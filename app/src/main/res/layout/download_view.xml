@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_height="match_parent"
+	android:layout_width="match_parent">
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+	android:background="?android:attr/windowBackground">
+    <android.support.design.widget.TabLayout
+		android:id="@+id/tablayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"/>
+	<android.support.v4.view.ViewPager
+		android:id="@+id/viewpager"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
+</LinearLayout>
+
+	<LinearLayout
+		android:layout_gravity="bottom|end"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+
+		<android.support.design.widget.FloatingActionButton
+			android:visibility="invisible"
+			android:id="@+id/download_view_cancel"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:scaleType="centerInside"
+			android:layout_marginEnd="15dp"
+			android:layout_marginStart="15dp"
+			android:layout_marginTop="15dp"
+			android:layout_marginBottom="30dp"
+			android:src="@drawable/ic_close"
+			app:backgroundTint="?attr/colorControlNormal"
+			app:borderWidth="0dp"
+			app:elevation="2dp"
+			app:fabSize="normal"
+			app:pressedTranslationZ="12dp"
+			app:rippleColor="?attr/colorControlHighlight"/>
+		<android.support.design.widget.FloatingActionButton
+			android:visibility="invisible"
+			android:id="@+id/download_view_delete"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:scaleType="centerInside"
+			android:layout_marginEnd="15dp"
+			android:layout_marginTop="15dp"
+			android:layout_marginBottom="30dp"
+			android:src="@drawable/delete"
+			app:backgroundTint="?attr/colorControlNormal"
+			app:borderWidth="0dp"
+			app:elevation="2dp"
+			app:fabSize="normal"
+			app:pressedTranslationZ="12dp"
+			app:rippleColor="?attr/colorControlHighlight"/>
+	</LinearLayout>
+
+</FrameLayout>
+

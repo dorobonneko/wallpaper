@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="match_parent"
+	android:layout_width="match_parent">
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:gravity="end">
+		
+		<Spinner
+			android:id="@+id/spinner"
+			android:layout_width="wrap_content"
+			android:layout_height="50dp"/>
+
+		<include
+			layout="@layout/book_view"/>
+
+		<android.support.design.widget.TabLayout
+			android:id="@+id/tablayout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="start"
+			android:orientation="horizontal">
+		<TextView
+			android:id="@+id/money"
+			android:textColor="?android:attr/textColorPrimary"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:singleLine="true"/>
+		</LinearLayout>
+		<ViewFlipper
+			android:id="@+id/viewflipper"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
+
+				
+				<EditText
+					android:id="@+id/n_sendmoney"
+					android:hint="悬赏金额"
+					android:inputType="number"
+					android:layout_width="match_parent"
+					android:ems="10"
+					android:layout_height="wrap_content"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				android:orientation="vertical">
+
+				<EditText
+					android:id="@+id/freemoney"
+					android:hint="总共撒币：(不低于2000)"
+					android:inputType="number"
+					android:layout_width="match_parent"
+					android:ems="10"
+					android:layout_height="wrap_content"/>
+
+				<EditText
+					android:id="@+id/freerule2"
+					android:hint="每人得币：(不低于200)"
+					android:inputType="number"
+					android:layout_width="match_parent"
+					android:ems="10"
+					android:layout_height="wrap_content"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				android:orientation="vertical"
+				android:gravity="right">
+				<EditText
+					android:id="@+id/v_sendmoney"
+					android:hint="悬赏金额"
+					android:inputType="number"
+					android:layout_width="match_parent"
+					android:ems="10"
+					android:layout_height="wrap_content"/>
+				<android.support.v7.widget.RecyclerView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/vote_list"/>
+				<ImageView
+					android:layout_marginRight="10dp"
+					android:background="?attr/selectableItemBackgroundBorderless"
+					android:id="@+id/add_vote"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:src="@drawable/ic_plus"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:gravity="right"
+				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				android:orientation="vertical">
+				<EditText
+					android:id="@+id/f_sendmoney"
+					android:hint="悬赏金额"
+					android:inputType="number"
+					android:layout_width="match_parent"
+					android:ems="10"
+					android:layout_height="wrap_content"/>
+				<include layout="@layout/file_add_view"/>
+		
+			</LinearLayout>
+
+		</ViewFlipper>
+
+	</LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="host">
+		<item>http://yaohuo.me</item>
+		<item>https://yaohuo.me</item>
+		<item>http://yaohw.com</item>
+		<item>https://yaohw.com</item>
+	</string-array>
+</resources>

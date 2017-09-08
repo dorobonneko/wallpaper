@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.moe.yaohuo" >
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	package="com.moe.yaohuo" >
 
     <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+		android:theme="@style/FloatActivity"
+		android:name="com.moe.app.Application"
+        android:icon="@drawable/yaohuo"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-		android:resizeableActivity = "true">
+        android:supportsRtl="true"
+		android:largeHeap="true">
         <activity
+			android:theme="@style/AppTheme"
             android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
@@ -17,6 +20,56 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+		<activity
+			android:name=".LoginActivity"/>
+		<activity
+			android:name=".BbsActivity"/>
+		<activity
+			android:configChanges="orientation|keyboardHidden|screenSize"
+			android:name=".WebViewActivity"/>
+		<activity
+			android:theme="@style/AppTheme"
+			android:name=".ExceptionActivity"/>
+		<activity
+			android:name=".ListActivity"/>
+		<activity
+			android:name=".ReplyActivity"/>
+		<activity
+			android:name=".UserInfoActivity"/>
+		<activity
+			android:name=".MessageActivity"/>
+		<activity
+			android:configChanges="orientation|keyboardHidden|screenSize"
+			android:name=".AddBbsActivity"/>
+		<activity
+			android:name=".MessageViewActivity"/>
+		<activity
+			android:name=".SendMessageActivity"/>
+		<activity
+			android:name=".UserDataActivity"/>
+		<service
+			android:name="com.moe.services.DownloadService"
+			android:process=":moe"/>
+		<activity
+			android:name=".FriendActivity"/>
+		<activity
+			android:name=".MoneyActivity"/>
+		<activity
+			android:name=".SearchActivity"/>
+		<activity
+			android:name=".ModBbsActivity"/>
+		<activity
+			android:name=".FileManagerActivity"/>
+		<activity
+			android:name=".FileAddActivity"/>
+		<activity
+			android:name=".DirectoryActivity"/>
+		<activity
+			android:theme="@style/ViewImage"
+			android:name=".ViewImageActivity"/>
     </application>
 
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

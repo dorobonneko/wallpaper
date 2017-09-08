@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true">
+    
+		<ListPreference
+			android:key="host"
+			android:title="切换host"
+			android:entries="@array/host"
+			android:entryValues="@array/host"
+			android:defaultValue="http://yaohuo.me"/>
+		<Preference
+			android:key="download_path"
+			android:title="下载路径"/>
+		<SwitchPreferenceCompat
+			android:key="direct"
+			android:title="网址直达"
+			android:summary="实验性功能（目前仅针对贴子内容）"
+			/>
+	<SwitchPreferenceCompat
+		android:key="emoji"
+		android:title="全动态表情展示"
+		android:summary="开启后卡出翔😂"
+	/>
+		<Preference
+			android:key="setting_about"
+			android:title="关于"/>
+</PreferenceScreen>

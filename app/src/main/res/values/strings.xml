@@ -2,6 +2,13 @@
 <resources>
 
     <string name="app_name">妖火网</string>
-    <string name="hello_world">Hello world!</string>
-
+    <string formatted="false" name="book_list">/bbs/book_list.aspx</string>
+	<string formatted="false" name="search_list">/search/book_list.aspx</string>
+	<string formatted="false" name="view">/bbs/view.aspx</string>
+	<string name="reply">/bbs/book_re.aspx</string>
+	<string name="reply_file">/bbs/book_re_addFile.aspx</string>
+	<string name="add">/bbs/book_view_add.aspx</string>
+	<string name="sendmoney">/bbs/book_view_sendmoney.aspx</string>
+	<string name="vote">/bbs/book_view_addvote.aspx</string>
+	<string name="addfile">/bbs/book_view_addfile.aspx</string>
 </resources>

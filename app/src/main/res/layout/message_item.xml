@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	
+	android:layout_width="match_parent"
+	android:layout_height="?attr/listPreferredItemHeight"
+	android:foreground="?attr/selectableItemBackground"
+	app:cardElevation="0dp">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center_vertical"
+		android:paddingStart="5dp"
+		android:paddingEnd="10dp"
+		android:paddingTop="3dp"
+		android:paddingBottom="5dp">
+
+		<ImageView
+			android:visibility="invisible"
+			android:layout_height="5dp"
+			android:layout_width="5dp"
+			android:src="@drawable/ic_circle"
+			android:scaleType="centerInside"
+			android:id="@+id/new_msg"/>
+
+		<LinearLayout
+			android:layout_height="match_parent"
+			android:layout_width="wrap_content"
+			android:orientation="vertical"
+			android:layout_weight="1.0">
+
+			<TextView
+				android:id="@+android:id/title"
+				android:textColor="?android:attr/textColorPrimary"
+				android:textSize="18sp"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:singleLine="true"
+				android:gravity="start"/>
+
+			<LinearLayout
+				android:layout_height="match_parent"
+				android:layout_width="match_parent"
+				android:gravity="bottom">
+
+				<TextView
+					android:id="@+android:id/summary"
+					android:textColor="?android:attr/textColorSecondary"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:textSize="12sp"
+					android:gravity="start"/>
+
+				<View
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"/>
+
+				<TextView
+					android:id="@+id/summary"
+					android:textColor="?android:attr/textColorSecondary"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:textSize="12sp"/>
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+		<ImageView
+			android:id="@+id/delete"
+			android:background="?attr/selectableItemBackgroundBorderless"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:src="@drawable/ic_delete"/>
+
+	</LinearLayout>
+
+</android.support.v7.widget.CardView>
+

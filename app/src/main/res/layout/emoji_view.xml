@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:minHeight="500dp"
+	android:orientation="vertical">
+
+	<android.support.design.widget.TabLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/tablayout"/>
+
+	<ViewFlipper
+		android:id="@+id/toggle"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1">
+
+		<android.support.v7.widget.RecyclerView
+			android:id="@+id/emoji_list"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="vertical">
+
+			<android.support.v7.widget.RecyclerView
+				android:id="@+id/ubb_ready"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"/>
+
+			<android.support.v7.widget.RecyclerView
+				android:id="@+id/ubb_list"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="1"/>
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:paddingLeft="15dp"
+				android:paddingRight="15dp">
+				<EditText
+					android:singleLine="true"
+					android:layout_weight="1"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/key"/>
+				<Button
+					android:minWidth="0px"
+					android:minHeight="0px"
+					android:minEms="0"
+					android:id="@+id/clear"
+					android:padding="10dp"
+					android:background="?attr/selectableItemBackground"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="清空"/>
+				<Button
+					android:minWidth="0px"
+					android:minHeight="0px"
+					android:minEms="0"
+					android:id="@+id/insert"
+					android:padding="10dp"
+					android:background="?attr/selectableItemBackground"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="插入"/>
+			</LinearLayout>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="vertical"
+			android:gravity="end">
+
+			<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingTop="15dp">
+
+				<TextView
+					android:layout_marginStart="15dp"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="上传图片"
+					android:layout_alignParentStart="true"
+					android:layout_centerVertical="true"/>
+
+				<ImageView
+					android:id="@+id/file_add"
+					android:layout_marginEnd="15dp"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:background="?attr/selectableItemBackgroundBorderless"
+					android:src="@drawable/ic_plus"
+					android:layout_alignParentEnd="true"
+					android:layout_centerVertical="true"/>
+
+			</RelativeLayout>
+
+			<android.support.v7.widget.RecyclerView
+				android:id="@+id/image_list"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+		</LinearLayout>
+
+	</ViewFlipper>
+
+	<Button
+		android:id="@+id/cancel"
+		android:layout_margin="10dp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="取消"
+		android:background="?attr/selectableItemBackground"/>
+
+</LinearLayout>
+

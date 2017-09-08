@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:fitsSystemWindows="true"
+	android:id="@+id/coordinatorlayout"
+	android:background="@color/window_background">
+
+	<android.support.design.widget.AppBarLayout
+		android:id="@+id/appbarlayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:elevation="0dp">
+
+		<android.support.v7.widget.Toolbar
+			android:theme="@style/toolbar"
+			android:id="@+id/toolbar"
+			android:layout_width="match_parent"
+			android:layout_height="?attr/actionBarSize"/>
+
+	</android.support.design.widget.AppBarLayout>
+
+	<FrameLayout
+		android:id="@+id/main_index"
+		app:layout_behavior="@string/appbar_scrolling_view_behavior"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
+
+	<android.support.design.widget.FloatingActionButton
+		android:visibility="gone"
+		android:id="@+id/edit"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:scaleType="centerInside"
+		android:layout_gravity="bottom|end"
+		android:layout_marginBottom="30dp"
+		android:layout_marginEnd="30dp"
+		android:src="@drawable/ic_pencil"
+		app:layout_behavior="com.moe.view.FloatingActionButtonBehavior"
+		app:backgroundTint="?attr/colorControlNormal"
+		app:borderWidth="0dp"
+		app:elevation="5dp"
+		app:fabSize="mini"
+		app:pressedTranslationZ="12dp"
+		app:rippleColor="?attr/colorControlHighlight"/>
+	</android.support.design.widget.CoordinatorLayout>
+

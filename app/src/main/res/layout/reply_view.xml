@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="8dp"
+		android:focusable="true"
+		android:focusableInTouchMode="true">
+
+		<EditText
+			android:id="@+id/reply_content"
+			android:inputType="textMultiLine"
+			android:layout_width="match_parent"
+			android:ems="10"
+			android:layout_height="wrap_content"
+			android:minLines="5"
+			android:gravity="start|top"/>
+
+		<RelativeLayout
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent">
+
+			<ImageButton
+				android:id="@+id/emoji"
+				android:background="?attr/selectableItemBackgroundBorderless"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:src="@drawable/ic_emoticon"/>
+
+			<ImageButton
+				android:layout_marginStart="10dp"
+				android:background="?attr/selectableItemBackgroundBorderless"
+				android:id="@+id/file"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:src="@drawable/ic_attachment"
+				android:layout_toEndOf="@id/emoji"/>
+
+			<CheckBox
+				android:id="@+id/reply_notify"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:layout_centerVertical="true"/>
+
+			<TextView
+				android:gravity="start"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="通知楼主:"
+				android:layout_toStartOf="@id/reply_notify"
+				android:layout_centerVertical="true"/>
+
+		</RelativeLayout>
+		<android.support.v7.widget.RecyclerView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/filelist"/>
+		
+		<android.support.v7.widget.RecyclerView
+			android:visibility="gone"
+			
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/list"/>
+		
+	</LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>
+

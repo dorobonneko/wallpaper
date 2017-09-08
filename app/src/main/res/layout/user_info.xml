@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:id="@+id/coordinatorlayout"
+	android:background="@color/window_background">
+
+	<android.support.design.widget.AppBarLayout
+		android:id="@+id/appbarlayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:elevation="2dp">
+
+		<android.support.design.widget.CollapsingToolbarLayout
+			app:layout_scrollFlags="scroll|exitUntilCollapsed"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			app:contentScrim="?attr/colorPrimary">
+
+			<LinearLayout
+				android:layout_height="match_parent"
+				android:layout_width="match_parent"
+				android:orientation="vertical">
+
+				<ImageView
+					android:scaleType="centerCrop"
+					android:id="@+id/user_info_top"
+					android:layout_height="80dp"
+					android:layout_width="match_parent"
+					android:src="@drawable/bar_back"/>
+
+				<RelativeLayout
+					android:background="#fffafafa"
+					android:id="@+id/user_info_bottom"
+					android:layout_height="100dp"
+					android:layout_width="match_parent">
+
+					<LinearLayout
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:orientation="vertical"
+						android:layout_alignParentBottom="true"
+						android:paddingLeft="10dp">
+
+						<LinearLayout
+							android:layout_height="wrap_content"
+							android:layout_width="wrap_content"
+							android:orientation="horizontal"
+							android:gravity="center_vertical">
+
+							<TextView
+								android:gravity="start"
+								android:id="@+android:id/title"
+								android:singleLine="true"
+								android:textColor="?android:attr/textColorPrimary"
+								android:textSize="24sp"
+								android:layout_height="wrap_content"
+								android:layout_width="wrap_content"/>
+
+							<ImageView
+								android:id="@+id/user_info_sex"
+								android:scaleType="centerInside"
+								android:layout_height="wrap_content"
+								android:layout_width="wrap_content"/>
+
+						</LinearLayout>
+
+						<TextView
+							android:gravity="start"
+							android:id="@+android:id/summary"
+							android:singleLine="true"
+							android:textSize="12sp"
+							android:text=""
+							android:textColor="?android:attr/textColorSecondary"
+							android:layout_height="wrap_content"
+							android:layout_width="wrap_content"/>
+
+					</LinearLayout>
+
+					<TextView
+						android:visibility="invisible"
+						android:id="@+id/user_information"
+						android:background="@drawable/info_background"
+						android:gravity="start"
+						android:textColor="?attr/colorPrimary"
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:text="个人资料"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="10dp"
+						android:layout_marginEnd="10dp"/>
+
+				</RelativeLayout>
+
+			</LinearLayout>
+
+			<com.moe.widget.CircleImageView
+				android:id="@+android:id/icon"
+				android:layout_width="70dp"
+				android:layout_height="70dp"
+				android:layout_marginTop="45dp"
+				android:layout_marginStart="35dp"
+				android:scaleType="centerCrop"/>
+
+			<android.support.v7.widget.Toolbar
+				android:theme="@style/toolbar"
+				android:id="@+id/toolbar"
+				android:layout_width="match_parent"
+				android:layout_height="?attr/actionBarSize"
+				app:layout_collapseMode="pin"/>
+
+		</android.support.design.widget.CollapsingToolbarLayout>
+
+	</android.support.design.widget.AppBarLayout>
+
+	<LinearLayout
+		app:layout_behavior="@string/appbar_scrolling_view_behavior"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
+
+		<android.support.design.widget.TabLayout
+			android:background="#ffffffff"
+			android:id="@+id/tablayout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<android.support.v4.view.ViewPager
+			android:id="@+id/viewpager"
+			android:layout_height="match_parent"
+			android:layout_width="match_parent"/>
+
+	</LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>
+
