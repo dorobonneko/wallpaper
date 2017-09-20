@@ -59,15 +59,17 @@ public class TextViewClickMode implements TextView.OnTouchListener
 			case event.ACTION_UP:
 				if(link!=null&&link.length>0){
 					int i=0;
+					boolean flag=false;
 					for(i=0;i<link.length;i++){
 						if(link[i] instanceof ImageSpan){
+							flag=true;
 							break;
 						}
 					}
 					if(ocl!=null)
-						ocl.onClick(link[i]);
+						ocl.onClick(link[flag?i:0]);
 						else
-						onClick(link[i]);
+						onClick(link[flag?i:0]);
 					/*for(CharacterStyle cs:link)
 						ocl.onClick(cs);
 					else
