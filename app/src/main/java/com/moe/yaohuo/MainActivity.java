@@ -239,14 +239,14 @@ LogoUpload.Callback
 		}
 		else{
 			if (snack == null)
-				snack = Snackbar.make(drawerlayout.getChildAt(0), "确认退出？", 1500).setAction("退出", new View.OnClickListener(){
-
-						@Override
-						public void onClick(View p1)
-						{
-							MainActivity.super.finish();
+				snack = Snackbar.make(drawerlayout.getChildAt(0), "确认退出？", 1500).setAction("退出", this).setActionTextColor(getResources().getColor(R.color.primary)).setCallback(new Snackbar.Callback(){
+					public void onDismissed(Snackbar bar,int event){
+						switch(event){
+							case Snackbar.Callback.DISMISS_EVENT_SWIPE:
+								snack=null;
 						}
-					}).setActionTextColor(getResources().getColor(R.color.primary));
+					}
+				});
 			if (snack.isShown())snack.dismiss();
 			else snack.show();
 			}
@@ -344,6 +344,9 @@ LogoUpload.Callback
 				if(rv!=null){
 					rv.smoothScrollToPosition(0);
 				}
+				break;
+			case android.support.v7.appcompat.R.id.snackbar_action:
+				super.finish();
 				break;
 		}
 	}

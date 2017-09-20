@@ -115,7 +115,8 @@ public class FloorAdapter extends RecyclerView.Adapter
 			vh.logo.setImageDrawable(null);
 		}else{
 			vh.title.setText(Html.fromHtml(bi.getName()));
-				}
+			vh.logo.setImageBitmap(null);
+		}
 		vh.summary.setText((bi.getFloor()==0?"":(bi.getFloor()+"# "))+bi.getTime());
 		vh.content.setText(Html.fromHtml(bi.getContent(), new ImageGetter(vh.content,true), null));
 		vh.money.setText(bi.getMoney()==0?null:(bi.getMoney()+""));
@@ -177,6 +178,7 @@ public class FloorAdapter extends RecyclerView.Adapter
 			mm.setOnClickListener(this);
 			content.setMovementMethod(mm);*/
 			TextViewClickMode tvc=new TextViewClickMode(content);
+			//content.setFocusable(false);
 			logo.setOnClickListener(this);
 			more.setOnClickListener(this);
 			}

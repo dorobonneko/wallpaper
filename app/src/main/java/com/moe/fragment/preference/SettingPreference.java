@@ -34,7 +34,7 @@ public class SettingPreference extends PreferenceFragment implements Preference.
 		path.setSummary(getPreferenceManager().getSharedPreferences().getString("path",Environment.getExternalStorageDirectory().getAbsolutePath()+"/yaohuo"));
 		host=(ListPreference) findPreference("host");
 		host.setSummary(getPreferenceManager().getSharedPreferences().getString("host",null));
-		host.setValue(host.getSummary().toString());
+		host.setValue(host.getSummary()==null?null:host.getSummary().toString());
 		host.setOnPreferenceChangeListener(this);
 	}
 

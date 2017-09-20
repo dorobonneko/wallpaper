@@ -20,6 +20,7 @@ import android.text.style.ImageSpan;
 import android.text.style.CharacterStyle;
 import android.widget.Toast;
 import com.moe.yaohuo.ViewImageActivity;
+import android.text.Selection;
 
 public class TextViewClickMode implements TextView.OnTouchListener
 {
@@ -28,7 +29,6 @@ public class TextViewClickMode implements TextView.OnTouchListener
 	public TextViewClickMode(TextView tv){
 		tv.setOnTouchListener(this);
 		tv.setTextIsSelectable(true);
-		tv.setFocusable(false);
 		this.widget=tv;
 	}
 	@Override
@@ -55,14 +55,19 @@ public class TextViewClickMode implements TextView.OnTouchListener
 					}else return false;
 				//break;*/
 			case event.ACTION_CANCEL:
-				
 				break;
 			case event.ACTION_UP:
 				if(link!=null&&link.length>0){
+					int i=0;
+					for(i=0;i<link.length;i++){
+						if(link[i] instanceof ImageSpan){
+							break;
+						}
+					}
 					if(ocl!=null)
-						ocl.onClick(link[0]);
+						ocl.onClick(link[i]);
 						else
-						onClick(link[0]);
+						onClick(link[i]);
 					/*for(CharacterStyle cs:link)
 						ocl.onClick(cs);
 					else

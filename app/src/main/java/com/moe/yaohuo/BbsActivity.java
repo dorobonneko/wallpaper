@@ -162,6 +162,7 @@ SwipeRefreshLayout.OnRefreshListener
 		reply.setImageResource(R.drawable.ic_quick_reply);
 		reply.setOnClickListener(this);
 		TextViewClickMode tvcm=new TextViewClickMode(tv_content);
+		tv_content.setFocusable(false);
 		//new TextViewClickMode(tv_content_summary);
 		//tv_content.setTextIsSelectable(false);
 		icon = (CircleImageView)header.findViewById(android.R.id.icon);

@@ -126,14 +126,7 @@ public class MessageActivity extends EventActivity implements SwipeRefreshLayout
 	}
 
 
-	@Override
-	protected void onResume()
-	{
-		// TODO: Implement this method
-		super.onResume();
-		if(!refresh.isRefreshing())
-		onRefresh();
-	}
+	
 
 	@Override
 	public void onRefresh()
@@ -304,6 +297,8 @@ public class MessageActivity extends EventActivity implements SwipeRefreshLayout
 	@Override
 	public void onItemClick(RecyclerView.Adapter ra, RecyclerView.ViewHolder vh)
 	{
+		list.get(vh.getAdapterPosition()).setView(0);
+		ra.notifyItemChanged(vh.getAdapterPosition());
 		startActivity(new Intent(this,MessageViewActivity.class).putExtra("id",list.get(vh.getAdapterPosition()).getId()));
 	}
 

@@ -2,7 +2,8 @@
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="?attr/listPreferredItemHeightSmall"
+	android:layout_height="wrap_content"
+	android:minHeight="?attr/listPreferredItemHeightSmall"
 	android:orientation="horizontal"
 	android:gravity="bottom">
 
@@ -11,7 +12,6 @@
 		android:id="@+id/vote_value"
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
-		android:ems="10"
 		android:layout_weight="1.0"
 		android:singleLine="true"/>
 

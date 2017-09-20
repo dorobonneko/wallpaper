@@ -43,7 +43,7 @@ public class ViewImageActivity extends AppCompatActivity
 					return map;
 				}
 			});
-		Glide.with(this).load(gu).diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.yaohuo).into(iv);
+		Glide.with(this).load(gu).diskCacheStrategy(DiskCacheStrategy.SOURCE).error(R.drawable.yaohuo).into(iv);
 	}
 
 	@Override
@@ -74,7 +74,6 @@ public class ViewImageActivity extends AppCompatActivity
 					count++;
 					handler.removeMessages(0);
 					handler.sendEmptyMessageDelayed(0,400);
-					return true;
 					}
 				break;
 		}
