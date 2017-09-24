@@ -26,7 +26,7 @@ public class ViewImageActivity extends AppCompatActivity
 		super.onCreate(savedInstanceState);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		if(savedInstanceState==null){
-			url=getIntent().getStringExtra("url");
+			url=getIntent().getDataString();
 		}else{
 			url=savedInstanceState.getString("url");
 		}
@@ -70,10 +70,10 @@ public class ViewImageActivity extends AppCompatActivity
 				//super.dispatchTouchEvent(ev);
 				break;
 			case ev.ACTION_UP:
-				if(ev.getRawX()==x&&ev.getRawY()==y){
+				if(ev.getRawX()==x&&ev.getRawY()==y&&ev.getPointerCount()==1){
 					count++;
 					handler.removeMessages(0);
-					handler.sendEmptyMessageDelayed(0,400);
+					handler.sendEmptyMessageDelayed(0,600);
 					}
 				break;
 		}

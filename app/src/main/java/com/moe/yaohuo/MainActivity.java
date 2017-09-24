@@ -380,9 +380,9 @@ LogoUpload.Callback
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
+		if(resultCode==RESULT_OK)
 		switch(requestCode){
 			case 233:
-				if(resultCode==RESULT_OK)
 				loadInfo();
 				break;
 			case 482:

@@ -40,13 +40,18 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import android.animation.Animator;
 import android.view.MotionEvent;
 import android.animation.ObjectAnimator;
+import android.net.Uri;
+import android.support.v4.view.ViewCompat;
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
+import android.graphics.Color;
 
 public class UserInfoActivity extends BaseActivity implements View.OnClickListener
 {
 	private boolean isAnime;
 	private float oldx,oldy,X;
 	private int mode;
-	private View view;
+	private View view,background;
 	private long time;
 	
 	private int id;
@@ -62,6 +67,8 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.user_info);
 		view=findViewById(R.id.coordinatorlayout);
+		background=getWindow().getDecorView();
+		ViewCompat.setElevation(view,60);
 		getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
 		Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
 		toolbar.setTitleTextColor(0xffffffff);
@@ -73,6 +80,7 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		info=findViewById(R.id.user_information);
 		logo=(ImageView)findViewById(android.R.id.icon);
+		logo.setOnClickListener(this);
 		username=(TextView)findViewById(android.R.id.title);
 		sex=(ImageView)findViewById(R.id.user_info_sex);
 		summary=(TextView)findViewById(android.R.id.summary);
@@ -264,6 +272,8 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
 				startActivity(new Intent(this,UserDataActivity.class).putExtra("ui",ui));
 				break;
 			case android.R.id.icon:
+				if(ui!=null)
+				startActivity(new Intent(this,ViewImageActivity.class).setData(Uri.parse(ui.getLogo())));
 				break;
 		}
 	}
@@ -298,6 +308,7 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
 					case -1://横向滚动
 						float lx=X+event.getRawX()-oldx;
 						view.setX(lx<0?0:lx);
+						background.setBackgroundColor(Color.argb((int)((1-lx/background.getWidth())*255/2),0,0,0));
 						return true;
 					case 0:
 						if(Math.abs(oldy-event.getRawY())<5&&event.getRawX()>oldx)
@@ -361,7 +372,17 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
 	}
 	private void animeFinish(){
 		float[] data=new float[]{view.getX(),view.getWidth()};
-		Animator anim=ObjectAnimator.ofFloat(view,"X",data);
+		AnimatorSet anim=new AnimatorSet();
+		Animator trans=ObjectAnimator.ofFloat(view,"X",data);
+		ValueAnimator alpha=ObjectAnimator.ofInt(new int[]{(int)((1-view.getX()/view.getWidth())*255/2),0});
+		alpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+
+				@Override
+				public void onAnimationUpdate(ValueAnimator p1)
+				{
+					background.setBackgroundColor(Color.argb(p1.getAnimatedValue(),0,0,0));
+				}
+			});
 		anim.addListener(new Animator.AnimatorListener(){
 
 				@Override
@@ -388,6 +409,7 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
 					// TODO: Implement this method
 				}
 			});
+		anim.playTogether(new Animator[]{trans,alpha});
 		anim.setDuration((int)((data[1]-data[0])/data[1]*500));
 		anim.start();
 	}

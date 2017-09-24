@@ -318,8 +318,10 @@ private void load(){
 			return;
 		}
 		catch (IOException e)
-		{} //发表失败
-		handler.obtainMessage(1,"发布失败").sendToTarget();
+		{
+			handler.obtainMessage(1,e.getMessage()).sendToTarget();
+		} //发表失败
+		//handler.obtainMessage(1,"发布失败").sendToTarget();
 		
 	}
 

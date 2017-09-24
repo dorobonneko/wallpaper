@@ -27,6 +27,7 @@ public class ViewImage extends ImageView implements GestureDetector.OnGestureLis
 	public boolean onScale(ScaleGestureDetector p1)
 	{
 		float scale=p1.getScaleFactor();
+		scale=scale<1&&getScale()<=0.5?1:scale;
 		matrix.postScale(scale, scale, p1.getFocusX(), p1.getFocusY());
 		invalidate();
 		return true;

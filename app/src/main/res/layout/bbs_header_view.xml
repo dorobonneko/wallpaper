@@ -84,8 +84,17 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/radiolist"/>
+	<TextView
+		android:visibility="gone"
+		android:background="#fff"
+		android:layout_marginTop="3dp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/close"
+		android:textColor="#f00"
+		android:gravity="center_horizontal"/>
 	<LinearLayout
-		android:layout_marginTop="15dp"
+		android:layout_marginTop="10dp"
 		android:layout_marginBottom="5dp"
 		android:paddingTop="2dp"
 		android:paddingBottom="2dp"

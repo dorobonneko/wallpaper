@@ -116,7 +116,7 @@ public class TextViewClickMode implements TextView.OnTouchListener
 			}
 		}else if(span instanceof ImageSpan){
 			ImageSpan img=(ImageSpan) span;
-			widget.getContext().startActivity(new Intent(widget.getContext(),ViewImageActivity.class).putExtra("url",UrlUtils.getAbsUrl(widget.getContext(),img.getSource())));
+			widget.getContext().startActivity(new Intent(widget.getContext(),ViewImageActivity.class).setData(Uri.parse(UrlUtils.getAbsUrl(widget.getContext(),img.getSource()))));
 		}
 	}
 	public void setOnClickListener(OnClickListener l){

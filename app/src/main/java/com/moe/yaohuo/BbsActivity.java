@@ -95,8 +95,8 @@ SwipeRefreshLayout.OnRefreshListener
 	private ArrayList<FloorItem> list;
 	private UserItem ui;
 	private ListItem bbs;
-	private String time,content,mode,mode_summary,max,min;
-	private TextView author,summary,tv_content,bbs_mode,subtitle;
+	private String time,content,mode,mode_summary,max,min,why_close;
+	private TextView author,summary,tv_content,bbs_mode,subtitle,close;
 	private ViewGroup bbs_mode_s;
 	private ProgressBar pb;
 	private boolean load,canload;
@@ -163,6 +163,7 @@ SwipeRefreshLayout.OnRefreshListener
 		reply.setOnClickListener(this);
 		TextViewClickMode tvcm=new TextViewClickMode(tv_content);
 		tv_content.setFocusable(false);
+		close=(TextView)header.findViewById(R.id.close);
 		//new TextViewClickMode(tv_content_summary);
 		//tv_content.setTextIsSelectable(false);
 		icon = (CircleImageView)header.findViewById(android.R.id.icon);
@@ -232,6 +233,14 @@ SwipeRefreshLayout.OnRefreshListener
 					Matcher matcher=Pattern.compile("论坛>(.*?)>帖子").matcher(doc.getElementsByClass("title").get(0).text());
 					if (matcher.find())
 						bbs.setBbs(matcher.group(1));
+					Elements tips=doc.getElementsByClass("tip");
+					if(tips.size()>0){
+					matcher=Pattern.compile("结束原因:(.*)-",Pattern.DOTALL).matcher(tips.get(0).text());
+					if(matcher.find()){
+						why_close=matcher.group();
+						why_close=why_close.substring(0,why_close.length()-3);
+					}
+					}
 					Elements elements=doc.getElementsByClass("content");
 					if (elements.size() == 0)
 					{
@@ -356,6 +365,11 @@ SwipeRefreshLayout.OnRefreshListener
 //int index=content.indexOf("<!--listE-->");
 					tv_content.setText(Html.fromHtml(content, new ImageGetter(tv_content, true), BbsActivity.this));
 //tv_content_summary.setText(Html.fromHtml(content.substring(index),new ImageGetter(tv_content_summary),null));
+					if(why_close!=null){
+						close.setVisibility(View.VISIBLE);
+						close.setText(why_close);
+						}else
+						close.setVisibility(View.GONE);
 					subtitle.setText(bbs.getBbs());
 					if (mode != null)
 					{
@@ -663,6 +677,10 @@ SwipeRefreshLayout.OnRefreshListener
 		switch (p1.getId())
 		{
 			case R.id.edit:
+				if(why_close!=null){
+					Toast.makeText(this,"本贴已结",Toast.LENGTH_SHORT).show();
+					return;
+				}
 				Bundle bundle=new Bundle();
 				bundle.putParcelable("bbs", bbs);
 				startActivityForResult(new Intent(this, ReplyActivity.class).putExtras(bundle), 333);
@@ -704,6 +722,10 @@ SwipeRefreshLayout.OnRefreshListener
 		}
 		else
 		{
+			if(why_close!=null){
+				Toast.makeText(this,"本贴已结",Toast.LENGTH_SHORT).show();
+				return;
+			}
 			Bundle bundle=new Bundle();
 			bundle.putParcelable("bbs", bbs);
 			bundle.putParcelable("floor", list.get(vh.getAdapterPosition() - fa.getHeaderCount()));

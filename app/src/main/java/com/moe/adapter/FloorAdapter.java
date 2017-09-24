@@ -177,7 +177,7 @@ public class FloorAdapter extends RecyclerView.Adapter
 			/**MovementMethod mm=new MovementMethod();
 			mm.setOnClickListener(this);
 			content.setMovementMethod(mm);*/
-			TextViewClickMode tvc=new TextViewClickMode(content);
+			new TextViewClickMode(content);
 			//content.setFocusable(false);
 			logo.setOnClickListener(this);
 			more.setOnClickListener(this);

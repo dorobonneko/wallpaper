@@ -95,8 +95,8 @@
 			android:layout_marginStart="?attr/listPreferredItemHeightSmall"
 			android:id="@+id/floor_content"
 			android:layout_height="wrap_content"
-			android:layout_width="match_parent"
-			android:background="@drawable/border"/>
+			android:layout_width="match_parent"/>
+			<!--android:background="@drawable/border"/>-->
 
 		<View
 			android:gravity="start"

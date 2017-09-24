@@ -60,6 +60,7 @@ public class TextViewTarget extends ViewTarget<TextView,Object>
 			Bitmap bit=(Bitmap) obj;
 			if(bit.getWidth()>getView().getWidth())
 			bit=BitmapUtils.scaleBitmap(bit,((float)width/bit.getWidth()));
+			if(bit==null)return;
 			d.addLevel(1,1,new GlideBitmapDrawable(getView().getResources(),bit));
 			d.setLevel(1);
 			d.setBounds(0,0,bit.getWidth(),bit.getHeight());
