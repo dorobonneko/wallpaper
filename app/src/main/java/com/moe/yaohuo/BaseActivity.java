@@ -41,5 +41,4 @@ public class BaseActivity extends AppCompatActivity
 		Glide.get(this).clearMemory();
 		
 	}
-	
 }

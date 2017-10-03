@@ -23,20 +23,41 @@ import java.security.cert.X509Certificate;
 import java.security.SecureRandom;
 import java.security.KeyManagementException;
 import java.security.cert.CertificateException;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import android.widget.RemoteViews;
+import com.moe.yaohuo.R;
+import android.app.Notification;
+import java.io.File;
+import android.media.RemoteControlClient;
+import android.os.Build;
+import android.app.PendingIntent;
+import android.net.Uri;
+import android.webkit.MimeTypeMap;
+import java.text.DecimalFormat;
+import com.moe.yaohuo.MainActivity;
+import android.content.ComponentName;
+import android.content.ClipData;
 
 public class DownloadService extends Service
 {
+	public final static String ACTION_REFRESH="com.moe.yaohuo.DOWNLOAD_REFRESH";
 	private  ArrayList<DownloadItem> list=new ArrayList<>(),loading=new ArrayList<>();
 	private  ArrayList<Download> download=new ArrayList<>();
 	private DownloadDatabase dd;
+	private NotificationManager nm;
 	private static SSLSocketFactory ssf;
+	private NotifcationRefresh refresh;
+	private Notification notification;
+	private DecimalFormat format=new DecimalFormat("0.00");
 	public static SSLSocketFactory getSSLSocketFactory()
 	{
 		if(ssf==null){
 			try{
 			SSLContext sc=SSLContext.getInstance("SSL", "SunJSSE");
 			sc.init(null, new TrustManager[]{new TrustManager()}, new SecureRandom());
-			ssf =sc .getSocketFactory();
+			ssf =sc.getSocketFactory();
 			}
 			catch (Exception e)
 			{}
@@ -67,7 +88,7 @@ public class DownloadService extends Service
 				di.setState(State.WAITING);
 				loading.add(di);
 				list.add(di);
-				sendBroadcast(new Intent("com.moe.refresh").putParcelableArrayListExtra("data",loading));
+				sendBroadcast(new Intent(ACTION_REFRESH).putParcelableArrayListExtra("data",loading));
 				handler.sendEmptyMessageDelayed(0,1000);
 				break;
 			case Action_Stop:
@@ -75,7 +96,7 @@ public class DownloadService extends Service
 				if(index!=-1){
 					di=loading.get(index);
 					di.setState(DownloadService.State.PAUSE);
-					sendBroadcast(new Intent("com.moe.refresh").putParcelableArrayListExtra("data",loading));
+					sendBroadcast(new Intent(ACTION_REFRESH).putParcelableArrayListExtra("data",loading));
 				}
 				if(download.contains(di)){
 					index=download.indexOf(di);
@@ -96,7 +117,7 @@ public class DownloadService extends Service
 		{
 			switch(msg.what){
 				case 0:
-					sendBroadcast(new Intent("com.moe.refresh").putParcelableArrayListExtra("data",loading));
+					sendBroadcast(new Intent(ACTION_REFRESH).putParcelableArrayListExtra("data",loading));
 					sendEmptyMessageDelayed(0,1000);
 					break;
 			}
@@ -108,13 +129,25 @@ public class DownloadService extends Service
 	public void onCreate()
 	{
 		super.onCreate();
+		nm=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		dd=DownloadDatabase.getInstance(this);
+		Intent intent=getPackageManager().getLaunchIntentForPackage(getPackageName());
+		intent.setClipData(ClipData.newPlainText("",""));
+		PendingIntent pi=PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+		Notification.Builder build=new Notification.Builder(this).setContent(new RemoteViews(getPackageName(),R.layout.download_item_view)).setSmallIcon(R.drawable.yaohuo).setTicker("下载开始").setAutoCancel(true).setContentIntent(pi);
+		build.setContentIntent(pi);
+		if(Build.VERSION.SDK_INT>15)
+		notification=build.build();
+		else
+		notification=build.getNotification();
+		registerReceiver(refresh=new NotifcationRefresh(),new IntentFilter(ACTION_REFRESH));
 	}
 
 	@Override
 	public void onDestroy()
 	{
 		handler.removeMessages(0);
+		if(refresh!=null)unregisterReceiver(refresh);
 		super.onDestroy();
 	}
 	
@@ -128,18 +161,66 @@ public class DownloadService extends Service
 			d.start();
 			}catch(IndexOutOfBoundsException e){break;}
 		}
-		if(download.size()==0&&list.size()==0)
-			stopSelf();
+		//if(download.size()==0&&list.size()==0)
+		//	stopSelf();
 	}
 	
 	public void onItemEnd(Download down,boolean flag){
-		sendBroadcast(new Intent("com.moe.refresh").putParcelableArrayListExtra("data",loading));
+		sendBroadcast(new Intent(ACTION_REFRESH).putParcelableArrayListExtra("data",loading));
 		download.remove(down);
 		loading.remove(down);
 		check();
 		
 	}
-	
+	private class NotifcationRefresh extends BroadcastReceiver
+	{
+
+		@Override
+		public void onReceive(Context p1, Intent p2)
+		{
+			ArrayList<DownloadItem> list=p2.getParcelableArrayListExtra("data");
+			for(DownloadItem di:list){
+				switch(di.getState()){
+					case State.SUCCESS:
+						Notification.Builder nb=new Notification.Builder(p1).setSmallIcon(R.drawable.yaohuo).setTicker(di.getTitle()+"下载完成").setContentTitle(di.getTitle()).setSubText("下载完成");
+						Intent intent = new Intent(Intent.ACTION_VIEW);
+						Uri contentUri=Uri.fromFile(new File(di.getDir()));
+						if (Build.VERSION.SDK_INT >19)
+						{
+							intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+							intent.setDataAndType(contentUri, MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl((intent.getDataString()))));
+						}
+						else
+						{
+							intent.setDataAndType(contentUri, MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(intent.getDataString())));
+							intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						}
+						PendingIntent pi=PendingIntent.getActivity(p1, 233, intent, PendingIntent.FLAG_ONE_SHOT);
+						nb.setContentIntent(pi);
+						if(di.getTitle().matches(".*.apk"))
+							p1.startActivity(intent);
+						nm.notify(di.getUrl().hashCode(),Build.VERSION.SDK_INT>15?nb.build():nb.getNotification());
+						break;
+					default:
+						double currentSize=new File(di.getDir()).length();
+						RemoteViews remote=notification.contentView;
+						remote.setImageViewResource(R.id.download_item_view_state,di.isLoading()?R.drawable.ic_pause:R.drawable.ic_play);
+						remote.setTextViewText(R.id.download_item_view_title,di.getTitle());
+						remote.setProgressBar(R.id.download_item_view_progress,100,(int)(currentSize/di.getTotal()*100),false);
+						remote.setTextViewText(R.id.download_item_view_size,format.format(currentSize/1024.0/1024)+"M/"+format.format(di.getTotal()/1024.0/1024)+"M");
+						Intent click_intent=new Intent(p1,DownloadService.class);
+						click_intent.setAction(di.isLoading()?Action_Stop:Action_Start);
+						click_intent.putExtra("down",di);
+						PendingIntent click=PendingIntent.getService(p1,0,click_intent,0);
+						remote.setOnClickPendingIntent(R.id.download_item_view_state,click);
+						nm.notify(di.getUrl().hashCode(),notification);
+						break;
+				}
+				if(download.size()==0&&list.size()==0)
+					stopSelf();
+			}
+		}
+	}
 	public final static String Action_Start="start";
 	public final static String Action_Stop="stop";
 	public static class State{

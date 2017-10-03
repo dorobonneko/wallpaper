@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<com.moe.widget.LeftDragView
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:id="@+id/dragView">
+<android.support.design.widget.CoordinatorLayout
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:fitsSystemWindows="true"
@@ -46,4 +50,4 @@
 		app:pressedTranslationZ="12dp"
 		app:rippleColor="?attr/colorControlHighlight"/>
 	</android.support.design.widget.CoordinatorLayout>
-
+</com.moe.widget.LeftDragView>

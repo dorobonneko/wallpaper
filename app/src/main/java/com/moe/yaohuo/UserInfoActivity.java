@@ -285,7 +285,7 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
 		super.onStop();
 	}
 
-	@Override
+	/*@Override
 	public boolean dispatchTouchEvent(MotionEvent event)
 	{
 		if(isAnime)return true;
@@ -336,7 +336,7 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
 
 		return super.dispatchTouchEvent(event);
 	}
-
+*/
 	private void animeResume()
 	{
 		float[] data=new float[]{view.getX(),0};

@@ -133,6 +133,9 @@ LogoUpload.Callback
 		}
 		IntentFilter filter=new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
 		registerReceiver(network=new Network(),filter);
+		//关闭主界面的侧滑关闭
+		findViewById(R.id.dragView).setEnabled(false);
+		
     }
 
 	@Override
@@ -438,4 +441,7 @@ LogoUpload.Callback
 			}
 		}
 	}
+
+	
+	
 }

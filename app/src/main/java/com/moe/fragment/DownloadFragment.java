@@ -131,7 +131,7 @@ DownloadAdapter.OnItemLongClickListener
 			success.clear();
 			success.addAll(dd.query(true));
 			success_adapter.notifyDataSetChanged();
-			getContext().registerReceiver(broadcast = new RefreshBroadcast(), new IntentFilter("com.moe.refresh"));
+			getContext().registerReceiver(broadcast = new RefreshBroadcast(), new IntentFilter(DownloadService.ACTION_REFRESH));
 			/*List<DownloadItem> list=dd.query(false);
 			 for(DownloadItem di:list){
 			 getContext().startService(new Intent(getContext(),DownloadService.class).setAction(DownloadService.Action_Update).putExtra("down",di));

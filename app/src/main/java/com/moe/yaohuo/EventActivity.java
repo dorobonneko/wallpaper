@@ -11,6 +11,9 @@ import android.graphics.Color;
 import android.animation.ValueAnimator;
 import android.animation.AnimatorSet;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.ViewDragHelper;
+import android.view.ViewGroup;
+import android.support.design.widget.CoordinatorLayout;
 
 public class EventActivity extends BaseActivity
 {
@@ -32,9 +35,9 @@ public class EventActivity extends BaseActivity
 		toolbar.setTitleTextColor(0xffffffff);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-	}
-
-	@Override
+		}
+	
+	/*@Override
 	public boolean dispatchTouchEvent(MotionEvent event)
 	{
 		if(isAnime)return true;
@@ -84,7 +87,7 @@ public class EventActivity extends BaseActivity
 		}
 		
 		return super.dispatchTouchEvent(event);
-	}
+	}*/
 
 	private void animeResume()
 	{
