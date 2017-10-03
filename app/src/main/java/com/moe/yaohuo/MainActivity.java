@@ -242,7 +242,7 @@ LogoUpload.Callback
 		}
 		else{
 			if (snack == null)
-				snack = Snackbar.make(drawerlayout.getChildAt(0), "确认退出？", 1500).setAction("退出", this).setActionTextColor(getResources().getColor(R.color.primary)).setCallback(new Snackbar.Callback(){
+				snack = Snackbar.make(findViewById(R.id.coordinatorlayout), "确认退出？", 1500).setAction("退出", this).setActionTextColor(getResources().getColor(R.color.primary)).setCallback(new Snackbar.Callback(){
 					public void onDismissed(Snackbar bar,int event){
 						switch(event){
 							case Snackbar.Callback.DISMISS_EVENT_SWIPE:

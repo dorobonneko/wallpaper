@@ -9,6 +9,8 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
 import android.app.Activity;
 import android.support.v4.app.ActivityCompat;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 
 public class LeftDragView extends FrameLayout
 {
@@ -17,6 +19,15 @@ public class LeftDragView extends FrameLayout
 		super(context,attrs);
 		viewDragHelper=ViewDragHelper.create(this,new DragCallback());
 		viewDragHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT);
+	}
+
+	@Override
+	protected void onAttachedToWindow()
+	{
+		super.onAttachedToWindow();
+		ViewCompat.setElevation(getChildAt(0),60);
+		getChildAt(0).setBackgroundColor(0xffeeeeee);
+		setBackgroundColor(0xaa000000);
 	}
 
 	@Override
@@ -61,6 +72,14 @@ public class LeftDragView extends FrameLayout
 		public int getViewHorizontalDragRange(View child)
 		{
 			return child.getWidth();
+		}
+
+		@Override
+		public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy)
+		{
+			super.onViewPositionChanged(changedView, left, top, dx, dy);
+			setBackgroundColor(Color.argb((int)(((1-(double)left/changedView.getWidth()))*0xaa),0,0,0));
+			getChildAt(0).setAlpha((1-(float)left/changedView.getWidth()));
 		}
 
 		@Override
