@@ -159,7 +159,7 @@ SwipeRefreshLayout.OnRefreshListener
 		//tv_content.setTextIsSelectable(true);
 		ImageView reply=(ImageView)findViewById(R.id.edit);
 		reply.setVisibility(View.VISIBLE);
-		reply.setImageResource(R.drawable.ic_quick_reply);
+		reply.setImageResource(R.drawable.reply);
 		reply.setOnClickListener(this);
 		TextViewClickMode tvcm=new TextViewClickMode(tv_content);
 		tv_content.setFocusable(false);

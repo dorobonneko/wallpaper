@@ -6,4 +6,9 @@
 		<item>http://yaohw.com</item>
 		<item>https://yaohw.com</item>
 	</string-array>
+	<string-array name="exit_mode">
+		<item>按钮</item>
+		<item>双击</item>
+		<item>侧边栏</item>
+	</string-array>
 </resources>

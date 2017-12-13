@@ -28,7 +28,6 @@ public class EventActivity extends BaseActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_list_view);
 		view=findViewById(R.id.coordinatorlayout);
-		ViewCompat.setElevation(view,60);
 		getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
 		background=getWindow().getDecorView();
 		Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);

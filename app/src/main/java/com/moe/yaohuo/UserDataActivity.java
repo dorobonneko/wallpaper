@@ -50,10 +50,10 @@ public class UserDataActivity extends EventActivity implements View.OnClickListe
 						ImageView sex=(ImageView)findViewById(R.id.sex);
 						switch(ui.getSex()){
 							case 0:
-								sex.setImageResource(R.drawable.ic_gender_male);
+								sex.setImageResource(R.drawable.gender_male);
 								break;
 							case 1:
-								sex.setImageResource(R.drawable.ic_gender_female);
+								sex.setImageResource(R.drawable.gender_female);
 								break;
 						}
 						((TextView)findViewById(R.id.style)).setText(ui.getSign());

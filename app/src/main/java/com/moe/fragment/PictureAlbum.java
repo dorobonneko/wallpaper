@@ -160,7 +160,7 @@ public class PictureAlbum extends Fragment implements SwipeRefreshLayout.OnRefre
 		@Override
 		public void onScrolled(RecyclerView recyclerView, int dx, int dy)
 		{
-			if (canload && !refresh.isRefreshing())
+			if (dy>0&&canload && !refresh.isRefreshing())
 			{
 				GridLayoutManager glm=(GridLayoutManager)recyclerView.getLayoutManager();
 				if(glm.findLastVisibleItemPosition() > glm.getItemCount() - 5)loadMore();

@@ -71,7 +71,7 @@
 				android:layout_height="wrap_content"
 				android:scaleType="centerInside"
 				android:adjustViewBounds="true"
-				android:src="@drawable/ic_delete"/>
+				app:srcCompat="@drawable/delete"/>
 
 		</LinearLayout>
 

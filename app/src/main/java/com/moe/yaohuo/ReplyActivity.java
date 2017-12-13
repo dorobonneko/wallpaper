@@ -52,6 +52,7 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 	private FileAdapter file;
 	private RecyclerView rv;
 	private EmojiDialog emoji;
+	private View progressBar;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -60,6 +61,7 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 			list = savedInstanceState.getStringArrayList("list");
 			bbs=savedInstanceState.getParcelable("bbs");
 			floor=savedInstanceState.getParcelable("floor");
+			send=savedInstanceState.getBoolean("send");
 		}
 		else
 		{
@@ -70,6 +72,8 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 		getSupportActionBar().setTitle("回复");
 		View view=LayoutInflater.from(this).inflate(R.layout.reply_view,(ViewGroup)findViewById(R.id.main_index),true);
 		text = (EditText)view.findViewById(R.id.reply_content);
+		progressBar=view.findViewById(R.id.progressbar);
+		if(send)progressBar.setVisibility(View.VISIBLE);
 		if (floor != null)
 		{
 			if(floor.getUser()==null){
@@ -135,6 +139,8 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 					{
 						Toast.makeText(this, "内容小于两个字符", Toast.LENGTH_SHORT).show();
 					}else{
+						send=true;
+						progressBar.setVisibility(View.VISIBLE);
 					new Thread(){
 						public void run()
 						{
@@ -210,8 +216,6 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 	
 	private void send()
 	{
-		if(send)return;
-		send = true;
 		Connection conn=Jsoup.connect(PreferenceUtils.getHost(this) +( filelist.size()>0?getString(R.string.reply_file): getString(R.string.reply)))
 			.timeout(10000)
 			.data("lpage", "1")
@@ -261,17 +265,17 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 					if(elements.get(0).child(0).childNode(0).toString().equals("回复成功！")){
 						handler.sendEmptyMessage(0);
 					}else{
-
+						handler.obtainMessage(1,"回复失败").sendToTarget();
 					}
 
 				}catch(Exception e){
 					handler.obtainMessage(1,elements.get(0).childNode(0).toString().substring(1)).sendToTarget();
 				}
 			}else
-				handler.sendEmptyMessage(2);
+				handler.obtainMessage(1,"流响应错误").sendToTarget();
 		}
 		catch (IOException e)
-		{handler.sendEmptyMessage(2);}
+		{handler.obtainMessage(1,e.getMessage()).sendToTarget();}
 		
 			send=false;
 	}
@@ -292,6 +296,7 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 		outState.putBoolean("notify", notify.isChecked());
 		outState.putCharSequence("text", text.getText());
 		outState.putStringArrayList("list", list);
+		outState.putBoolean("send",send);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -314,11 +319,7 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 				case 1:
 					Toast.makeText(getApplicationContext(),msg.obj.toString(),Toast.LENGTH_SHORT).show();
 					break;
-				case 2:
-					Toast.makeText(getApplicationContext(),"发生错误，请重试",Toast.LENGTH_SHORT).show();
-
-					break;
-			}
+				}
 		}
 
 	};

@@ -28,9 +28,9 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
 	{
 		p1.name.setText(list.get(p2).getName());
 		if(list.get(p2).isDirectory())
-			p1.icon.setImageResource(R.drawable.ic_folder);
+			p1.icon.setImageResource(R.drawable.folder);
 			else
-			p1.icon.setImageResource(R.drawable.ic_file);
+			p1.icon.setImageResource(R.drawable.file);
 	}
 
 	@Override

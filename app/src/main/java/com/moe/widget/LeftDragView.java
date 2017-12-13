@@ -11,23 +11,60 @@ import android.app.Activity;
 import android.support.v4.app.ActivityCompat;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Canvas;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Bitmap;
 
 public class LeftDragView extends FrameLayout
 {
 	private ViewDragHelper viewDragHelper;
+	private int left,bgColor;
+	private Paint paint;
+	private Bitmap bit;
 	public LeftDragView(Context context,AttributeSet attrs){
 		super(context,attrs);
-		viewDragHelper=ViewDragHelper.create(this,new DragCallback());
+		bgColor=0xaa000000;
+		paint=new Paint();
+		viewDragHelper=ViewDragHelper.create(this,1,new DragCallback());
 		viewDragHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT);
+		
+	}
+
+	@Override
+	protected void onLayout(boolean changed, int left, int top, int right, int bottom)
+	{
+		// TODO: Implement this method
+		super.onLayout(changed, left, top, right, bottom);
+		if(changed)ViewCompat.offsetLeftAndRight(getChildAt(0),this.left);
+	}
+
+	@Override
+	protected boolean drawChild(Canvas canvas, View child, long drawingTime)
+	{
+		canvas.drawColor(bgColor);
+		
+		LinearGradient lg=new LinearGradient(0,0,50,0,0x00000000,0xaa00000,LinearGradient.TileMode.REPEAT);
+		paint.setShader(lg);
+		if(bit==null){
+			bit=Bitmap.createBitmap(50,child.getHeight(),Bitmap.Config.ARGB_8888);
+			Canvas c=new Canvas(bit);
+			Rect rect=new Rect();
+			rect.right=bit.getWidth();
+			rect.bottom=bit.getHeight();
+			c.drawRect(rect,paint);
+		}
+		canvas.drawBitmap(bit,child.getLeft()-50,0,null);
+		return super.drawChild(canvas, child, drawingTime);
 	}
 
 	@Override
 	protected void onAttachedToWindow()
 	{
 		super.onAttachedToWindow();
-		ViewCompat.setElevation(getChildAt(0),60);
 		getChildAt(0).setBackgroundColor(0xffeeeeee);
-		setBackgroundColor(0xaa000000);
+		//setBackgroundColor(0xaa000000);
 	}
 
 	@Override
@@ -78,8 +115,10 @@ public class LeftDragView extends FrameLayout
 		public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy)
 		{
 			super.onViewPositionChanged(changedView, left, top, dx, dy);
-			setBackgroundColor(Color.argb((int)(((1-(double)left/changedView.getWidth()))*0xaa),0,0,0));
+			LeftDragView.this.left=left;
+			bgColor=(Color.argb((int)(((1-(double)left/changedView.getWidth()))*0xaa),0,0,0));
 			getChildAt(0).setAlpha((1-(float)left/changedView.getWidth()));
+			invalidate();
 		}
 
 		@Override
@@ -109,8 +148,8 @@ public class LeftDragView extends FrameLayout
 		public void run()
 		{
 			if(viewDragHelper.continueSettling(true)){
-				ViewCompat.postOnAnimationDelayed(v,this,16);
-				}
+				ViewCompat.postOnAnimation(v,this);
+			}
 				else if(v.getLeft()==v.getWidth()&&v.getContext() instanceof Activity){
 					((Activity)v.getContext()).getWindow().getDecorView().setAlpha(0);
 					((Activity)v.getContext()).finish();

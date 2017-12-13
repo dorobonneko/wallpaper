@@ -21,7 +21,7 @@
 			android:visibility="invisible"
 			android:layout_height="5dp"
 			android:layout_width="5dp"
-			android:src="@drawable/ic_circle"
+			app:srcCompat="@drawable/circle"
 			android:scaleType="centerInside"
 			android:id="@+id/new_msg"/>
 
@@ -74,7 +74,7 @@
 			android:background="?attr/selectableItemBackgroundBorderless"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:src="@drawable/ic_delete"/>
+			app:srcCompat="@drawable/delete"/>
 
 	</LinearLayout>
 

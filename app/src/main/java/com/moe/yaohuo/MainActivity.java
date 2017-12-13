@@ -72,9 +72,10 @@ LogoUpload.Callback
 	private TextView username;
 	private Network network;
 	private TextView msg;
+
+	
     @Override
-	@SuppressLint("NewApi")
-    protected void onCreate(Bundle savedInstanceState)
+	protected void onCreate(Bundle savedInstanceState)
     {
 		moe=getSharedPreferences("moe",0);
         super.onCreate(savedInstanceState);
@@ -99,6 +100,8 @@ LogoUpload.Callback
 		abdt = new ActionBarDrawerToggle(this, drawerlayout, toolbar, 0, 0);
 		drawerlayout.addDrawerListener(abdt);
 		nmv.setNavigationItemSelectedListener(this);
+		if("侧边栏".equals(moe.getString("exit_mode",null)))
+		reloadExit(true);
 		drawerlayout.addDrawerListener(this);
 		logo = (CircleImageView)nmv.getHeaderView(0).findViewById(R.id.logo);
 		logo.setOnClickListener(this);
@@ -147,8 +150,11 @@ LogoUpload.Callback
 			drawerlayout.closeDrawers();
 		}
 		else{
+			if(p1.getItemId()!=R.id.menu_exit)
+			getSupportActionBar().setTitle(p1.getTitle());
 			switch (p1.getItemId())
 			{
+				
 				case R.id.menu_new:
 					open(p1.getItemId(), ListFragment.class);
 					break;
@@ -167,8 +173,11 @@ LogoUpload.Callback
 				case R.id.menu_collection:
 					open(p1.getItemId(),CollectionFragment.class);
 					break;
+				case R.id.menu_exit:
+					super.finish();
+					break;
+				
 			}
-			getSupportActionBar().setTitle(p1.getTitle());
 			}
 		return true;
 	}
@@ -222,6 +231,9 @@ LogoUpload.Callback
 				case 1:
 					Toast.makeText(getApplicationContext(),msg.obj.toString(),Toast.LENGTH_SHORT).show();
 					break;
+				case 2:
+					//退出标记，留空
+					break;
 			}
 		}
 
@@ -241,17 +253,30 @@ LogoUpload.Callback
 			onNavigationItemSelected(nmv.getMenu().findItem(R.id.menu_new).setChecked(true));
 		}
 		else{
+			switch(moe.getString("exit_mode","按钮")){
+				case "按钮":
 			if (snack == null)
-				snack = Snackbar.make(findViewById(R.id.coordinatorlayout), "确认退出？", 1500).setAction("退出", this).setActionTextColor(getResources().getColor(R.color.primary)).setCallback(new Snackbar.Callback(){
+				snack = Snackbar.make(findViewById(R.id.coordinatorlayout), "确认退出？", 1500).setAction("退出", this).setActionTextColor(getResources().getColor(R.color.primary)).addCallback(new Snackbar.Callback(){
 					public void onDismissed(Snackbar bar,int event){
 						switch(event){
 							case Snackbar.Callback.DISMISS_EVENT_SWIPE:
-								snack=null;
+								bar.removeCallback(this);
+								snack = Snackbar.make(findViewById(R.id.coordinatorlayout), "确认退出？", 1500).setAction("退出", MainActivity.this).setActionTextColor(getResources().getColor(R.color.primary)).addCallback(this);
 						}
 					}
 				});
 			if (snack.isShown())snack.dismiss();
 			else snack.show();
+			break;
+			case "双击":
+				if(handler.hasMessages(2))
+					super.finish();
+					else{
+					handler.sendEmptyMessageDelayed(2,2000);
+					handler.obtainMessage(1,"再点一次退出！").sendToTarget();
+					}
+				break;
+			}
 			}
 		
 	}
@@ -351,6 +376,7 @@ LogoUpload.Callback
 			case android.support.v7.appcompat.R.id.snackbar_action:
 				super.finish();
 				break;
+			
 		}
 	}
 
@@ -428,6 +454,13 @@ LogoUpload.Callback
 				handler.sendEmptyMessage(0);
 			}
 		}.start();
+	}
+	public void reloadExit(boolean exit)
+	{
+		if(exit)
+			nmv.getMenu().findItem(R.id.menu_exit).setVisible(true);
+		else
+			nmv.getMenu().findItem(R.id.menu_exit).setVisible(false);
 	}
 	private class Network extends BroadcastReceiver
 	{

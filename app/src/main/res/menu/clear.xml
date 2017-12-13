@@ -5,7 +5,7 @@
     <item
 		app:showAsAction="always"
         android:id="@+id/clear"
-		android:icon="@drawable/ic_recycle"
+		android:icon="@drawable/recycle"
         android:title="清理"/>
     
 </menu>

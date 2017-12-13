@@ -111,7 +111,7 @@
 				android:scaleType="centerCrop"/>
 
 			<android.support.v7.widget.Toolbar
-				android:theme="@style/toolbar"
+				android:theme="@style/ThemeOverlay.AppCompat.Light"
 				android:id="@+id/toolbar"
 				android:layout_width="match_parent"
 				android:layout_height="?attr/actionBarSize"

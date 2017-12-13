@@ -106,7 +106,7 @@ public class SearchActivity extends EventActivity implements TextWatcher,SearchH
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		menu.add(0,0,0,"搜索");
-		menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_magnify)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.magnify)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return true;
 	}
 	

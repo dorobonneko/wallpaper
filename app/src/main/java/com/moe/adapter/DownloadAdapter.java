@@ -38,9 +38,9 @@ public class DownloadAdapter extends RecyclerView.Adapter
 				ViewHolder vh=(ViewHolder)p1;
 				vh.title.setText(di.getTitle());
 				if(di.isLoading())
-					vh.state.setImageResource(R.drawable.ic_pause);
+					vh.state.setImageResource(R.drawable.pause);
 						else
-					vh.state.setImageResource(R.drawable.ic_play);
+					vh.state.setImageResource(R.drawable.play);
 				File file=new File(di.getDir());
 				//long length=file.length();
 				try{

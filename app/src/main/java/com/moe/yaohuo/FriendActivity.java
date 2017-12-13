@@ -225,7 +225,7 @@ public class FriendActivity extends EventActivity implements SwipeRefreshLayout.
 		@Override
 		public void onScrolled(RecyclerView recyclerView, int dx, int dy)
 		{
-			if (canload && !refresh.isRefreshing()&&progress.getVisibility()!=View.VISIBLE)
+			if (dy>0&&canload && !refresh.isRefreshing()&&progress.getVisibility()!=View.VISIBLE)
 			{
 				LinearLayoutManager glm=(LinearLayoutManager)recyclerView.getLayoutManager();
 				if(glm.findLastVisibleItemPosition() > glm.getItemCount() - 4)loadMore();

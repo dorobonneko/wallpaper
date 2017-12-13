@@ -85,7 +85,7 @@
 				android:layout_height="wrap_content"
 				android:scaleType="centerInside"
 				android:adjustViewBounds="true"
-				android:src="@drawable/ic_dots_vertical"/>
+				app:srcCompat="@drawable/dots_vertical"/>
 
 		</LinearLayout>
 

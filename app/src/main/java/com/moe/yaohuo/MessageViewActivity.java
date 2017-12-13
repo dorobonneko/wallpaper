@@ -45,7 +45,7 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 		getSupportActionBar().setTitle("查看消息");
 		ImageView iv=(ImageView)findViewById(R.id.edit);
 		iv.setVisibility(iv.VISIBLE);
-		iv.setImageResource(R.drawable.ic_quick_reply);
+		iv.setImageResource(R.drawable.reply);
 		iv.setOnClickListener(this);
 		LayoutInflater.from(this).inflate(R.layout.list_view,(ViewGroup)findViewById(R.id.main_index),true);
 		refresh=(SwipeRefreshLayout)findViewById(R.id.refresh);
@@ -159,6 +159,7 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		if(requestCode==452&&resultCode==RESULT_OK){
+			refresh.setRefreshing(true);
 			onRefresh();
 		}
 		

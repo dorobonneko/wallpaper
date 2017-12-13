@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	
 	android:layout_width="fill_parent"
 	android:layout_height="?attr/listPreferredItemHeightSmall"
 	android:orientation="horizontal"
@@ -12,7 +14,7 @@
 		android:id="@+id/folder_item_view_icon"
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
-		android:src="@drawable/ic_folder"
+		app:srcCompat="@drawable/folder"
 		android:scaleType="centerInside"
 		android:layout_marginStart="20dp"
 		android:layout_marginEnd="10dp"/>

@@ -315,7 +315,7 @@ public class CollectionFragment extends Fragment implements SwipeRefreshLayout.O
 		public void onScrolled(RecyclerView recyclerView, int dx, int dy)
 		{
 			LinearLayoutManager llm=(LinearLayoutManager) recyclerView.getLayoutManager();
-			if(canload&&!refresh.isRefreshing()&&progress.getVisibility()!=View.VISIBLE&&llm.findLastVisibleItemPosition()>llm.getItemCount()-3)loadMore();
+			if(dy>0&&canload&&!refresh.isRefreshing()&&progress.getVisibility()!=View.VISIBLE&&llm.findLastVisibleItemPosition()>llm.getItemCount()-3)loadMore();
 			
 		}
 		

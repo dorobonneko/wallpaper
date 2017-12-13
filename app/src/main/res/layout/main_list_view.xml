@@ -41,7 +41,7 @@
 		android:layout_gravity="bottom|end"
 		android:layout_marginBottom="30dp"
 		android:layout_marginEnd="30dp"
-		android:src="@drawable/ic_pencil"
+		app:srcCompat="@drawable/pencil"
 		app:layout_behavior="com.moe.view.FloatingActionButtonBehavior"
 		app:backgroundTint="?attr/colorControlNormal"
 		app:borderWidth="0dp"

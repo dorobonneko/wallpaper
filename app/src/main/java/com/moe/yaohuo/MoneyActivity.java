@@ -157,7 +157,7 @@ public class MoneyActivity extends EventActivity implements SwipeRefreshLayout.O
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		menu.add(0,0,0,"filter");
-		menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_filter_variant)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.filter_variant)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return true;
 	}
 	
@@ -194,7 +194,7 @@ public class MoneyActivity extends EventActivity implements SwipeRefreshLayout.O
 		@Override
 		public void onScrolled(RecyclerView recyclerView, int dx, int dy)
 		{
-			if (canload && !refresh.isRefreshing()&&progress.getVisibility()!=View.VISIBLE)
+			if (dy>0&&canload && !refresh.isRefreshing()&&progress.getVisibility()!=View.VISIBLE)
 			{
 				LinearLayoutManager ll=(LinearLayoutManager) recyclerView.getLayoutManager();
 				if(ll.findLastVisibleItemPosition() > ll.getItemCount() - 4)loadMore();

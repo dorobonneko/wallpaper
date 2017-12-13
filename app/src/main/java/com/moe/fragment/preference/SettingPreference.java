@@ -9,6 +9,7 @@ import com.moe.yaohuo.DirectoryActivity;
 import android.app.Activity;
 import android.os.Environment;
 import android.support.v7.preference.ListPreference;
+import com.moe.yaohuo.MainActivity;
 public class SettingPreference extends PreferenceFragment implements Preference.OnPreferenceClickListener,Preference.OnPreferenceChangeListener
 {
 	ListPreference host;
@@ -16,26 +17,28 @@ public class SettingPreference extends PreferenceFragment implements Preference.
 	@Override
 	public void onCreatePreferences(Bundle p1, String p2)
 	{
-		addPreferencesFromResource(R.xml.setting);
-	}
+			}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		((SwitchPreferenceCompat)findPreference("direct"))
+		addPreferencesFromResource(R.xml.setting);
 		
-		.setChecked(getPreferenceManager().getSharedPreferences().getBoolean("direct",false));
-		((SwitchPreferenceCompat)findPreference("emoji")).setChecked(getPreferenceManager().getSharedPreferences().getBoolean("emoji",false));
+		//((SwitchPreferenceCompat)findPreference("direct"))
+		
+		//.setChecked(getPreferenceManager().getSharedPreferences().getBoolean("direct",false));
+		//((SwitchPreferenceCompat)findPreference("emoji")).setChecked(getPreferenceManager().getSharedPreferences().getBoolean("emoji",false));
 		
 		path=findPreference("download_path");
 		path.setOnPreferenceClickListener(this);
 		path.setSummary(getPreferenceManager().getSharedPreferences().getString("path",Environment.getExternalStorageDirectory().getAbsolutePath()+"/yaohuo"));
 		host=(ListPreference) findPreference("host");
 		host.setSummary(getPreferenceManager().getSharedPreferences().getString("host",null));
-		host.setValue(host.getSummary()==null?null:host.getSummary().toString());
+		//host.setValue(host.getSummary()==null?null:host.getSummary().toString());
 		host.setOnPreferenceChangeListener(this);
+		findPreference("exit_mode").setOnPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -55,6 +58,9 @@ public class SettingPreference extends PreferenceFragment implements Preference.
 		switch(p1.getKey()){
 			case "host":
 				host.setSummary(p2.toString());
+				break;
+			case "exit_mode":
+				((MainActivity)getActivity()).reloadExit("侧边栏".equals(p2));
 				break;
 		}
 		return true;

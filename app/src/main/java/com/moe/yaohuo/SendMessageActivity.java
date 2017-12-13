@@ -19,12 +19,16 @@ import android.widget.Toast;
 import org.jsoup.nodes.Document;
 import com.moe.app.EmojiDialog;
 import android.content.Intent;
+import android.view.View;
+import android.widget.ProgressBar;
 
 public class SendMessageActivity extends EventActivity
 {
 	private EditText content,title;
 	private int id;
 	private EmojiDialog emoji;
+	private View progressBar;
+	private boolean send;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -44,11 +48,20 @@ public class SendMessageActivity extends EventActivity
 		title.setSingleLine();
 		title.setGravity(Gravity.LEFT);
 		title.setHint("标题：可忽略");
+		FrameLayout parent=new FrameLayout(this);
 		LinearLayout ll=new LinearLayout(this);
 		ll.setOrientation(ll.VERTICAL);
 		ll.addView(title);
 		ll.addView(content);
-		((FrameLayout)findViewById(R.id.main_index)).addView(ll,new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.WRAP_CONTENT));
+		parent.addView(ll,new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT));
+		FrameLayout.LayoutParams pl=new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
+		pl.gravity=Gravity.CENTER_HORIZONTAL;
+		parent.addView(progressBar=new ProgressBar(this),pl);
+		if(savedInstanceState!=null)
+		progressBar.setVisibility(savedInstanceState.getBoolean("send")?View.VISIBLE:View.INVISIBLE);
+		else
+		progressBar.setVisibility(View.INVISIBLE);
+		((FrameLayout)findViewById(R.id.main_index)).addView(parent,new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.WRAP_CONTENT));
 		if(savedInstanceState==null){
 			id=getIntent().getIntExtra("uid",0);
 		}else{
@@ -65,6 +78,7 @@ public class SendMessageActivity extends EventActivity
 		outState.putInt("uid",id);
 		outState.putCharSequence("title",title.getText());
 		outState.putCharSequence("content",content.getText());
+		outState.putBoolean("send",send);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -76,6 +90,9 @@ public class SendMessageActivity extends EventActivity
 		switch(item.getItemId()){
 			
 			case R.id.send:
+				if(send)
+					handler.obtainMessage(1,"正在发送").sendToTarget();
+					else
 				if(content.getText().toString().trim().length()>0)
 				send();
 				else
@@ -97,6 +114,8 @@ public class SendMessageActivity extends EventActivity
 		return true;
 	}
 	private void send(){
+		send=true;
+		progressBar.setVisibility(View.VISIBLE);
 		new Thread(){
 			public void run(){
 				try
@@ -114,14 +133,15 @@ public class SendMessageActivity extends EventActivity
 						.userAgent(PreferenceUtils.getUserAgent())
 						.cookie(PreferenceUtils.getCookieName(getApplicationContext()), PreferenceUtils.getCookie(getApplicationContext()))
 						.post();
-						if(doc.text().indexOf("成功")!=-1){
+						if(doc.text().indexOf("成功")!=-1)
 						handler.sendEmptyMessage(0);
-						return;
-						}
+						else
+						handler.obtainMessage(1,"回复失败").sendToTarget();
+						
 				}
 				catch (IOException e)
-				{}
-				handler.sendEmptyMessage(1);
+				{handler.obtainMessage(1,e.getMessage()).sendToTarget();}
+				
 			}
 		}.start();
 	}
@@ -130,13 +150,15 @@ public class SendMessageActivity extends EventActivity
 		@Override
 		public void handleMessage(Message msg)
 		{
+			send=false;
+			progressBar.setVisibility(View.INVISIBLE);
 			switch(msg.what){
 				case 0:
 					setResult(RESULT_OK);
 					finish();
 					break;
 				case 1:
-					Toast.makeText(getApplicationContext(),"网络连接失败",Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(),msg.obj.toString(),Toast.LENGTH_SHORT).show();
 					break;
 			}
 		}

@@ -2,12 +2,12 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
 		app:showAsAction="always"
-		android:icon="@drawable/emoji"
+		android:icon="@drawable/emoticon"
         android:id="@+id/emoji"
         android:title="emoji"/>
     <item
 		app:showAsAction="always"
-		android:icon="@drawable/ic_send"
+		android:icon="@drawable/send"
         android:id="@+id/send"
         android:title="发布"/>
     

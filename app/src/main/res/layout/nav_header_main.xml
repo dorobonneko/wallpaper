@@ -29,7 +29,7 @@
 		android:background="?attr/selectableItemBackgroundBorderless"
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
-		android:src="@drawable/ic_message_text_outline"
+		app:srcCompat="@drawable/message_text_outline"
 		android:layout_alignParentEnd="true"
 		android:scaleType="centerInside"
 		android:layout_marginTop="30dp"

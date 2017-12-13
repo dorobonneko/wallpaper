@@ -17,6 +17,7 @@ import java.util.Map;
 import com.moe.utils.PreferenceUtils;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -85,8 +86,8 @@ private TextInputEditText username,passwd;
 							}
 						
 					}
-					catch (IOException e)
-					{}
+					catch (Exception e)
+					{handler.obtainMessage(3,e.getMessage()).sendToTarget();}
 				}
 			}.start();
 		}
@@ -111,6 +112,9 @@ private TextInputEditText username,passwd;
 					moe.edit().putString("pwd",passwd.getText().toString().trim()).putString("cookie",msg.obj.toString()).commit();
 					setResult(RESULT_OK);
 					finish();
+					break;
+				case 3:
+					Toast.makeText(getApplicationContext(),msg.obj.toString(),Toast.LENGTH_SHORT).show();
 					break;
 			}
 		}

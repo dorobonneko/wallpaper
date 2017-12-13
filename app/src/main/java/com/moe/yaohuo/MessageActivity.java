@@ -263,7 +263,7 @@ public class MessageActivity extends EventActivity implements SwipeRefreshLayout
 		public void onScrolled(RecyclerView recyclerView, int dx, int dy)
 		{
 			LinearLayoutManager llm=(LinearLayoutManager) recyclerView.getLayoutManager();
-			if(canload&&!refresh.isRefreshing()&&progress.getVisibility()!=View.VISIBLE&&llm.findLastVisibleItemPosition()>=list.size()-3)
+			if(dy>0&&canload&&!refresh.isRefreshing()&&progress.getVisibility()!=View.VISIBLE&&llm.findLastVisibleItemPosition()>=list.size()-3)
 				loadMore();
 		}
 		

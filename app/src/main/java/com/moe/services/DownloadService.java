@@ -188,13 +188,13 @@ public class DownloadService extends Service
 						if (Build.VERSION.SDK_INT >19)
 						{
 							intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-							intent.setDataAndType(contentUri, MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl((intent.getDataString()))));
 						}
 						else
 						{
-							intent.setDataAndType(contentUri, MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(intent.getDataString())));
 							intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						}
+						int index=di.getDir().lastIndexOf(".");
+						intent.setDataAndType(contentUri,index==-1?"*/*":MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(di.getDir().substring(index+1))));
 						PendingIntent pi=PendingIntent.getActivity(p1, 233, intent, PendingIntent.FLAG_ONE_SHOT);
 						nb.setContentIntent(pi);
 						if(di.getTitle().matches(".*.apk"))
@@ -204,7 +204,7 @@ public class DownloadService extends Service
 					default:
 						double currentSize=new File(di.getDir()).length();
 						RemoteViews remote=notification.contentView;
-						remote.setImageViewResource(R.id.download_item_view_state,di.isLoading()?R.drawable.ic_pause:R.drawable.ic_play);
+						remote.setImageViewResource(R.id.download_item_view_state,di.isLoading()?R.drawable.pause:R.drawable.play);
 						remote.setTextViewText(R.id.download_item_view_title,di.getTitle());
 						remote.setProgressBar(R.id.download_item_view_progress,100,(int)(currentSize/di.getTotal()*100),false);
 						remote.setTextViewText(R.id.download_item_view_size,format.format(currentSize/1024.0/1024)+"M/"+format.format(di.getTotal()/1024.0/1024)+"M");

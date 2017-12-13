@@ -222,9 +222,9 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
 						username.setText(ui.getName());
 						summary.setText(ui.getSign());
 						if(ui.getSex()==1)
-							sex.setImageResource(R.drawable.ic_gender_female);
+							sex.setImageResource(R.drawable.gender_female);
 							else
-							sex.setImageResource(R.drawable.ic_gender_male);
+							sex.setImageResource(R.drawable.gender_male);
 						//if(ui.getUid()==PreferenceUtils.getUid(getApplicationContext())){
 							//logo.setOnClickListener(UserInfoActivity.this);
 

@@ -299,7 +299,7 @@ public class ListFragment extends AnimeFragment implements SwipeRefreshLayout.On
 		@Override
 		public void onScrolled(RecyclerView recyclerView, int dx, int dy)
 		{
-			if (canLoadMore && !refresh.isRefreshing()&&progress.getVisibility()!=View.VISIBLE)
+			if (dy>0&&canLoadMore && !refresh.isRefreshing()&&progress.getVisibility()!=View.VISIBLE)
 			{
 				RecyclerView.LayoutManager ll=recyclerView.getLayoutManager();
 				GridLayoutManager glm=(GridLayoutManager)ll;
@@ -341,7 +341,7 @@ public class ListFragment extends AnimeFragment implements SwipeRefreshLayout.On
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
 	{
 		menu.add(0,0,0,"搜索");
-		menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_magnify)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.magnify)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 	}
 
 	@Override
