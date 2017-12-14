@@ -95,7 +95,7 @@
 			android:layout_marginStart="?attr/listPreferredItemHeightSmall"
 			android:id="@+id/floor_content"
 			android:layout_height="wrap_content"
-			android:layout_width="match_parent"/>
+			android:layout_width="wrap_content"/>
 			<!--android:background="@drawable/border"/>-->
 
 		<View

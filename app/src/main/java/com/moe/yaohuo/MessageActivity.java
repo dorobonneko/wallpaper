@@ -299,7 +299,22 @@ public class MessageActivity extends EventActivity implements SwipeRefreshLayout
 	{
 		list.get(vh.getAdapterPosition()).setView(0);
 		ra.notifyItemChanged(vh.getAdapterPosition());
-		startActivity(new Intent(this,MessageViewActivity.class).putExtra("id",list.get(vh.getAdapterPosition()).getId()));
+		startActivityForResult(new Intent(this,MessageViewActivity.class).putExtra("id",list.get(vh.getAdapterPosition()).getId()),492);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		switch(requestCode){
+			case 492:
+				if(resultCode==RESULT_OK)
+				{
+					refresh.setRefreshing(true);
+					onRefresh();
+				}
+				break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	

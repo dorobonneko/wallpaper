@@ -30,6 +30,12 @@ import android.content.Intent;
 import com.moe.entity.UserItem;
 import android.widget.Toast;
 import com.moe.utils.StringUtils;
+import android.content.SharedPreferences;
+import android.view.Menu;
+import android.graphics.drawable.VectorDrawable;
+import android.support.graphics.drawable.VectorDrawableCompat;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 
 public class MessageViewActivity extends EventActivity implements SwipeRefreshLayout.OnRefreshListener,View.OnClickListener
 {
@@ -37,10 +43,11 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 	private SwipeRefreshLayout refresh;
 	private ArrayList<FloorItem> list;
 	private FloorAdapter fa;
-	
+	private SharedPreferences moe;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
+		moe=getSharedPreferences("moe",0);
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setTitle("查看消息");
 		ImageView iv=(ImageView)findViewById(R.id.edit);
@@ -87,6 +94,13 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 					Toast.makeText(getApplicationContext(),"加载失败",Toast.LENGTH_SHORT).show();
 					refresh.setRefreshing(false);
 					break;
+				case 1:
+					setResult(RESULT_OK);
+					finish();
+					break;
+				case 2:
+					Toast.makeText(getApplicationContext(),msg.obj.toString(),Toast.LENGTH_SHORT).show();
+					break;
 			}
 		}
 		
@@ -130,10 +144,10 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 					if(fi.getUser()!=null)uid=fi.getUser().getUid();
 					fi.setTime(element.child(1).text());
 					}else{
-						UserItem ui=new UserItem();
-						ui.setName("我");
+						UserItem ui=UserUtils.getUserInfo(getApplicationContext(),moe.getInt("uid",-1));
 						fi.setUser(ui);
 						fi.setTime(element.child(0).text());
+						fi.setFloor(-1);
 					}
 					list.add(fi);
 				}
@@ -172,6 +186,58 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 		outState.putInt("id",id);
 		outState.putInt("uid",uid);
 		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		menu.add(0,0,0,"删除");
+		menu.getItem(0).setIcon(VectorDrawableCompat.create(getResources(),R.drawable.delete,getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch(item.getItemId()){
+			case 0:
+				new AlertDialog.Builder(this).setTitle("确认删除？").setMessage("与该用户的所有会话").setNegativeButton("手滑了", null).setPositiveButton("删除", new DialogInterface.OnClickListener(){
+
+						@Override
+						public void onClick(DialogInterface p1, int p2)
+						{
+							new Thread(){
+								public void run(){
+									try
+									{
+										Document doc=Jsoup.connect(PreferenceUtils.getHost(getApplicationContext()) + "/bbs/messagelist_del.aspx")
+											.data("action", "godelother")
+											.data("siteid", "1000")
+											.data("classid", "0")
+											.data("id", id+"")
+											.data("page", "1")
+											.data("types", "0")
+											.data("issystem", "")
+											.userAgent(PreferenceUtils.getCookie(getApplicationContext()))
+											.cookie(PreferenceUtils.getCookieName(getApplicationContext()),PreferenceUtils.getCookie(getApplicationContext()))
+											.get();
+										if(doc.text().indexOf("成功")!=-1){
+											handler.sendEmptyMessage(1);
+											return;
+										}
+									}catch(IOException io){
+										
+									}
+									
+									handler.obtainMessage(2,"删除失败").sendToTarget();
+								}
+							}.start();
+						}
+					}).show();
+				break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	

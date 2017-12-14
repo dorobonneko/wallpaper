@@ -51,6 +51,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 			summary=(TextView)v.findViewById(android.R.id.summary);
 			subsummary=(TextView)v.findViewById(R.id.summary);
 			v.setOnClickListener(this);
+			v.findViewById(R.id.delete).setVisibility(View.GONE);
 		}
 
 		@Override

@@ -102,13 +102,13 @@ public class FloorAdapter extends RecyclerView.Adapter
 	public void onBindViewHolder(RecyclerView.ViewHolder rvh, int p2)
 	{
 		if(rvh.getItemViewType()!=-1)return;
-		ViewHolder vh=(FloorAdapter.ViewHolder) rvh;
-		FloorItem bi=list.get(p2-headers.size());
-		if(bi.getUser()==null)
-			UserUtils.getInstance(vh.title.getContext()).getUserItem(bi,this,p2);
+		final ViewHolder vh=(FloorAdapter.ViewHolder) rvh;
+		final FloorItem bi=list.get(p2-headers.size());
 		UserItem ui=bi.getUser();
+		//已弃用
+		//UserUtils.getInstance(vh.title.getContext()).getUserItem(bi,this,p2);
 		if(ui!=null){
-			vh.title.setText(Html.fromHtml(ui.getName()+"<font color='#aaaa00'> Lv"+ui.getLevel()+"</font>"));
+			vh.title.setText(Html.fromHtml(ui.getName()+(ui.getLevel()==-1?"":"<font color='#aaaa00'> Lv"+ui.getLevel()+"</font>")));
 			if(ui.getLogo()!=null)
 			ImageCache.load(ui.getLogo(),vh.logo);
 			else
@@ -116,16 +116,37 @@ public class FloorAdapter extends RecyclerView.Adapter
 		}else{
 			vh.title.setText(Html.fromHtml(bi.getName()));
 			vh.logo.setImageBitmap(null);
+			UserUtils.loadUserItem(vh.title.getContext(), bi.getUid(), new UserUtils.Callback(){
+
+					@Override
+					public void onLoad(UserItem ui)
+					{
+						bi.setUser(ui);
+						setUserItem(ui,vh);
+					}
+				});
 		}
-		vh.summary.setText((bi.getFloor()==0?"":(bi.getFloor()+"# "))+bi.getTime());
+		vh.summary.setText((bi.getFloor()<1?"":(bi.getFloor()+"# "))+bi.getTime());
 		vh.content.setText(Html.fromHtml(bi.getContent(), new ImageGetter(vh.content,true), null));
 		vh.money.setText(bi.getMoney()==0?null:(bi.getMoney()+""));
 		if(bi.isDelete()||bi.isSendmoney())
 			vh.more.setVisibility(View.VISIBLE);
 			else
 			vh.more.setVisibility(View.GONE);
+		if(bi.getFloor()==-1)
+			vh.itemView.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+			else
+			vh.itemView.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
 	}
-
+	private void setUserItem(UserItem ui,ViewHolder vh){
+		if(ui!=null){
+			vh.title.setText(Html.fromHtml(ui.getName()+(ui.getLevel()==-1?"":"<font color='#aaaa00'> Lv"+ui.getLevel()+"</font>")));
+			if(ui.getLogo()!=null)
+				ImageCache.load(ui.getLogo(),vh.logo);
+			else
+				vh.logo.setImageDrawable(null);
+		}
+	}
 	@Override
 	public int getItemViewType(int position)
 	{

@@ -21,6 +21,7 @@ import com.moe.app.EmojiDialog;
 import android.content.Intent;
 import android.view.View;
 import android.widget.ProgressBar;
+import java.net.SocketTimeoutException;
 
 public class SendMessageActivity extends EventActivity
 {
@@ -140,7 +141,11 @@ public class SendMessageActivity extends EventActivity
 						
 				}
 				catch (IOException e)
-				{handler.obtainMessage(1,e.getMessage()).sendToTarget();}
+				{
+					if(e instanceof SocketTimeoutException)
+						handler.sendEmptyMessage(0);
+						else
+					handler.obtainMessage(1,e.getMessage()).sendToTarget();}
 				
 			}
 		}.start();

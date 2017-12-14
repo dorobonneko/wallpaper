@@ -14,6 +14,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Adapter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import com.moe.utils.UserUtils.Callback;
+import java.util.Iterator;
 public class UserUtils
 {
 	private static UserUtils uu;
@@ -38,7 +43,7 @@ public class UserUtils
 		if (uu == null)uu = new UserUtils(context);
 		return uu;
 	}
-	public void getUserItem(final FloorItem fi,final RecyclerView.Adapter adapter,final int position){
+	/**public void getUserItem(final FloorItem fi,final RecyclerView.Adapter adapter,final int position){
 		UserItem ui=cache.get(fi.getUid());
 		if(ui!=null){
 			fi.setUser(ui);
@@ -52,19 +57,20 @@ public class UserUtils
 	};
 	new Thread(){
 		public void run(){
-			UserItem ui=getUserItem(fi.getUid());
+			UserItem ui=getUserItem(fi.getUid(),true);
 			//if(ui!=null)
 			//cache.put(fi.getUid(),ui);
 			fi.setUser(ui);
 			handler.sendEmptyMessage(0);
 		}
 	}.start();
-	}
-	public UserItem getUserItem(int id)
+	}*/
+	public UserItem getUserItem(int id,boolean usecache)
 	{
 		if (id < 1000)return null;
 		UserItem ui=null;
-		if (id != PreferenceUtils.getUid(context))
+		//if (id != PreferenceUtils.getUid(context))
+		if(usecache)
 		ui=cache.get(id);
 		if (ui != null)return ui;
 		try
@@ -134,8 +140,75 @@ public class UserUtils
 		{}
 		return null;
 	}
+	public static UserItem getUserInfo(Context context, int id,boolean useCache)
+	{
+		return getInstance(context).getUserItem(id,useCache);
+	}
 	public static UserItem getUserInfo(Context context, int id)
 	{
-		return getInstance(context).getUserItem(id);
+		return getInstance(context).getUserItem(id,true);
+	}
+	
+	private static List<LoadThread> list_thread=new ArrayList<>();
+	public static void loadUserItem(Context context,int id,Callback call){
+		if(!Thread.currentThread().getName().equalsIgnoreCase("main"))
+		throw new RuntimeException("you must call in main thread");
+		if(list_thread.contains(id)){
+			list_thread.get(list_thread.indexOf(id)).add(call);
+		}else{
+			LoadThread lt=new LoadThread(id,context);
+			lt.add(call);
+			lt.start();
+			list_thread.add(lt);
+		}
+	}
+	public abstract interface Callback{
+		void onLoad(UserItem ui);
+	}
+	static class LoadThread extends Thread implements Handler.Callback
+	{
+		private int id;
+		private Context context;
+		private List<Callback> call=new ArrayList<>();
+		private Handler handler;
+		private UserItem ui;
+		public LoadThread(int id,Context context){
+			this.id=id;
+			this.context=context;
+			handler=new Handler(this);
+		}
+		public void add(UserUtils.Callback call)
+		{
+			this.call.add(call);
+		}
+		@Override
+		public void run()
+		{
+			ui=getInstance(context).getUserItem(id,true);
+			
+			handler.sendEmptyMessage(0);
+		}
+
+		@Override
+		public boolean equals(Object obj)
+		{
+			if(obj instanceof Integer)
+				return id==((Integer)obj).intValue();
+			return super.equals(obj);
+		}
+
+		@Override
+		public boolean handleMessage(Message p1)
+		{
+			Iterator<Callback> ic=call.iterator();
+			while(ic.hasNext()){
+				ic.next().onLoad(ui);
+				ic.remove();
+			}
+			list_thread.remove(this);
+			return true;
+		}
+
+		
 	}
 }

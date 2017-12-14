@@ -450,7 +450,7 @@ LogoUpload.Callback
 	private void loadInfo(){
 		new Thread(){
 			public void run(){
-				ui=UserUtils.getUserInfo(getApplicationContext(),moe.getInt("uid",0));
+				ui=UserUtils.getUserInfo(getApplicationContext(),moe.getInt("uid",0),false);
 				handler.sendEmptyMessage(0);
 			}
 		}.start();

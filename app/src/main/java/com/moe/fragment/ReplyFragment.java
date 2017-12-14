@@ -126,7 +126,7 @@ public class ReplyFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 				List<ReplyItem> list=new ArrayList<>();
 				for(int i=0;i<elements.size();i++){
 					ReplyItem ri=new ReplyItem();
-					Matcher matcher=Pattern.compile("(?s)([0-9]{1,}).*?<a.*：(.*)<br>(.*?)<a.*?bbs-([0-9]{1,}).html",Pattern.DOTALL).matcher(elements.get(i).html());
+					Matcher matcher=Pattern.compile("(?s)([0-9]{1,}).*?<a.*?：(.*)<br>(.*?)<a.*?bbs-([0-9]{1,}).html",Pattern.DOTALL).matcher(elements.get(i).html());
 					matcher.find();
 					ri.setTitle(matcher.group(1)+"."+matcher.group(2));
 					ri.setSummary(matcher.group(3));

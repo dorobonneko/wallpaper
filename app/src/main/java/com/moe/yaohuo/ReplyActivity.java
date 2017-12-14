@@ -38,6 +38,7 @@ import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.text.TextUtils;
 import com.moe.app.EmojiDialog;
+import java.net.SocketTimeoutException;
 
 public class ReplyActivity extends EventActivity implements View.OnClickListener,EmojiAdapter.OnItemClickListener
 {
@@ -275,7 +276,11 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 				handler.obtainMessage(1,"流响应错误").sendToTarget();
 		}
 		catch (IOException e)
-		{handler.obtainMessage(1,e.getMessage()).sendToTarget();}
+		{
+			if(e instanceof SocketTimeoutException)
+				handler.sendEmptyMessage(0);
+				else
+			handler.obtainMessage(1,e.getMessage()).sendToTarget();}
 		
 			send=false;
 	}
@@ -317,6 +322,7 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 					finish();
 					break;
 				case 1:
+					progressBar.setVisibility(View.INVISIBLE);
 					Toast.makeText(getApplicationContext(),msg.obj.toString(),Toast.LENGTH_SHORT).show();
 					break;
 				}

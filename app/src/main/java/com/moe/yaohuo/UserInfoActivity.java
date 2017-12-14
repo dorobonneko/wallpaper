@@ -118,6 +118,7 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
+		if(ui!=null&&ui.getUid()!=getSharedPreferences("moe",0).getInt("uid",-1))
 		getMenuInflater().inflate(R.menu.user_info,menu);
 		return true;
 	}
