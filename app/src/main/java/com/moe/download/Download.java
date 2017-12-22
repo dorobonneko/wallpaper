@@ -18,6 +18,7 @@ import com.moe.services.DownloadService;
 import android.os.Environment;
 import com.moe.utils.PreferenceUtils;
 import javax.net.ssl.HttpsURLConnection;
+import okhttp3.*;
 
 public class Download extends Thread
 {
@@ -25,9 +26,9 @@ public class Download extends Thread
 	private SharedPreferences setting;
 	private DownloadService service;
 	private DownloadDatabase dd;
-	private HttpURLConnection huc=null;
 	private InputStream is=null;
 	private OutputStream os=null;
+	private Call call;
 	public Download(DownloadItem pi,DownloadService context){
 		this.pi=pi;
 		setting=context.getSharedPreferences("setting",0);
@@ -65,59 +66,65 @@ public class Download extends Thread
 		}
 		catch (Exception e)
 		{}
-		if (huc != null)huc.disconnect();
 	}
 	@Override
 	public void run()
 	{
 		pi.setState(DownloadService.State.LOADING);
 		File file=new File(pi.getDir());
+		pi.setCurrent(file.length());
 		try{
-		huc=(HttpURLConnection)new URL(pi.getUrl()).openConnection();
-		if(huc instanceof HttpsURLConnection)
-			((HttpsURLConnection)huc).setSSLSocketFactory(service.getSSLSocketFactory());
-		huc.setRequestProperty("Accept", "*/*");
-		huc.setRequestProperty("Connection", "Keep-Alive");
+			Request.Builder build=new Request.Builder();
+			build.url(pi.getUrl());
+			build.addHeader("Accept","*/*");
+			build.addHeader("Accept", "*/*");
+			build.addHeader("Connection", "Keep-Alive");
 		//request.addHeader("Icy-MetaData", "1");
-		huc.setRequestProperty("Accept-Encoding","gzip");
-		huc.setRequestProperty("Referer",pi.getReferer()==null?"":pi.getReferer());
-		huc.setRequestProperty("Cookie",PreferenceUtils.getCookieName(service)+"="+PreferenceUtils.getCookie(service));
-		huc.setRequestProperty("Range", "bytes=" + file.length() + "-");
-		is=huc.getInputStream();
-		if("gzip".equalsIgnoreCase(huc.getHeaderField("Content-Encoding")))
+			build.addHeader("Accept-Encoding","gzip");
+			build.addHeader("Referer",pi.getReferer()==null?"":pi.getReferer());
+			build.addHeader("Cookie",PreferenceUtils.getCookieName(service)+"="+PreferenceUtils.getCookie(service));
+			build.addHeader("Range", "bytes=" + pi.getCurrent()+ "-");
+			call=service.getOkHttp().newCall(build.build());
+			Response response=call.execute();
+		is=response.body().byteStream();
+		if("gzip".equalsIgnoreCase(response.header("Content-Encoding")))
 			is=new GZIPInputStream(is);
 			if(pi.getTotal()<1){
 				long length =0;
 				try{
-				length=Long.parseLong(huc.getHeaderField("Content-Length"));
+				length=Long.parseLong(response.header("Content-Length"));
 				}catch(Exception e){}
 				if(length==0)
-					length=huc.getContentLength();
+					length=response.body().contentLength();
 				pi.setTotal(length);
 				//更新数据长度
 				dd.updateTotal(pi.getUrl(),length);
 			}
-		if(file.getAbsolutePath().startsWith(Environment.getExternalStorageDirectory().getAbsolutePath())){
-			File parent=file.getParentFile();
-			if(!parent.exists())parent.mkdirs();
-			os=new FileOutputStream(file,true);
-		}else if(setting.getString("sdcard",null)!=null){
-			os=service.getContentResolver().openOutputStream(DocumentFileUtils.getDocumentFilePath(DocumentFile.fromTreeUri(service,Uri.parse(setting.getString("sdcard",null))),file).getUri(),"wa");
-		}else
-			throw new IOException();
-			switch(huc.getResponseCode()){
+		
+			switch(response.code()){
 				case 200:
-					is.skip(file.length());
-					break;
+					//is.skip(fi.cu);
+					pi.setCurrent(0);
+					//os=new FileOutputStream(file);
 				case 206:
+					if(file.getAbsolutePath().startsWith(Environment.getExternalStorageDirectory().getAbsolutePath())){
+						File parent=file.getParentFile();
+						if(!parent.exists())parent.mkdirs();
+						os=new FileOutputStream(file,response.code()==206);
+					}else if(setting.getString("sdcard",null)!=null){
+						os=service.getContentResolver().openOutputStream(DocumentFileUtils.getDocumentFilePath(DocumentFile.fromTreeUri(service,Uri.parse(setting.getString("sdcard",null))),file).getUri(),response.code()==206?"wa":"w");
+					}else
+						throw new IOException();
 					break;
 				default:
 				throw new IOException();
 			}
-			byte[] buffer=new byte[4096];
+			byte[] buffer=new byte[Integer.parseInt(setting.getString("buffer_size","4096"))];
 			int len=-1;
 			while((len=is.read(buffer))!=-1){
 				os.write(buffer,0,len);
+				pi.setCurrent(pi.getCurrent()+len);
+				dd.updateCurrent(pi.getUrl(),pi.getCurrent());
 			}
 			os.flush();
 			pi.setState(DownloadService.State.SUCCESS);
@@ -140,7 +147,7 @@ public class Download extends Thread
 			}
 			catch (IOException e)
 			{}
-			if (huc != null)huc.disconnect();
+			if (call != null)call.cancel();
 		}
 	}
 	

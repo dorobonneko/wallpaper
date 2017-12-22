@@ -41,11 +41,9 @@ public class DownloadAdapter extends RecyclerView.Adapter
 					vh.state.setImageResource(R.drawable.pause);
 						else
 					vh.state.setImageResource(R.drawable.play);
-				File file=new File(di.getDir());
-				//long length=file.length();
 				try{
-				vh.progress.setProgress((int)(((double)file.length())/di.getTotal()*vh.progress.getMax()));
-				vh.size.setText(format.format(file.length()/1024.0/1024)+"M/"+format.format(di.getTotal()/1024.0/1024)+"M");
+				vh.progress.setProgress((int)(((double)di.getCurrent())/di.getTotal()*vh.progress.getMax()));
+				vh.size.setText(format.format(di.getCurrent()/1024.0/1024)+"M/"+format.format(di.getTotal()/1024.0/1024)+"M");
 				}catch(Exception e){}
 				if(selected.contains(di))
 					vh.bg.setBackgroundColor(p1.itemView.getResources().getColor(R.color.divider));
@@ -84,8 +82,8 @@ public class DownloadAdapter extends RecyclerView.Adapter
 		public ViewHolder(View v){
 			super(v);
 			bg=v.findViewById(R.id.background);
-			size=(TextView)v.findViewById(R.id.download_item_view_size);
-			title=(TextView)v.findViewById(R.id.download_item_view_title);
+			size=(TextView)v.findViewById(android.R.id.summary);
+			title=(TextView)v.findViewById(android.R.id.title);
 			progress=(ProgressBar)v.findViewById(R.id.download_item_view_progress);
 			state=(ImageView)v.findViewById(R.id.download_item_view_state);
 			progress.setMax(100);
@@ -115,8 +113,8 @@ public class DownloadAdapter extends RecyclerView.Adapter
 		public ViewHolder2(View v){
 			super(v);
 			bg=v.findViewById(R.id.background);
-			size=(TextView)v.findViewById(R.id.download_success_view_size);
-			title=(TextView)v.findViewById(R.id.download_success_view_title);
+			size=(TextView)v.findViewById(android.R.id.summary);
+			title=(TextView)v.findViewById(android.R.id.title);
 			v.setOnLongClickListener(this);
 			v.setOnClickListener(this);
 		}

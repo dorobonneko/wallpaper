@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="list_padding">5dp</dimen>
+	<dimen name="cellSpacing">5dp</dimen>
+	<dimen name="title">18sp</dimen>
+	<dimen name="summary">12sp</dimen>
+</resources>

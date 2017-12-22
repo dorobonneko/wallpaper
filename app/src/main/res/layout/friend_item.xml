@@ -65,6 +65,7 @@
 			</LinearLayout>
 
 			<ImageView
+				android:theme="@style/AppTheme.Dark"
 				android:id="@+id/delete"
 				android:background="?attr/selectableItemBackgroundBorderless"
 				android:layout_width="wrap_content"

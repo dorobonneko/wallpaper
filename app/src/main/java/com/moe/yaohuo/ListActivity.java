@@ -5,7 +5,7 @@ import android.view.WindowManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.MenuItem;
-import com.moe.fragment.ListFragment;
+import com.moe.fragment.BbsListFragment;
 import com.moe.entity.BbsItem;
 import android.widget.Toast;
 import android.content.Intent;
@@ -34,7 +34,7 @@ public class ListActivity extends EventActivity implements View.OnClickListener
 		v.setVisibility(v.VISIBLE);
 		v.setOnClickListener(this);
 		if(savedInstanceState==null){
-			ListFragment list=new ListFragment();
+			BbsListFragment list=new BbsListFragment();
 			bbs=getIntent().getParcelableExtra("bbs");
 			Bundle b=new Bundle();
 			b.putParcelable("bbs",bbs);

@@ -79,24 +79,50 @@ public class WebViewActivity extends EventActivity implements DownloadListener
 		getMenuInflater().inflate(R.menu.webview,menu);
 		return true;
 	}
+
+	@Override
+	public void finish()
+	{
+		wv.pauseTimers();
+		wv.stopLoading();
+		wv.destroy();
+		wv=null;
+		super.finish();
+	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		switch (item.getItemId())
 		{
-			
+			case android.R.id.home:
+				if(wv.canGoBack())
+					wv.goBack();
+					else
+					finish();
+				break;
 			case R.id.webview_view:
 				try{startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(wv.getUrl())));}
 				catch(Exception e){
 					Toast.makeText(getApplicationContext(),"没有可用程序",Toast.LENGTH_SHORT).show();
 				}
 				break;
+			case R.id.webview_other:
+				try{startActivity(new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.parse(wv.getUrl()),"*/*"));}
+				catch(Exception e){
+					Toast.makeText(getApplicationContext(),"没有可用程序",Toast.LENGTH_SHORT).show();
+				}
+			break;
 			case R.id.webview_copy:
 				((ClipboardManager)getSystemService(CLIPBOARD_SERVICE)).setText(wv.getUrl());
 				Toast.makeText(getApplicationContext(),"已复制到剪贴板",Toast.LENGTH_SHORT).show();
-				
 			break;
+			case R.id.webview_refresh:
+				wv.reload();
+				break;
+			case R.id.webview_close:
+				finish();
+				break;
 			default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -136,7 +162,7 @@ public class WebViewActivity extends EventActivity implements DownloadListener
 				}catch(Exception e){}
 				return true;
 			}
-			return super.shouldOverrideUrlLoading(view, request);
+			return false;
 		}
 
 		@Override
@@ -168,6 +194,7 @@ public class WebViewActivity extends EventActivity implements DownloadListener
 		{
 			
 			pb.setVisibility(pb.VISIBLE);
+			getSupportActionBar().setSubtitle(url);
 		}
 
 		@Override
@@ -188,8 +215,11 @@ public class WebViewActivity extends EventActivity implements DownloadListener
 	}
 
 	@Override
-	public void onDownloadStart(final String url, String useragent, String content, String type, final long size)
+	public void onDownloadStart(final String url, String useragent, String content, final String type, final long size)
 	{
+		if(getSharedPreferences("setting",0).getBoolean("download_outside",false)&&!url.startsWith(PreferenceUtils.getHost(this)))
+			startActivity(new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.parse(url),"*/*"));
+			else{
 		final String name=URLDecoder.decode(URLUtil.guessFileName(url,content,type));
 		new AlertDialog.Builder(this).setTitle("确认下载").setMessage(name).setPositiveButton("确定", new DialogInterface.OnClickListener(){
 
@@ -201,10 +231,12 @@ public class WebViewActivity extends EventActivity implements DownloadListener
 					di.setTitle(name);
 					di.setReferer(wv.getUrl());
 					di.setTotal(size);
-					di.setDir(getSharedPreferences("moe",0).getString("path",Environment.getExternalStorageDirectory().getAbsolutePath()+"/yaohuo")+"/"+name);
+					di.setDir(getSharedPreferences("setting",0).getString("path",Environment.getExternalStorageDirectory().getAbsolutePath()+"/yaohuo")+"/"+name);
+					di.setType(type);
 					startService(new Intent(getApplicationContext(),DownloadService.class).setAction(DownloadService.Action_Start).putExtra("down",di));
 				}
 			}).setNegativeButton("取消", null).show();
+			}
 	}
 
 	

@@ -14,6 +14,8 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.view.ViewGroup;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.graphics.drawable.TypedArrayUtils;
+import android.content.res.TypedArray;
 
 public class EventActivity extends BaseActivity
 {
@@ -31,7 +33,9 @@ public class EventActivity extends BaseActivity
 		getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
 		background=getWindow().getDecorView();
 		Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
-		toolbar.setTitleTextColor(0xffffffff);
+		TypedArray ta=obtainStyledAttributes(new int[]{android.support.v7.appcompat.R.attr.colorControlNormal});
+		toolbar.setTitleTextColor(ta.getColor(0,0xffffffff));
+		ta.recycle();
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
@@ -87,7 +91,7 @@ public class EventActivity extends BaseActivity
 		
 		return super.dispatchTouchEvent(event);
 	}*/
-
+/**
 	private void animeResume()
 	{
 		float[] data=new float[]{view.getX(),0};
@@ -163,7 +167,7 @@ public class EventActivity extends BaseActivity
 			anim.playTogether(new Animator[]{trans,alpha});
 			anim.setDuration((int)((data[1]-data[0])/data[1]*500));
 			anim.start();
-	}
+	}*/
 	@Override
 	public void finish()
 	{

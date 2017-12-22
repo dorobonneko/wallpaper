@@ -200,9 +200,10 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 			case R.id.insert:
 				StringBuffer sb=new StringBuffer(ubb_key.getText());
 				for(UbbItem ui:ubb_ready_list){
-					sb.insert(0,"["+ui.getData()+"]").append("[/"+ui.getData()+"]");
+					int index=ui.getData().indexOf("=");
+					sb.insert(0,"["+ui.getData()+"]").append("[/"+(index==-1?ui.getData():ui.getData().substring(0,index))+"]");
 				}
-				text.getText().insert(text.getSelectionEnd(),sb.toString());
+				text.getText().replace(text.getSelectionStart(),text.getSelectionEnd(),sb.toString());
 				dismiss();
 				break;
 			case R.id.clear:
@@ -236,7 +237,8 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 						ready.scrollToPosition(ubb_ready_list.size()-1);
 						return;
 					case 1:
-						data="["+ui.getData()+"]"+ubb_key.getText().toString()+"[/"+ui.getData()+"]";
+						int index=ui.getData().indexOf("=");
+						data="["+ui.getData()+"]"+ubb_key.getText().toString()+"[/"+(index==-1?ui.getData():ui.getData().substring(0,index))+"]";
 						break;
 					case 2:
 						data="["+ui.getData()+"]";

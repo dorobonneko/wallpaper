@@ -36,6 +36,7 @@
 			android:layout_width="match_parent">
 
 			<ImageButton
+				android:visibility="gone"
 				android:id="@+id/emoji"
 				android:background="?attr/selectableItemBackgroundBorderless"
 				android:layout_height="wrap_content"

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.moe.widget.LeftDragView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:id="@+id/dragView">
+
+	<android.support.design.widget.CoordinatorLayout
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:id="@+id/coordinatorlayout"
+		android:background="@color/window_background">
+
+		<android.support.design.widget.AppBarLayout
+			android:id="@+id/appbarlayout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			app:elevation="0dp">
+
+			<android.support.design.widget.CollapsingToolbarLayout
+				android:layout_width="match_parent"
+				android:layout_height="240dp"
+				app:layout_scrollFlags="scroll|exitUntilCollapsed"
+				app:contentScrim="?attr/colorPrimary">
+
+				<com.moe.widget.BigLogoView
+					android:id="@+id/icon"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:scaleType="centerCrop"
+					app:srcCompat="@drawable/logo_background"/>
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="bottom"
+					android:orientation="vertical"
+					>
+					<LinearLayout
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:orientation="horizontal">
+						<TextView
+							android:layout_marginStart="20dp"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:textColor="#fff"
+							android:shadowRadius="1.0"
+							android:shadowColor="#000"
+							android:textSize="20sp"
+							android:id="@+id/user_info_view_username"/>
+						<ImageView
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:id="@+id/user_info_view_sex"/>
+					</LinearLayout>
+					<TextView
+						android:layout_marginStart="20dp"
+						android:textSize="?attr/sizeTitle"
+						android:textColor="#baffffff"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:minLines="1"
+						android:maxLines="2"
+						android:id="@+id/user_info_view_usersign"
+						android:shadowColor="#000"
+						android:shadowRadius="1.0"/>
+				</LinearLayout>
+				<android.support.v7.widget.Toolbar
+					android:fitsSystemWindows="true"
+					android:id="@+id/toolbar"
+					app:layout_collapseMode="pin"
+					android:layout_width="match_parent"
+					android:layout_height="?attr/actionBarSize"/>
+
+			</android.support.design.widget.CollapsingToolbarLayout>
+
+		</android.support.design.widget.AppBarLayout>
+
+		<android.support.v4.widget.NestedScrollView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:orientation="vertical">
+
+				<LinearLayout
+					android:background="#fff"
+					android:orientation="vertical"
+					android:paddingStart="25dp"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:minHeight="?attr/listPreferredItemHeight"
+					android:gravity="center_vertical">
+
+					<TextView
+						android:textSize="?attr/sizeSummary"
+						android:singleLine="true"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="Uid"
+						android:textColor="?android:attr/textColorSecondary"/>
+
+					<TextView
+						android:textSize="?attr/sizeTitle"
+						android:singleLine="true"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:id="@+id/user_info_view_uid"
+						android:textColor="?android:attr/textColorPrimary"/>
+
+				</LinearLayout>
+
+				<View
+					android:layout_width="match_parent"
+					android:layout_height="1px"
+					android:background="?android:attr/listDivider"/>
+
+				<RelativeLayout
+					android:background="#fff"
+					android:layout_width="match_parent"
+					android:layout_height="?attr/listPreferredItemHeight"
+					android:minHeight="?attr/listPreferredItemHeight"
+					
+					>
+					<Button
+						android:id="@+id/user_info_view_space"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:background="?attr/selectableItemBackground"/>
+					<LinearLayout
+						android:layout_marginStart="25dp"
+						android:layout_centerVertical="true"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:orientation="vertical"
+						android:gravity="center_vertical">
+
+						<TextView
+							android:textSize="?attr/sizeSummary"
+							android:singleLine="true"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="个人空间"
+							android:textColor="?android:attr/textColorSecondary"/>
+
+						<TextView
+							android:id="@+id/user_info_view_userspace"
+							android:textSize="?attr/sizeTitle"
+							android:singleLine="true"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:textColor="?android:attr/textColorPrimary"/>
+
+					</LinearLayout>
+
+					<ImageView
+						android:adjustViewBounds="true"
+						android:layout_marginEnd="25dp"
+						android:theme="?style/AppTheme.Dark"
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						app:srcCompat="@drawable/chevron_right"
+						android:layout_centerVertical="true"
+						android:layout_alignParentEnd="true"/>
+
+				</RelativeLayout>
+
+			</LinearLayout>
+
+		</android.support.v4.widget.NestedScrollView>
+
+		<LinearLayout
+			android:id="@+id/user_info_view_bottom"
+			android:background="#fff"
+			android:layout_gravity="bottom"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+
+			<Button
+				android:id="@+id/send"
+				android:background="?attr/selectableItemBackground"
+				android:text="发消息"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"/>
+
+			<Button
+				android:id="@+id/friend"
+				android:background="?attr/selectableItemBackground"
+				android:text="加好友"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"/>
+
+		</LinearLayout>
+
+	</android.support.design.widget.CoordinatorLayout>
+
+</com.moe.widget.LeftDragView>
+

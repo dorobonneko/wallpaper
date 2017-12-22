@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.ProgressBar;
 import java.net.SocketTimeoutException;
+import com.moe.utils.StringUtils;
 
 public class SendMessageActivity extends EventActivity
 {
@@ -123,7 +124,7 @@ public class SendMessageActivity extends EventActivity
 				{
 					Document doc= Jsoup.connect(PreferenceUtils.getHost(getApplicationContext()) + "/bbs/messagelist_add.aspx")
 						.data("touseridlist", id + "")
-						.data("content", content.getText().toString().replaceAll("\n","[br]"))
+						.data("content", StringUtils.replaceRtlf(content.getText().toString()))
 						.data("title", title.getText().toString())
 						.data("action", "gomod")
 						.data("classid", "0")

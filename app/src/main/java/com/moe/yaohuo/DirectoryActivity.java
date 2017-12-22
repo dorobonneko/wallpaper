@@ -45,16 +45,12 @@ public class DirectoryActivity extends EventActivity implements FileFilter,Compa
 	{
 		// TODO: Implement this method
 		super.onCreate(savedInstanceState);
-		TypedArray ta=obtainStyledAttributes(new int[]{android.R.attr.windowBackground,android.support.v7.appcompat.R.attr.colorPrimaryDark});
 		LayoutInflater.from(this).inflate(R.layout.folder_picker_view,(ViewGroup)findViewById(R.id.main_index),true);
 		ViewGroup group=(ViewGroup)findViewById(R.id.coordinatorlayout);
-		group.setBackgroundColor(ta.getColor(1,0xffffffff));
-		group.setFitsSystemWindows(false);
-		group.setPadding(0,getResources().getDimensionPixelSize(getResources().getIdentifier("status_bar_height", "dimen", "android")),0,0);
 		LayoutInflater.from(this).inflate(R.layout.folder_picker_bottom,group,true);
 		Toolbar toolbar=(Toolbar) findViewById(R.id.toolbar);
 		AppBarLayout.LayoutParams al=(AppBarLayout.LayoutParams) toolbar.getLayoutParams();
-		al.setScrollFlags(al.SCROLL_FLAG_SCROLL|al.SCROLL_FLAG_SNAP|al.SCROLL_FLAG_ENTER_ALWAYS);
+		al.setScrollFlags(al.SCROLL_FLAG_SCROLL|al.SCROLL_FLAG_SNAP|al.SCROLL_FLAG_ENTER_ALWAYS|al.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
 		toolbar.setLayoutParams(al);
 		list_view = (RecyclerView)findViewById(R.id.folder_picker_view_list);
 		list_view.setLayoutManager(new LinearLayoutManager(this));

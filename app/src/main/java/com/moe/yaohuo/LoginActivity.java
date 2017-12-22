@@ -75,7 +75,7 @@ private TextInputEditText username,passwd;
 								uid.substring(uid.indexOf("touserid=")+9);
 								Matcher matcher=Pattern.compile("[0-9]{1,}").matcher(uid);
 								if(matcher.find())
-									moe.edit().putInt("uid",Integer.parseInt(matcher.group())).commit();
+									moe.edit().putBoolean("login",true).putInt("uid",Integer.parseInt(matcher.group())).commit();
 								
 								handler.obtainMessage(2,responde.cookie(PreferenceUtils.getCookieName(getApplicationContext()))).sendToTarget();
 								}

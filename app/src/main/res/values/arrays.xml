@@ -11,4 +11,33 @@
 		<item>双击</item>
 		<item>侧边栏</item>
 	</string-array>
+	<string-array name="buffer">
+		<item>1024Byte</item>
+		<item>2048Byte</item>
+		<item>4096Byte</item>
+		<item>8192Byte</item>
+		<item>32k</item>
+		<item>64k</item>
+		<item>128k</item>
+	</string-array>
+	<string-array name="buffer">
+		<item>1024Byte</item>
+		<item>2048Byte</item>
+		<item>4096Byte</item>
+		<item>8192Byte</item>
+		<item>16KByte</item>
+		<item>32KByte</item>
+		<item>64KByte</item>
+		<item>128KByte</item>
+	</string-array>
+	<string-array name="buffer_value">
+		<item>1024</item>
+		<item>2048</item>
+		<item>4096</item>
+		<item>8192</item>
+		<item>16384</item>
+		<item>32768</item>
+		<item>65536</item>
+		<item>131072</item>
+	</string-array>
 </resources>

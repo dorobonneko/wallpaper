@@ -67,7 +67,7 @@ public class UserUtils
 	}*/
 	public UserItem getUserItem(int id,boolean usecache)
 	{
-		if (id < 1000)return null;
+		if (id < 0)return null;
 		UserItem ui=null;
 		//if (id != PreferenceUtils.getUid(context))
 		if(usecache)
@@ -150,6 +150,7 @@ public class UserUtils
 	}
 	
 	private static List<LoadThread> list_thread=new ArrayList<>();
+	
 	public static void loadUserItem(Context context,int id,Callback call){
 		if(!Thread.currentThread().getName().equalsIgnoreCase("main"))
 		throw new RuntimeException("you must call in main thread");

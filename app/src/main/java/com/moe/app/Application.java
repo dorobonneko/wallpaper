@@ -3,6 +3,9 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.Context;
 import com.moe.yaohuo.ExceptionActivity;
+import com.tencent.bugly.crashreport.CrashReport;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 
 public class Application extends Application implements Thread.UncaughtExceptionHandler
 {
@@ -29,7 +32,18 @@ public class Application extends Application implements Thread.UncaughtException
 	{
 		super.onCreate();
 		context=this;
-		Thread.currentThread().setDefaultUncaughtExceptionHandler(this);
+		CrashReport.UserStrategy cu=new CrashReport.UserStrategy(this);
+		cu.setAppChannel("moe");
+		cu.setAppPackageName(getPackageName());
+		try
+		{
+			cu.setAppVersion(getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_CONFIGURATIONS).versionName);
+		}
+		catch (PackageManager.NameNotFoundException e)
+		{}
+		CrashReport.initCrashReport(this, "04dc5a19f4", true, cu);
+		//Thread.currentThread().setDefaultUncaughtExceptionHandler(this);
+		BmobUpdateAgent.initAppVersion();
 	}
 
 }

@@ -3,24 +3,56 @@ import com.moe.download.Download;
 import com.moe.services.DownloadService;
 import android.os.Parcelable;
 import android.os.Parcel;
+import android.app.Notification.Builder;
+import android.app.Notification;
 
 public class DownloadItem implements Parcelable
 {
 
-	
-		public DownloadItem(){}
-		public DownloadItem(Parcel p){
-			title=p.readString();
-			url=p.readString();
-			dir=p.readString();
-			referer=p.readString();
-			total=p.readLong();
-			state=p.readInt();
-		}
 	private String title,dir,url;
-	private long total;
+	private long current,total;
 	private int state;
-private String referer;
+	private String referer;
+	private String type;
+	private long time;
+	public DownloadItem(){}
+	public DownloadItem(Parcel p)
+	{
+		title = p.readString();
+		url = p.readString();
+		dir = p.readString();
+		referer = p.readString();
+		total = p.readLong();
+		state = p.readInt();
+		type = p.readString();
+		time = p.readLong();
+		current=p.readLong();
+	}
+	public long getCurrent(){
+		return current;
+	}
+	public void setCurrent(long current){
+		this.current=current;
+	}
+	public void setType(String type)
+	{
+		this.type = type;
+	}
+
+	public String getType()
+	{
+		return type;
+	}
+
+	public void setTime(long time)
+	{
+		this.time = time;
+	}
+
+	public long getTime()
+	{
+		return time;
+	}
 	public void setTitle(String title)
 	{
 		this.title = title;
@@ -70,24 +102,26 @@ private String referer;
 	{
 		return total;
 	}
-	public boolean isLoading(){
-		switch(state){
+	public boolean isLoading()
+	{
+		switch (state)
+		{
 			case DownloadService.State.WAITING:
 			case DownloadService.State.LOADING:
-			return true;
+				return true;
 			default:
-			return false;
+				return false;
 		}
 	}
 	@Override
 	public boolean equals(Object obj)
 	{
-		if(obj instanceof Download)
+		if (obj instanceof Download)
 			return ((Download)obj).getDownloadItem().getUrl().equals(url);
-		else if(obj instanceof DownloadItem)
-		return ((DownloadItem)obj).getUrl().equals(url);
+		else if (obj instanceof DownloadItem)
+			return ((DownloadItem)obj).getUrl().equals(url);
 		else
-		return this==obj;
+			return this == obj;
 	}
 	public void setReferer(String referer)
 	{
@@ -115,6 +149,9 @@ private String referer;
 		p1.writeString(referer);
 		p1.writeLong(total);
 		p1.writeInt(state);
+		p1.writeString(type);
+		p1.writeLong(time);
+		p1.writeLong(current);
 	}
 	public static Parcelable.Creator<DownloadItem> CREATOR=new Parcelable.Creator<DownloadItem>(){
 
@@ -132,4 +169,4 @@ private String referer;
 		}
 
 	};
-	}
+}

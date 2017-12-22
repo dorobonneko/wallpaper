@@ -4,15 +4,15 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="fill_parent"
 	android:layout_height="200dp"
-	android:background="?attr/colorPrimary">
+	android:background="#fff">
 
-	<com.moe.widget.CircleImageView
-		android:background="?attr/selectableItemBackgroundBorderless"
+	<com.moe.widget.BigLogoView
+		app:direction="ltr"
 		android:id="@+id/logo"
-		android:layout_width="?attr/listPreferredItemHeight"
-		android:layout_height="?attr/listPreferredItemHeight"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
 		android:scaleType="centerCrop"
-		android:src="@drawable/yaohuo"
+		app:srcCompat="@drawable/logo_background"
 		android:layout_centerInParent="true"/>
 
 	<TextView
@@ -21,8 +21,12 @@
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
 		android:text="未登录"
-		android:layout_below="@id/logo"
-		android:layout_centerHorizontal="true"/>
+		android:layout_alignParentBottom="true"
+		android:layout_marginBottom="25dp"
+		android:layout_marginStart="25dp"
+		android:textSize="?attr/sizeTitle"
+		android:shadowColor="#000"
+		android:shadowRadius="1.0"/>
 
 	<ImageView
 		android:id="@+id/message"

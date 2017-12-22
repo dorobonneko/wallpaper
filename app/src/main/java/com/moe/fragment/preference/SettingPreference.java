@@ -10,10 +10,10 @@ import android.app.Activity;
 import android.os.Environment;
 import android.support.v7.preference.ListPreference;
 import com.moe.yaohuo.MainActivity;
-public class SettingPreference extends PreferenceFragment implements Preference.OnPreferenceClickListener,Preference.OnPreferenceChangeListener
+public class SettingPreference extends PreferenceFragment implements Preference.OnPreferenceChangeListener
 {
 	ListPreference host;
-	Preference path;
+	
 	@Override
 	public void onCreatePreferences(Bundle p1, String p2)
 	{
@@ -31,9 +31,6 @@ public class SettingPreference extends PreferenceFragment implements Preference.
 		//.setChecked(getPreferenceManager().getSharedPreferences().getBoolean("direct",false));
 		//((SwitchPreferenceCompat)findPreference("emoji")).setChecked(getPreferenceManager().getSharedPreferences().getBoolean("emoji",false));
 		
-		path=findPreference("download_path");
-		path.setOnPreferenceClickListener(this);
-		path.setSummary(getPreferenceManager().getSharedPreferences().getString("path",Environment.getExternalStorageDirectory().getAbsolutePath()+"/yaohuo"));
 		host=(ListPreference) findPreference("host");
 		host.setSummary(getPreferenceManager().getSharedPreferences().getString("host",null));
 		//host.setValue(host.getSummary()==null?null:host.getSummary().toString());
@@ -41,17 +38,7 @@ public class SettingPreference extends PreferenceFragment implements Preference.
 		findPreference("exit_mode").setOnPreferenceChangeListener(this);
 	}
 
-	@Override
-	public boolean onPreferenceClick(Preference p1)
-	{
-		switch(p1.getKey()){
-			case "download_path":
-				startActivityForResult(new Intent(getContext(),DirectoryActivity.class),641);
-				break;
-		}
-		return true;
-	}
-
+	
 	@Override
 	public boolean onPreferenceChange(Preference p1, Object p2)
 	{
@@ -67,18 +54,7 @@ public class SettingPreference extends PreferenceFragment implements Preference.
 	}
 
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-		if(resultCode==Activity.RESULT_OK){
-			switch(requestCode){
-				case 641:
-					getPreferenceManager().getSharedPreferences().edit().putString("path",data.getDataString()).commit();
-					path.setSummary(data.getDataString());
-					break;
-			}
-		}
-		}
+	
 
 	
 }

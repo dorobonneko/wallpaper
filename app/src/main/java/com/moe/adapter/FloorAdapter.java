@@ -24,7 +24,7 @@ import android.view.MotionEvent;
 import android.text.Layout;
 import android.text.Spannable;
 import com.moe.internal.TextViewClickMode;
-import com.moe.yaohuo.UserInfoActivity;
+import com.moe.yaohuo.UserSpaceActivity;
 import android.widget.PopupWindow;
 import android.graphics.drawable.BitmapDrawable;
 import android.widget.LinearLayout;
@@ -50,6 +50,7 @@ import android.os.Build;
 import android.widget.FrameLayout;
 import com.moe.utils.UserUtils;
 import java.util.ArrayList;
+import com.moe.yaohuo.UserInfoActivity;
 public class FloorAdapter extends RecyclerView.Adapter
 {
 	private ListItem li;
@@ -89,7 +90,7 @@ public class FloorAdapter extends RecyclerView.Adapter
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
 	{
 		if(p2==-1)
-		return new ViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.floor_item,p1,false));
+		return new ViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.floor_item_view,p1,false));
 		else
 		if(p2<headers.size())
 			return new ViewHolderView(headers.get(p2));
@@ -188,7 +189,7 @@ public class FloorAdapter extends RecyclerView.Adapter
 			logo=(ImageView)v.findViewById(R.id.icon);
 			title=(TextView)v.findViewById(R.id.title);
 			summary=(TextView)v.findViewById(R.id.summary);
-			content=(TextView)v.findViewById(R.id.floor_content);
+			content=(TextView)v.findViewById(R.id.content);
 			LinearLayout.LayoutParams ll=(LinearLayout.LayoutParams)content.getLayoutParams();
 			if(Build.VERSION.SDK_INT>16)
 			ll.setMarginStart(ll.getMarginStart()+(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,5,content.getResources().getDisplayMetrics()));
@@ -210,7 +211,7 @@ public class FloorAdapter extends RecyclerView.Adapter
 			switch(p1.getId()){
 				case R.id.icon:
 					UserItem ui=list.get(getAdapterPosition()-headers.size()).getUser();
-					if(ui!=null&&ui.getUid()>999){
+					if(ui!=null){
 					p1.getContext().startActivity(new Intent(p1.getContext(),UserInfoActivity.class).putExtra("uid",ui.getUid()));
 					}
 					break;

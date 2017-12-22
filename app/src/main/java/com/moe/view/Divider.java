@@ -10,12 +10,15 @@ import android.util.DisplayMetrics;
 
 public class Divider extends RecyclerView.ItemDecoration
 {
-	private Paint paint;
+	private Paint paint=new Paint();
 	private Rect rect=new Rect();
 	public Divider(int color,int left,int top,int right,int bottom,DisplayMetrics dm){
-		paint=new Paint();
 		paint.setColor(color);
 		rect.set((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,left,dm),(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,top,dm),(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,right,dm),(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,bottom,dm));
+	}
+	public Divider(int size){
+		paint.setColor(0x00000000);
+		rect.set(size,size/2,size,size);
 	}
 	public Divider(int left,int top,int right,int bottom,DisplayMetrics dm){
 		this(0x00000000,left,top,right,bottom,dm);

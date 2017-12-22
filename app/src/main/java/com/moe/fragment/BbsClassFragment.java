@@ -28,7 +28,7 @@ import android.content.Intent;
 import com.moe.yaohuo.ListActivity;
 import com.moe.utils.BbsUtils;
 import android.widget.Toast;
-public class BbsFragment extends AnimeFragment implements SwipeRefreshLayout.OnRefreshListener,BbsAdapter.OnItemClickListener
+public class BbsClassFragment extends AnimeFragment implements SwipeRefreshLayout.OnRefreshListener,BbsAdapter.OnItemClickListener
 {
 	private List<BbsItem> list=new ArrayList<>();
 	private BbsAdapter ba;

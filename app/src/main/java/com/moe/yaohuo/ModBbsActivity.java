@@ -96,7 +96,7 @@ public class ModBbsActivity extends EventActivity
 		switch(item.getItemId()){
 			case R.id.send:
 				if(sending){
-					Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(),"正在发布",Toast.LENGTH_SHORT).show();
 					return true;
 					}
 				if(success){

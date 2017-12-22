@@ -6,21 +6,22 @@
 	android:layout_width="match_parent">
 
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
-	android:background="?android:attr/windowBackground">
-    <android.support.design.widget.TabLayout
-		android:id="@+id/tablayout"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"/>
-	<android.support.v4.view.ViewPager
-		android:id="@+id/viewpager"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"/>
-</LinearLayout>
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:background="?android:attr/windowBackground">
+		<android.support.design.widget.TabLayout
+			android:id="@+id/tablayout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+		<android.support.v4.view.ViewPager
+			android:id="@+id/viewpager"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
+	</LinearLayout>
 
 	<LinearLayout
+		android:theme="@style/AppTheme.Dark"
 		android:layout_gravity="bottom|end"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -37,7 +38,7 @@
 			android:layout_marginTop="15dp"
 			android:layout_marginBottom="30dp"
 			app:srcCompat="@drawable/close"
-			app:backgroundTint="?attr/colorControlNormal"
+			app:backgroundTint="#fff"
 			app:borderWidth="0dp"
 			app:elevation="2dp"
 			app:fabSize="normal"
@@ -52,8 +53,8 @@
 			android:layout_marginEnd="15dp"
 			android:layout_marginTop="15dp"
 			android:layout_marginBottom="30dp"
-			android:src="@drawable/delete"
-			app:backgroundTint="?attr/colorControlNormal"
+			app:srcCompat="@drawable/delete"
+			app:backgroundTint="#fff"
 			app:borderWidth="0dp"
 			app:elevation="2dp"
 			app:fabSize="normal"

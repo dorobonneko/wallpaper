@@ -4,9 +4,10 @@
 	android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-	android:gravity="end">
+	android:gravity="end"
+	android:paddingTop="15dp">
     <ImageView
-		android:layout_marginRight="10dp"
+		android:layout_marginEnd="15dp"
 		android:id="@+id/file_add"
 		android:background="?attr/selectableItemBackgroundBorderless"
 		android:layout_height="wrap_content"

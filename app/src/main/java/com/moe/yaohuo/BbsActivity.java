@@ -1,88 +1,30 @@
 package com.moe.yaohuo;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.WindowManager;
-import com.moe.entity.ListItem;
-import org.jsoup.Jsoup;
-import android.content.SharedPreferences;
-import java.io.IOException;
-import android.content.res.Resources.NotFoundException;
-import org.jsoup.nodes.Document;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.view.MenuItem;
-import org.jsoup.select.Elements;
-import org.jsoup.nodes.Element;
-import android.widget.TextView;
-import android.graphics.drawable.Drawable;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.HttpURLConnection;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import com.moe.utils.ImageCache;
-import com.moe.thread.ImageLoadThread;
-import com.moe.utils.ImageLoad;
-import android.graphics.drawable.LevelListDrawable;
-import android.text.method.LinkMovementMethod;
-import android.view.View;
-import android.view.ViewGroup;
-import com.moe.utils.PreferenceUtils;
-import com.moe.widget.CircleImageView;
-import java.util.List;
-import org.jsoup.nodes.Node;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import org.xml.sax.XMLReader;
-import android.text.Editable;
-import android.text.Spannable;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.text.Layout;
-import android.text.style.ClickableSpan;
-import android.text.Selection;
-import android.text.style.URLSpan;
-import com.moe.utils.UrlUtils;
-import android.content.Intent;
-import android.view.Gravity;
-import com.moe.widget.ProgressBar;
-import com.moe.utils.BitmapUtils;
-import com.moe.entity.UserItem;
-import com.moe.utils.UserUtils;
+import android.content.*;
+import android.os.*;
+import android.support.v7.widget.*;
+import android.text.*;
+import android.view.*;
+import android.widget.*;
+import com.moe.adapter.*;
+import com.moe.entity.*;
+import com.moe.internal.*;
+import com.moe.utils.*;
+import com.moe.widget.*;
+import java.util.*;
+import java.util.regex.*;
+import org.jsoup.nodes.*;
+
 import android.net.Uri;
-import com.moe.entity.FloorItem;
-import java.util.ArrayList;
-import com.moe.internal.ImageGetter;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.LinearLayoutManager;
-import com.moe.adapter.FloorAdapter;
-import com.moe.view.Divider;
-import com.moe.internal.TextViewClickMode;
-import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.support.v7.widget.RecyclerView.Adapter;
-import android.view.Menu;
-import android.widget.Toast;
-import com.moe.app.ReportDialog;
-import android.widget.ImageView;
-import com.moe.entity.RadioItem;
-import com.moe.adapter.VotedAdapter;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.LayoutInflater;
-import com.moe.entity.BbsItem;
-import android.support.v7.app.AlertDialog;
-import android.content.DialogInterface;
-import android.widget.EditText;
-import android.annotation.SuppressLint;
-import android.support.v4.widget.NestedScrollView;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import android.support.v4.view.ViewCompat;
-import android.widget.LinearLayout;
-import android.widget.FrameLayout;
-import com.moe.utils.StringUtils;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
+import com.moe.app.ReportDialog;
+import com.moe.view.Divider;
+import com.moe.widget.ProgressBar;
+import java.io.IOException;
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
+import org.xml.sax.XMLReader;
 public class BbsActivity extends EventActivity implements 
 Html.TagHandler,
 View.OnClickListener,
@@ -163,7 +105,7 @@ SwipeRefreshLayout.OnRefreshListener
 		reply.setOnClickListener(this);
 		TextViewClickMode tvcm=new TextViewClickMode(tv_content);
 		tv_content.setFocusable(false);
-		close=(TextView)header.findViewById(R.id.close);
+		close = (TextView)header.findViewById(R.id.close);
 		//new TextViewClickMode(tv_content_summary);
 		//tv_content.setTextIsSelectable(false);
 		icon = (CircleImageView)header.findViewById(android.R.id.icon);
@@ -234,12 +176,14 @@ SwipeRefreshLayout.OnRefreshListener
 					if (matcher.find())
 						bbs.setBbs(matcher.group(1));
 					Elements tips=doc.getElementsByClass("tip");
-					if(tips.size()>0){
-					matcher=Pattern.compile("结束原因:(.*)-",Pattern.DOTALL).matcher(tips.get(0).text());
-					if(matcher.find()){
-						why_close=matcher.group();
-						why_close=why_close.substring(0,why_close.length()-3);
-					}
+					if (tips.size() > 0)
+					{
+						matcher = Pattern.compile("结束原因:(.*)-", Pattern.DOTALL).matcher(tips.get(0).text());
+						if (matcher.find())
+						{
+							why_close = matcher.group();
+							why_close = why_close.substring(0, why_close.length() - 3);
+						}
 					}
 					Elements elements=doc.getElementsByClass("content");
 					if (elements.size() == 0)
@@ -365,10 +309,12 @@ SwipeRefreshLayout.OnRefreshListener
 //int index=content.indexOf("<!--listE-->");
 					tv_content.setText(Html.fromHtml(content, new ImageGetter(tv_content, true), BbsActivity.this));
 //tv_content_summary.setText(Html.fromHtml(content.substring(index),new ImageGetter(tv_content_summary),null));
-					if(why_close!=null){
+					if (why_close != null)
+					{
 						close.setVisibility(View.VISIBLE);
 						close.setText(why_close);
-						}else
+					}
+					else
 						close.setVisibility(View.GONE);
 					subtitle.setText(bbs.getBbs());
 					if (mode != null)
@@ -385,10 +331,10 @@ SwipeRefreshLayout.OnRefreshListener
 						if (ui.getLogo() != null)
 //Glide.with(BbsActivity.this).load(ui.getLogo()).diskCacheStrategy(DiskCacheStrategy.ALL).into(icon);
 							ImageCache.load(ui.getLogo(), icon);
-						if (ui.getUid() != PreferenceUtils.getUid(getApplicationContext()))
-							if (manager != null)
-								manager.setVisible(false);
+
 					}
+					if (manager != null)
+						manager.setVisible(!(ui != null && ui.getUid() != PreferenceUtils.getUid(getApplicationContext())));
 					break;
 				case 2://加载回复
 //progress.clearAnimation();
@@ -446,6 +392,9 @@ SwipeRefreshLayout.OnRefreshListener
 	{
 		switch (item.getItemId())
 		{
+			case R.id.open_in_web:
+				startActivity(new Intent(this, WebViewActivity.class).setData(Uri.parse(PreferenceUtils.getHost(getApplicationContext()) + getString(R.string.view) + "?id=" + bbs.getId())));
+				break;
 			case R.id.manager:
 				new AlertDialog.Builder(this).setItems(new String[]{"修改贴子","文件续传","附件管理","删除贴子","结束贴子"}, new DialogInterface.OnClickListener(){
 
@@ -677,8 +626,9 @@ SwipeRefreshLayout.OnRefreshListener
 		switch (p1.getId())
 		{
 			case R.id.edit:
-				if(why_close!=null){
-					Toast.makeText(this,"本贴已结",Toast.LENGTH_SHORT).show();
+				if (why_close != null)
+				{
+					Toast.makeText(this, "本贴已结", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				Bundle bundle=new Bundle();
@@ -722,8 +672,9 @@ SwipeRefreshLayout.OnRefreshListener
 		}
 		else
 		{
-			if(why_close!=null){
-				Toast.makeText(this,"本贴已结",Toast.LENGTH_SHORT).show();
+			if (why_close != null)
+			{
+				Toast.makeText(this, "本贴已结", Toast.LENGTH_SHORT).show();
 				return;
 			}
 			Bundle bundle=new Bundle();
@@ -756,8 +707,7 @@ SwipeRefreshLayout.OnRefreshListener
 	{
 		getMenuInflater().inflate(R.menu.bbs_manager, menu);
 		manager = menu.getItem(0);
-		if (ui != null && ui.getUid() != PreferenceUtils.getUid(getApplicationContext()))
-			manager.setVisible(false);
+		manager.setVisible(!(ui != null && ui.getUid() != PreferenceUtils.getUid(getApplicationContext())));
 		return true;
 	}
 

@@ -2,14 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	package="com.moe.yaohuo" >
-
     <application
 		android:theme="@style/FloatActivity"
 		android:name="com.moe.app.Application"
         android:icon="@drawable/yaohuo"
         android:label="@string/app_name"
         android:supportsRtl="true"
-		android:largeHeap="true">
+		android:largeHeap="true"
+		android:usesCleartextTraffic="true">
         <activity
 			android:theme="@style/AppTheme"
             android:name=".MainActivity"
@@ -36,6 +36,8 @@
 			android:name=".ReplyActivity"/>
 		<activity
 			android:name=".UserInfoActivity"/>
+		<activity
+			android:name=".UserSpaceActivity"/>
 		<activity
 			android:name=".MessageActivity"/>
 		<activity
@@ -67,9 +69,28 @@
 		<activity
 			android:theme="@style/ViewImage"
 			android:name=".ViewImageActivity"/>
+		<activity
+			android:name=".LeaveMessageActivity"/>
+		<activity
+			android:name=".DownloadPreferenceActivity"/>
+		<activity 
+            android:name="cn.bmob.v3.update.UpdateDialogActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+		<provider
+			android:authorities="cn.bmob.update.fileprovider"           android:name="android.support.v4.content.FileProvider"
+			android:grantUriPermissions="true"
+			android:exported="false">
+			<meta-data  
+				android:name="android.support.FILE_PROVIDER_PATHS"
+				android:resource="@xml/file_paths" />
+		</provider>
     </application>
 
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.READ_LOGS" />
 </manifest>

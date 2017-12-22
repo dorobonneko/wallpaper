@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme" parent="parent">
-		
 		</style>
 	<style name="parent" parent="Theme.AppCompat.Light">
 		<item name="windowNoTitle">true</item>
@@ -15,9 +14,9 @@
 		<!--<item name="android:statusBarColor">@color/icons</item>-->
 		<item name="android:textColorPrimary">@color/primary_text</item>
 		<item name="android:textColorSecondary">@color/secondary_text</item>
-		<item name="colorControlNormal">@color/accent</item>
+		<item name="colorControlNormal">@color/icons</item>
 		<item name="colorControlHighlight">@color/primary_light</item>
-		<item name="colorControlActivated">@color/primary</item>
+		<item name="colorControlActivated">@color/accent</item>
 		<item name="android:listDivider">@color/divider</item>
 		<item name="android:dividerHeight">1dp</item>
 		<item name="preferenceTheme">@style/preference</item>
@@ -25,7 +24,11 @@
 		-->
 		<item name="cardElevation">2px</item>
 		<item name="android:windowBackground">@color/window_background</item>
-		
+		<item name="sizeTitle">@dimen/title</item>
+		<item name="sizeSummary">@dimen/summary</item>
+	</style>
+	<style name="AppTheme.Dark" parent="parent">
+		<item name="colorControlNormal">#000</item>
 	</style>
 	<style name="preference" parent="parent">
 		<item name="preferenceScreenStyle">@style/Preference.PreferenceScreen</item>
@@ -44,10 +47,10 @@
 		<item
 			name="android:background">?attr/selectableItemBackground</item>
 	</style>
-	<style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+	<!--<style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
 		<item name="spinBars">true</item>
 		<item name="color">@android:color/white</item>
-	</style>
+	</style>-->
 	<style name="FloatActivity" parent="@style/AppTheme">
 		<item name="android:backgroundDimEnabled">false</item>
 		<item name="android:windowIsFloating">true</item>
@@ -81,13 +84,13 @@
 		<item name="android:windowExitAnimation">@anim/scale_out</item>
 		
 	</style>
-	<style name="toolbar" parent="AppTheme">
+	<!--<style name="toolbar" parent="AppTheme">
 		<item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
 		
 		<item name="colorControlNormal">@color/icons</item>
 		<item name="colorControlHighlight">@color/accent</item>
 		<item name="titleTextAppearance">?android:attr/textAppearance</item>
-	</style>
+	</style>-->
 	<!--<style name="EditText" parent="AppTheme">
 		<item name="android:textCursorDrawable">?android:attr/colorControlHighlight</item>
 		<item name="android:textSelectHandle">?android:attr/colorControlHighlight</item>

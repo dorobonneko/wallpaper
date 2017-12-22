@@ -73,4 +73,7 @@ public class StringUtils
 			}
 		return input;
 	}
+	public static String replaceRtlf(String input){
+		return input.replaceAll("\n","[br]");
+	}
 }

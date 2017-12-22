@@ -26,6 +26,7 @@
 				android:layout_height="wrap_content"
 				android:layout_weight="1">
 			<TextView
+				android:textSize="?attr/sizeTitle"
 				android:textColor="?android:attr/textColorPrimary"
 				android:id="@+id/list_item_title"
 				android:layout_width="wrap_content"
@@ -50,11 +51,12 @@
 			android:gravity="top">
 
 			<TextView
+				android:textSize="?attr/sizeSummary"
 				android:id="@+id/list_item_author"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="Small Text"
-				android:textSize="12sp"/>
+				/>
 			<View
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"

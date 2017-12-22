@@ -28,7 +28,7 @@ import android.content.Intent;
 import com.moe.yaohuo.BbsActivity;
 import com.moe.entity.ListItem;
 import android.support.v7.widget.DefaultItemAnimator;
-public class ReplyFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,ReplyAdapter.OnItemClickListener
+public class ReplyFragment extends UserSpaceFragment implements SwipeRefreshLayout.OnRefreshListener,ReplyAdapter.OnItemClickListener
 {
 	private ArrayList<ReplyItem> list;
 	private ReplyAdapter ra;
@@ -53,6 +53,13 @@ public class ReplyFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	}
 
 	@Override
+	protected void onStateChanged(boolean state)
+	{
+		refresh.setEnabled(state);
+	}
+
+
+	@Override
 	public void onSaveInstanceState(Bundle outState)
 	{
 		outState.putParcelableArrayList("list",list);
@@ -75,7 +82,7 @@ public class ReplyFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		if(list==null)list=new ArrayList<>();
 		rv.setAdapter(ra=new ReplyAdapter(list));
 		rv.addOnScrollListener(new Scroll());
-		rv.addItemDecoration(new Divider(5,1,5,5,getResources().getDisplayMetrics()));
+		rv.addItemDecoration(new Divider(getResources().getDimensionPixelSize(R.dimen.cellSpacing)));
 		((DefaultItemAnimator)rv.getItemAnimator()).setSupportsChangeAnimations(false);
 		ra.setOnItemClickListener(this);
 	}

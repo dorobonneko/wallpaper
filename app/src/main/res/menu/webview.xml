@@ -1,8 +1,21 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+		app:showAsAction="always"
+		android:id="@+id/webview_close"
+		android:icon="@drawable/close"
+		android:title="关闭"/>
+	<item
+		app:showAsAction="always"
+		android:id="@+id/webview_refresh"
+		android:icon="@drawable/refresh"
+		android:title="刷新"/>
     <item
         android:id="@+id/webview_view"
         android:title="用浏览器打开"/>
+	<item
+        android:id="@+id/webview_other"
+        android:title="用其它应用打开"/>
     <item
         android:id="@+id/webview_copy"
         android:title="复制链接"/>

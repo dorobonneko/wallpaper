@@ -3,15 +3,11 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <item
-		android:icon="@drawable/message_text_outline"
-		app:showAsAction="always"
-        android:id="@+id/send"
-        android:title="发信息"/>
-	<item
-		android:id="@+id/friend"
-		android:title="加好友"/>
+        android:id="@+id/more_info"
+        android:title="更多资料"/>
     
 	<item
+		android:visible="false"
 		android:id="@+id/black"
 		android:title="拉黑"/>
     

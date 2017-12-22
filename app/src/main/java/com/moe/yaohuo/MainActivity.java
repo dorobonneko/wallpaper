@@ -16,11 +16,11 @@ import android.widget.TextView;
 import android.view.View;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
-import com.moe.fragment.ListFragment;
+import com.moe.fragment.BbsListFragment;
 import android.view.Gravity;
 import android.support.design.widget.FloatingActionButton;
 import android.content.Intent;
-import com.moe.fragment.BbsFragment;
+import com.moe.fragment.BbsClassFragment;
 import android.view.ViewGroup;
 import org.jsoup.Jsoup;
 import com.moe.utils.UserUtils;
@@ -51,6 +51,15 @@ import android.provider.MediaStore;
 import android.graphics.Bitmap;
 import android.support.v4.content.ContentResolverCompat;
 import com.moe.download.LogoUpload;
+import com.tencent.bugly.crashreport.CrashReport;
+import android.widget.ImageView;
+import com.bumptech.glide.request.target.ViewTarget;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.moe.graphics.ImageViewTarget;
+import android.support.graphics.drawable.VectorDrawableCompat;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import android.content.res.TypedArray;
 
 
 public class MainActivity extends BaseActivity implements 
@@ -58,7 +67,8 @@ NavigationView.OnNavigationItemSelectedListener,
 DrawerLayout.DrawerListener,
 View.OnClickListener,
 View.OnLongClickListener,
-LogoUpload.Callback
+LogoUpload.Callback,
+SharedPreferences.OnSharedPreferenceChangeListener
 {
 	private UserItem ui;
 	private Snackbar snack;
@@ -67,7 +77,7 @@ LogoUpload.Callback
 	private DrawerLayout drawerlayout;
 	private Fragment current;
 	private int id;
-	private CircleImageView logo;
+	private ImageView logo;
 	private SharedPreferences moe;
 	private TextView username;
 	private Network network;
@@ -78,12 +88,15 @@ LogoUpload.Callback
 	protected void onCreate(Bundle savedInstanceState)
     {
 		moe=getSharedPreferences("moe",0);
+		moe.registerOnSharedPreferenceChangeListener(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 		nmv = (NavigationView)findViewById(R.id.main_leftselectedView);
 		drawerlayout = (DrawerLayout)findViewById(R.id.main_drawerlayout);
 		Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
-		toolbar.setTitleTextColor(0xffffffff);
+		TypedArray ta=obtainStyledAttributes(new int[]{android.support.v7.appcompat.R.attr.colorControlNormal});
+		toolbar.setTitleTextColor(ta.getColor(0,0xffffffff));
+		ta.recycle();
 		setSupportActionBar(toolbar);
 		try
 		{
@@ -103,10 +116,10 @@ LogoUpload.Callback
 		if("侧边栏".equals(moe.getString("exit_mode",null)))
 		reloadExit(true);
 		drawerlayout.addDrawerListener(this);
-		logo = (CircleImageView)nmv.getHeaderView(0).findViewById(R.id.logo);
-		logo.setOnClickListener(this);
+		logo = (ImageView)nmv.getHeaderView(0).findViewById(R.id.logo);
 		logo.setOnLongClickListener(this);
 		msg=(TextView)nmv.getHeaderView(0).findViewById(R.id.msg_size);
+		
 		/*msg.setOutlineProvider(new ViewOutlineProvider(){
 
 				@Override
@@ -119,26 +132,28 @@ LogoUpload.Callback
 		findViewById(R.id.edit).setOnClickListener(this);
 		nmv.getHeaderView(0).findViewById(R.id.message).setOnClickListener(this);
 		username=(TextView)nmv.getHeaderView(0).findViewById(R.id.nav_header_main_info);
+		username.setOnClickListener(this);
+		
 		if (savedInstanceState != null)
 		{
 			ui=savedInstanceState.getParcelable("ui");
 			id = savedInstanceState.getInt("id");
 			current = getSupportFragmentManager().findFragmentByTag(id + "");
-			handler.sendEmptyMessage(0);
+			//handler.sendEmptyMessage(0);
 		}
 		else
 		{
 			onNavigationItemSelected(nmv.getMenu().findItem(R.id.menu_new));
-			if(PreferenceUtils.isLogin(this)){
-			username.setText(moe.getString("name",null));
-			}
+			//username.setText(PreferenceUtils.isLogin(this)?moe.getString("name","未登录"):"未登录");
+			
 			//loadInfo();
 		}
 		IntentFilter filter=new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
 		registerReceiver(network=new Network(),filter);
 		//关闭主界面的侧滑关闭
 		findViewById(R.id.dragView).setEnabled(false);
-		
+		//CrashReport.testJavaCrash();
+		loadInfo();
     }
 
 	@Override
@@ -156,10 +171,10 @@ LogoUpload.Callback
 			{
 				
 				case R.id.menu_new:
-					open(p1.getItemId(), ListFragment.class);
+					open(p1.getItemId(), BbsListFragment.class);
 					break;
 				case R.id.menu_bbs:
-					open(p1.getItemId(), BbsFragment.class);
+					open(p1.getItemId(), BbsClassFragment.class);
 					break;
 				case R.id.menu_center:
 					open(p1.getItemId(),CenterPreference.class);
@@ -181,29 +196,7 @@ LogoUpload.Callback
 			}
 		return true;
 	}
-	private void open(int tag, Class fragclass)
-	{
-		if (id == tag)return;
-		id = tag;
-		Fragment frag=getSupportFragmentManager().findFragmentByTag(tag + "");
-		try
-		{
-			if (frag == null)frag = (Fragment)fragclass.newInstance();
-		}
-		catch (InstantiationException e)
-		{}
-		catch (IllegalAccessException e)
-		{}
-		FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
-		if (current != null)
-			ft.hide(current);
-		if (frag.isAdded())
-			ft.show(frag);
-		else
-			ft.add(R.id.main_index, frag, tag + "");
-		ft.commit();
-		current = frag;
-	}
+	
 	private Handler handler=new Handler(){
 
 		@Override
@@ -215,11 +208,29 @@ LogoUpload.Callback
 					MainActivity.this.msg.setVisibility(View.INVISIBLE);
 					if(ui==null){
 						username.setText(moe.getString("name","未登录"));
-						logo.setImageResource(R.drawable.yaohuo);
+						//logo.setImageResource(R.drawable.yaohuo);
 					}else{
 						username.setText(ui.getName());
 						//ImageCache.load(ui.getLogo(),logo);
-						Glide.with(MainActivity.this).load(ui.getLogo()).diskCacheStrategy(DiskCacheStrategy.ALL).into(logo);
+						try{
+							if(logo.getTag(R.id.state)==null||!(Boolean)logo.getTag(R.id.state))
+								Glide.with(MainActivity.this).load(ui.getLogo()).listener(new RequestListener<String,GlideDrawable>(){
+
+										@Override
+										public boolean onException(Exception p1, String p2, Target<GlideDrawable> p3, boolean p4)
+										{
+											logo.setTag(R.id.state,false);
+											return false;
+										}
+
+										@Override
+										public boolean onResourceReady(GlideDrawable p1, String p2, Target<GlideDrawable> p3, boolean p4, boolean p5)
+										{
+											logo.setTag(R.id.state,true);
+											return false;
+										}
+									}).error(VectorDrawableCompat.create(getResources(), R.drawable.logo_background, getTheme())).diskCacheStrategy(DiskCacheStrategy.ALL).into(logo);
+							}catch(Exception e){}
 						moe.edit().putString("name",ui.getName()).commit();
 						if(ui.getMsg()>0){
 							MainActivity.this.msg.setVisibility(View.VISIBLE);
@@ -249,7 +260,7 @@ LogoUpload.Callback
 		}else if(current instanceof com.moe.fragment.Fragment){
 			if(((com.moe.fragment.Fragment)current).onBackPressed())return;
 		}
-		if(!(current instanceof ListFragment)){
+		if(!(current instanceof BbsListFragment)){
 			onNavigationItemSelected(nmv.getMenu().findItem(R.id.menu_new).setChecked(true));
 		}
 		else{
@@ -328,7 +339,7 @@ LogoUpload.Callback
 	public void onDrawerOpened(View p1)
 	{
 		p1.setTag(null);
-		if(ui==null)loadInfo();
+		loadInfo();
 		//else
 		//ImageCache.load(ui.getLogo(),logo);
 	}
@@ -351,11 +362,11 @@ LogoUpload.Callback
 	{
 		switch (p1.getId())
 		{
-			case R.id.logo:
+			case R.id.nav_header_main_info:
 				if(!PreferenceUtils.isLogin(this))
 				startActivityForResult(new Intent(this, LoginActivity.class),233);
 				else
-				startActivity(new Intent(this,UserInfoActivity.class).putExtra("uid",moe.getInt("uid",0)));
+				startActivity(new Intent(this,UserInfoActivity.class).putExtra("uid",PreferenceUtils.getUid(getApplicationContext())));
 				break;
 			case R.id.edit:
 				if(!PreferenceUtils.isLogin(this))
@@ -364,8 +375,10 @@ LogoUpload.Callback
 				startActivity(new Intent(this,AddBbsActivity.class));
 				break;
 			case R.id.message:
-				if(PreferenceUtils.isLogin(this))
+				if(PreferenceUtils.isLogin(this)){
 					startActivity(new Intent(this, MessageActivity.class));
+					drawerlayout.closeDrawer(Gravity.START);
+					}
 				break;
 			case android.R.id.title:
 				RecyclerView rv=(RecyclerView)findViewById(R.id.list);
@@ -383,6 +396,7 @@ LogoUpload.Callback
 	@Override
 	public boolean onLongClick(View p1)
 	{
+		if(PreferenceUtils.isLogin(this))
 		switch(p1.getId()){
 			case R.id.logo:
 				new AlertDialog.Builder(this).setMessage("上传头像").setNeutralButton("取消", null).setNegativeButton("拍照", new DialogInterface.OnClickListener(){
@@ -444,16 +458,22 @@ LogoUpload.Callback
 		super.onResume();
 		if( current instanceof DownloadFragment)
 			current.onHiddenChanged(false);
-		loadInfo();
+		//loadInfo();
 	}
 
 	private void loadInfo(){
+		if(PreferenceUtils.isLogin(this))
 		new Thread(){
 			public void run(){
-				ui=UserUtils.getUserInfo(getApplicationContext(),moe.getInt("uid",0),false);
+				ui=UserUtils.getUserInfo(getApplicationContext(),PreferenceUtils.getUid(getApplicationContext()),false);
 				handler.sendEmptyMessage(0);
 			}
 		}.start();
+		else{
+		username.setText("未登录");
+		logo.setImageDrawable(VectorDrawableCompat.create(getResources(),R.drawable.logo_background,getTheme()));
+		}
+		
 	}
 	public void reloadExit(boolean exit)
 	{
@@ -461,6 +481,43 @@ LogoUpload.Callback
 			nmv.getMenu().findItem(R.id.menu_exit).setVisible(true);
 		else
 			nmv.getMenu().findItem(R.id.menu_exit).setVisible(false);
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences p1, String p2)
+	{
+		switch(p2){
+			case "login":
+				loadInfo();
+				break;
+			case "name":
+				username.setText(p1.getString("name",null));
+				break;
+		}
+	}
+
+	private void open(int tag, Class fragclass)
+	{
+		if (id == tag)return;
+		id = tag;
+		Fragment frag=getSupportFragmentManager().findFragmentByTag(tag + "");
+		try
+		{
+			if (frag == null)frag = (Fragment)fragclass.newInstance();
+		}
+		catch (InstantiationException e)
+		{}
+		catch (IllegalAccessException e)
+		{}
+		FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+		if (current != null)
+			ft.hide(current);
+		if (frag.isAdded())
+			ft.show(frag);
+		else
+			ft.add(R.id.main_index, frag, tag + "");
+		ft.commit();
+		current = frag;
 	}
 	private class Network extends BroadcastReceiver
 	{
@@ -473,6 +530,13 @@ LogoUpload.Callback
 				loadInfo();
 			}
 		}
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		moe.unregisterOnSharedPreferenceChangeListener(this);
+		super.onDestroy();
 	}
 
 	

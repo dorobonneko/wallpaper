@@ -11,8 +11,12 @@
 		android:entryValues="@array/host"
 		android:defaultValue="http://yaohuo.me"/>
 	<Preference
-		android:key="download_path"
-		android:title="下载路径"/>
+		android:title="下载设置">
+		<intent
+			android:action=""
+			android:targetPackage="com.moe.yaohuo"
+			android:targetClass="com.moe.yaohuo.DownloadPreferenceActivity"/>
+	</Preference>
 	<SwitchPreferenceCompat
 		android:key="direct"
 		android:title="网址直达"

@@ -62,6 +62,9 @@ public class DownloadDatabase extends SQLiteOpenHelper
 			di.setTotal(cursor.getLong(3));
 			di.setDir(cursor.getString(4));
 			di.setReferer(cursor.getString(5));
+			di.setType(cursor.getString(6));
+			di.setTime(cursor.getLong(7));
+			di.setCurrent(cursor.getLong(8));
 			ldi.add(di);
 		}
 		cursor.close();
@@ -69,7 +72,7 @@ public class DownloadDatabase extends SQLiteOpenHelper
 	}
 	public boolean insert(DownloadItem di){
 		boolean flag=true;
-		SQLiteStatement state=sql.compileStatement("insert into download values(?,?,?,?,?,?)");
+		SQLiteStatement state=sql.compileStatement("insert into download values(?,?,?,?,?,?,?,?,?)");
 		state.acquireReference();
 		state.bindString(1,di.getTitle());
 		state.bindString(2,di.getUrl());
@@ -77,6 +80,9 @@ public class DownloadDatabase extends SQLiteOpenHelper
 		state.bindLong(4,di.getTotal());
 		state.bindString(5,di.getDir());
 		state.bindString(6,di.getReferer());
+		state.bindString(7,di.getType()==null?"":di.getType());
+		state.bindLong(8,System.currentTimeMillis());
+		state.bindLong(9,di.getCurrent());
 		try{
 		state.executeInsert();
 		}catch(Exception e){
@@ -96,7 +102,16 @@ public class DownloadDatabase extends SQLiteOpenHelper
 		state.close();
 		state.releaseReference();
 	}
-
+	public void updateCurrent(String url, long length)
+	{
+		SQLiteStatement state=sql.compileStatement("update download set current=? where url=?");
+		state.acquireReference();
+		state.bindLong(1,length);
+		state.bindString(2,url);
+		state.executeUpdateDelete();
+		state.close();
+		state.releaseReference();
+	}
 	public void updateTotal(String url, long length)
 	{
 		SQLiteStatement state=sql.compileStatement("update download set total=? where url=?");
@@ -121,7 +136,7 @@ public class DownloadDatabase extends SQLiteOpenHelper
 	@Override
 	public void onCreate(SQLiteDatabase p1)
 	{
-		p1.execSQL("create table download(title TEXT,url TEXT primary key,state INTEGER,total INTEGER,dir TEXT,referer TEXT)");
+		p1.execSQL("create table download(title TEXT,url TEXT primary key,state INTEGER,total INTEGER,dir TEXT,referer TEXT,type TEXT,time INTEGER,current INTEGER)");
 	}
 
 

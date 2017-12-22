@@ -77,12 +77,12 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 		if(send)progressBar.setVisibility(View.VISIBLE);
 		if (floor != null)
 		{
-			if(floor.getUser()==null){
+			/*if(floor.getUser()==null){
 				Toast.makeText(this,"无用户数据",Toast.LENGTH_SHORT).show();
 				finish();
 				return;
-			}
-			text.setHint("@" + floor.getUser().getName());
+			}*/
+			text.setHint("@" +( floor.getUser()==null?floor.getName():floor.getUser().getName()));
 			getSupportActionBar().setTitle("回复" + floor.getFloor() + "楼");
 		}
 		view.findViewById(R.id.emoji).setOnClickListener(this);
@@ -233,7 +233,7 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 		if(floor!=null){
 			conn.data("sendmsg2","1")
 				.data("reply",floor.getFloor()+"")		
-				.data("touserid",floor.getUser().getUid()+"");
+				.data("touserid",floor.getUid()+"");
 		}
 		if(filelist.size()>0){
 			conn.data("action","gomod");

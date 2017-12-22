@@ -1,18 +1,19 @@
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
->
-    <LinearLayout
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:orientation="vertical"
-		
-		>
+		android:orientation="vertical">
+
 		<LinearLayout
 			android:orientation="vertical"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="#f9f9f9">
+			android:layout_height="wrap_content">
+
 			<LinearLayout
 				android:id="@+id/click_logo"
 				android:paddingEnd="10dp"
@@ -22,36 +23,41 @@
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
 				android:gravity="center_vertical"
-				android:background="?attr/selectableItemBackground"
-			>
+				android:background="?attr/selectableItemBackground">
+
 				<TextView
-					android:textColor="?android:attr/textColorPrimary"
+					android:textSize="?attr/sizeSummary"
+					android:textColor="?android:attr/textColorSecondary"
 					android:gravity="center_vertical"
 					android:text="头像"
 					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-				/>
+					android:layout_height="match_parent"/>
+
 				<View
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"/>
+
 				<com.moe.widget.CircleImageView
 					android:scaleType="centerCrop"
 					android:layout_width="?attr/listPreferredItemHeight"
 					android:layout_height="?attr/listPreferredItemHeight"
 					android:id="@+android:id/icon"/>
+
 			</LinearLayout>
+
 			<View
 				android:layout_width="match_parent"
 				android:layout_height="1dp"
 				android:background="@color/divider"/>
+
 		</LinearLayout>
-		
+
 		<LinearLayout
 			android:orientation="vertical"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="#ffffff">
+			android:layout_height="wrap_content">
+
 			<LinearLayout
 				android:paddingEnd="10dp"
 				android:paddingStart="10dp"
@@ -60,34 +66,44 @@
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
 				android:gravity="center_vertical"
-				android:background="?attr/selectableItemBackground"
-			>
+				android:background="?attr/selectableItemBackground">
+
 				<TextView
-					android:textColor="?android:attr/textColorPrimary"
+					android:textSize="?attr/sizeSummary"
+					
+					android:textColor="?android:attr/textColorSecondary"
 					android:gravity="center_vertical"
 					android:text="UID"
 					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-				/>
+					android:layout_height="match_parent"/>
+
 				<View
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"/>
+
 				<TextView
+					android:textColor="?android:attr/textColorPrimary"
+					android:textSize="?attr/sizeTitle"
+					
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:id="@+id/uid"/>
+					android:id="@+id/user_data_uid"/>
+
 			</LinearLayout>
+
 			<View
 				android:layout_width="match_parent"
 				android:layout_height="1dp"
 				android:background="@color/divider"/>
+
 		</LinearLayout>
+
 		<LinearLayout
 			android:orientation="vertical"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="#ffffff">
+			android:layout_height="wrap_content">
+
 			<LinearLayout
 				android:id="@+id/click_name"
 				android:paddingEnd="10dp"
@@ -97,35 +113,44 @@
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
 				android:gravity="center_vertical"
-				android:background="?attr/selectableItemBackground"
-			>
+				android:background="?attr/selectableItemBackground">
+
 				<TextView
-					android:textColor="?android:attr/textColorPrimary"
+					android:textSize="?attr/sizeSummary"
+					
+					android:textColor="?android:attr/textColorSecondary"
 					android:gravity="center_vertical"
 					android:text="昵称"
 					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-				/>
+					android:layout_height="match_parent"/>
+
 				<View
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"/>
+
 				<TextView
+					android:textColor="?android:attr/textColorPrimary"
+					android:textSize="?attr/sizeTitle"
+					
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:id="@+id/name"/>
+					android:id="@+id/user_data_name"/>
+
 			</LinearLayout>
+
 			<View
 				android:layout_width="match_parent"
 				android:layout_height="1dp"
 				android:background="@color/divider"/>
+
 		</LinearLayout>
-		
+
 		<LinearLayout
 			android:orientation="vertical"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="#ffffff">
+			android:layout_height="wrap_content">
+
 			<LinearLayout
 				android:id="@+id/click_sex"
 				android:paddingEnd="10dp"
@@ -135,35 +160,43 @@
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
 				android:gravity="center_vertical"
-				android:background="?attr/selectableItemBackground"
-			>
+				android:background="?attr/selectableItemBackground">
+
 				<TextView
-					android:textColor="?android:attr/textColorPrimary"
+					android:textSize="?attr/sizeSummary"
+					
+					android:textColor="?android:attr/textColorSecondary"
 					android:gravity="center_vertical"
 					android:text="性别"
 					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-				/>
+					android:layout_height="match_parent"/>
+
 				<View
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"/>
+
 				<ImageView
+					android:adjustViewBounds="true"
 					android:scaleType="centerInside"
 					android:layout_width="?attr/listPreferredItemHeight"
 					android:layout_height="?attr/listPreferredItemHeight"
-					android:id="@+id/sex"/>
+					android:id="@+id/user_data_sex"/>
+
 			</LinearLayout>
+
 			<View
+				
 				android:layout_width="match_parent"
 				android:layout_height="1dp"
 				android:background="@color/divider"/>
+
 		</LinearLayout>
 		<LinearLayout
 			android:orientation="vertical"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="#ffffff">
+			android:layout_height="wrap_content">
+
 			<LinearLayout
 				android:id="@+id/click_birthday"
 				android:paddingEnd="10dp"
@@ -173,34 +206,135 @@
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
 				android:gravity="center_vertical"
-				android:background="?attr/selectableItemBackground"
-			>
+				android:background="?attr/selectableItemBackground">
+
 				<TextView
-					android:textColor="?android:attr/textColorPrimary"
+					android:textSize="?attr/sizeSummary"
+					
+					android:textColor="?android:attr/textColorSecondary"
 					android:gravity="center_vertical"
-					android:text="生日"
+					android:text="年龄"
 					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-				/>
+					android:layout_height="match_parent"/>
+
 				<View
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"/>
+
 				<TextView
+					android:textColor="?android:attr/textColorPrimary"
+					android:textSize="?attr/sizeTitle"
+					
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:id="@+id/birthday"/>
+					android:id="@+id/user_data_age"/>
+
 			</LinearLayout>
+
 			<View
 				android:layout_width="match_parent"
 				android:layout_height="1dp"
 				android:background="@color/divider"/>
+
 		</LinearLayout>
 		<LinearLayout
 			android:orientation="vertical"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="#ffffff">
+			android:layout_height="wrap_content">
+
+			<LinearLayout
+				android:id="@+id/click_birthday"
+				android:paddingEnd="10dp"
+				android:paddingStart="10dp"
+				android:layout_width="match_parent"
+				android:minHeight="?attr/listPreferredItemHeight"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:background="?attr/selectableItemBackground">
+
+				<TextView
+					android:textSize="?attr/sizeSummary"
+					
+					android:textColor="?android:attr/textColorSecondary"
+					android:gravity="center_vertical"
+					android:text="等级"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"/>
+
+				<View
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"/>
+
+				<TextView
+					android:textColor="?android:attr/textColorPrimary"
+					android:textSize="?attr/sizeTitle"
+					
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/user_data_level"/>
+
+			</LinearLayout>
+
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:background="@color/divider"/>
+
+		</LinearLayout>
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<LinearLayout
+				android:id="@+id/click_birthday"
+				android:paddingEnd="10dp"
+				android:paddingStart="10dp"
+				android:layout_width="match_parent"
+				android:minHeight="?attr/listPreferredItemHeight"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:background="?attr/selectableItemBackground">
+
+				<TextView
+					android:textSize="?attr/sizeSummary"
+					
+					android:textColor="?android:attr/textColorSecondary"
+					android:gravity="center_vertical"
+					android:text="头衔"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"/>
+
+				<View
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"/>
+
+				<TextView
+					android:textColor="?android:attr/textColorPrimary"
+					android:textSize="?attr/sizeTitle"
+					
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/user_data_nickName"/>
+
+			</LinearLayout>
+
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:background="@color/divider"/>
+
+		</LinearLayout>
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
 			<LinearLayout
 				android:id="@+id/click_style"
 				android:paddingEnd="10dp"
@@ -211,35 +345,42 @@
 				android:gravity="start"
 				android:minHeight="?attr/listPreferredItemHeight"
 				android:background="?attr/selectableItemBackground"
-			android:paddingTop="10dp">
+				android:paddingTop="10dp">
+
 				<TextView
-					android:textColor="?android:attr/textColorPrimary"
+					android:textSize="?attr/sizeSummary"
+					
+					android:textColor="?android:attr/textColorSecondary"
 					android:gravity="center_vertical"
 					android:text="个性签名"
 					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-				/>
+					android:layout_height="match_parent"/>
+
 				<TextView
-					android:id="@+id/style"
-					android:textColor="?android:attr/textColorSecondary"
+					android:textSize="?attr/sizeTitle"
+					
+					android:id="@+id/user_data_sign"
+					android:textColor="?android:attr/textColorPrimary"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:singleLine="true"/>
+
 			</LinearLayout>
-				
+
 			<View
 				android:layout_width="match_parent"
 				android:layout_height="1dp"
 				android:background="@color/divider"/>
+
 		</LinearLayout>
+
 		<LinearLayout
 			android:visibility="gone"
-			
 			android:layout_marginTop="10dp"
 			android:orientation="vertical"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="#ffffff">
+			android:layout_height="wrap_content">
+
 			<LinearLayout
 				android:id="@+id/click_exit"
 				android:paddingEnd="10dp"
@@ -249,22 +390,25 @@
 				android:orientation="vertical"
 				android:gravity="center"
 				android:minHeight="?attr/listPreferredItemHeight"
-				android:background="?attr/selectableItemBackground"
-			>
+				android:background="?attr/selectableItemBackground">
+
 				<TextView
 					android:textColor="?android:attr/textColorPrimary"
 					android:gravity="center_vertical"
 					android:text="退出登录"
 					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-				/>
-				
+					android:layout_height="match_parent"/>
+
 			</LinearLayout>
 
 			<View
 				android:layout_width="match_parent"
 				android:layout_height="1dp"
 				android:background="@color/divider"/>
+
 		</LinearLayout>
+
 	</LinearLayout>
+
 </android.support.v4.widget.NestedScrollView>
+

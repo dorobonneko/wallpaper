@@ -11,4 +11,10 @@
 	<string name="sendmoney">/bbs/book_view_sendmoney.aspx</string>
 	<string name="vote">/bbs/book_view_addvote.aspx</string>
 	<string name="addfile">/bbs/book_view_addfile.aspx</string>
+	<string name="log">/bbs/book_list_log.aspx</string>
+	<string name="leaveMessage">/bbs/userguessbook.aspx</string>
+	<string name="leaveMessage_pic">/bbs/userguessbook.aspx</string>
+	<string name="leaveMessage_re">/bbs/userguessbook_re.aspx</string>
+	<string name="leaveMessage_del" formatted="false">/bbs/userguessbook_del.aspx?action=godel&amp;reid=%d&amp;siteid=1000&amp;classid=0&amp;touserid=%d&amp;page=1&amp;ot=</string>
 </resources>
+

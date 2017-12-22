@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import com.moe.utils.ImageCache;
 import android.content.Intent;
+import com.moe.yaohuo.UserSpaceActivity;
 import com.moe.yaohuo.UserInfoActivity;
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder>
 {

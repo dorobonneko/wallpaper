@@ -33,7 +33,7 @@ public class PreferenceUtils
 		return "Mozilla/5.0 (Linux; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 Mobile Safari/537.36" + (int)(Math.random() * Integer.MAX_VALUE);
 	}
 	public static boolean isLogin(Context context){
-		return getUid(context)!=0;
+		return getInstance(context).getPreference().getBoolean("login",false);
 	}
 	public static int getUid(Context context){
 		return getInstance(context).getPreference().getInt("uid",0);

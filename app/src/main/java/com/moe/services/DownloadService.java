@@ -39,6 +39,8 @@ import java.text.DecimalFormat;
 import com.moe.yaohuo.MainActivity;
 import android.content.ComponentName;
 import android.content.ClipData;
+import com.moe.internal.NotificationList;
+import okhttp3.*;
 
 public class DownloadService extends Service
 {
@@ -49,13 +51,14 @@ public class DownloadService extends Service
 	private NotificationManager nm;
 	private static SSLSocketFactory ssf;
 	private NotifcationRefresh refresh;
-	private Notification notification;
-	private DecimalFormat format=new DecimalFormat("0.00");
+	//private DecimalFormat format=new DecimalFormat("0.00");
+	private PendingIntent download_activity;
+	private OkHttpClient ohc;
 	public static SSLSocketFactory getSSLSocketFactory()
 	{
 		if(ssf==null){
 			try{
-			SSLContext sc=SSLContext.getInstance("SSL", "SunJSSE");
+			SSLContext sc=SSLContext.getInstance("TLS");
 			sc.init(null, new TrustManager[]{new TrustManager()}, new SecureRandom());
 			ssf =sc.getSocketFactory();
 			}
@@ -69,7 +72,12 @@ public class DownloadService extends Service
 	{
 		return null;
 	}
-
+	public OkHttpClient getOkHttp(){
+		if(ohc==null){
+			ohc=new OkHttpClient.Builder().sslSocketFactory(getSSLSocketFactory()).readTimeout(10,TimeUnit.SECONDS).connectTimeout(15,TimeUnit.SECONDS).build();
+		}
+		return ohc;
+	}
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
@@ -133,13 +141,7 @@ public class DownloadService extends Service
 		dd=DownloadDatabase.getInstance(this);
 		Intent intent=getPackageManager().getLaunchIntentForPackage(getPackageName());
 		intent.setClipData(ClipData.newPlainText("",""));
-		PendingIntent pi=PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
-		Notification.Builder build=new Notification.Builder(this).setContent(new RemoteViews(getPackageName(),R.layout.download_item_view)).setSmallIcon(R.drawable.yaohuo).setTicker("下载开始").setAutoCancel(true).setContentIntent(pi);
-		build.setContentIntent(pi);
-		if(Build.VERSION.SDK_INT>15)
-		notification=build.build();
-		else
-		notification=build.getNotification();
+		download_activity=PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
 		registerReceiver(refresh=new NotifcationRefresh(),new IntentFilter(ACTION_REFRESH));
 	}
 
@@ -153,8 +155,7 @@ public class DownloadService extends Service
 	
 	private void check(){
 		if(list.size()==0)return;
-		int size=download.size();
-		for(;size<5;size++){
+		for(int size=download.size();size<5;size++){
 			try{
 			Download d=new Download(list.remove(0),this);
 			download.add(d);
@@ -182,7 +183,8 @@ public class DownloadService extends Service
 			for(DownloadItem di:list){
 				switch(di.getState()){
 					case State.SUCCESS:
-						Notification.Builder nb=new Notification.Builder(p1).setSmallIcon(R.drawable.yaohuo).setTicker(di.getTitle()+"下载完成").setContentTitle(di.getTitle()).setSubText("下载完成");
+						Notification.Builder nb=NotificationList.getInstance(getApplicationContext()).getNotification(di);
+						NotificationList.getInstance(getApplicationContext()).remove(di);
 						Intent intent = new Intent(Intent.ACTION_VIEW);
 						Uri contentUri=Uri.fromFile(new File(di.getDir()));
 						if (Build.VERSION.SDK_INT >19)
@@ -202,18 +204,9 @@ public class DownloadService extends Service
 						nm.notify(di.getUrl().hashCode(),Build.VERSION.SDK_INT>15?nb.build():nb.getNotification());
 						break;
 					default:
-						double currentSize=new File(di.getDir()).length();
-						RemoteViews remote=notification.contentView;
-						remote.setImageViewResource(R.id.download_item_view_state,di.isLoading()?R.drawable.pause:R.drawable.play);
-						remote.setTextViewText(R.id.download_item_view_title,di.getTitle());
-						remote.setProgressBar(R.id.download_item_view_progress,100,(int)(currentSize/di.getTotal()*100),false);
-						remote.setTextViewText(R.id.download_item_view_size,format.format(currentSize/1024.0/1024)+"M/"+format.format(di.getTotal()/1024.0/1024)+"M");
-						Intent click_intent=new Intent(p1,DownloadService.class);
-						click_intent.setAction(di.isLoading()?Action_Stop:Action_Start);
-						click_intent.putExtra("down",di);
-						PendingIntent click=PendingIntent.getService(p1,0,click_intent,0);
-						remote.setOnClickPendingIntent(R.id.download_item_view_state,click);
-						nm.notify(di.getUrl().hashCode(),notification);
+						Notification.Builder build=NotificationList.getInstance(getApplicationContext()).getNotification(di);
+						build.setContentIntent(download_activity);
+						nm.notify(di.getUrl().hashCode(),Build.VERSION.SDK_INT>15?build.build():build.getNotification());
 						break;
 				}
 				if(download.size()==0&&list.size()==0)

@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v7.widget.CardView
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:orientation="horizontal">
+	app:cardCornerRadius="3dp"
+	app:cardElevation="1dp"
+	android:foreground="?attr/selectableItemBackground">
 
 	<LinearLayout
+		android:textColor="?android:attr/textColorPrimary"
+		android:minHeight="?attr/listPreferredItemHeightSmall"
+		android:id="@+id/background"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
+		android:layout_height="wrap_content"
 		android:orientation="horizontal"
-		android:id="@+id/background">
+		android:paddingStart="12dp"
+		android:paddingEnd="12dp"
+		android:gravity="center_vertical">
+
+		<ImageView
+			android:theme="@style/AppTheme.Dark"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			app:srcCompat="@drawable/download"/>
 
 		<LinearLayout
 			android:layout_height="match_parent"
@@ -21,14 +33,12 @@
 			android:gravity="center_vertical">
 
 			<TextView
-				android:textColor="#FFFFFF"
 				android:singleLine="true"
-				android:id="@+id/download_item_view_title"
+				android:id="@+android:id/title"
 				android:layout_height="wrap_content"
 				android:layout_width="match_parent"
 				android:gravity="center_vertical"
-				android:shadowColor="#000000"
-				android:shadowRadius="2.0"/>
+				/>
 
 			<ProgressBar
 				android:focusable="false"
@@ -39,14 +49,13 @@
 				android:layout_width="match_parent"/>
 
 			<TextView
-				android:textColor="#E7E7E7"
+				android:textColor="?android:attr/textColorSecondary"
 				android:singleLine="true"
-				android:id="@+id/download_item_view_size"
+				android:id="@+android:id/summary"
 				android:layout_height="wrap_content"
 				android:layout_width="match_parent"
 				android:gravity="center_vertical"
-				android:shadowRadius="3.0"
-				android:shadowColor="#7F7F7F"/>
+				/>
 
 		</LinearLayout>
 
@@ -59,5 +68,4 @@
 
 	</LinearLayout>
 
-</LinearLayout>
-
+</android.support.v7.widget.CardView>

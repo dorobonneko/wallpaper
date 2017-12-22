@@ -14,7 +14,7 @@ import com.moe.entity.BbsItem;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.content.Intent;
-import com.moe.fragment.ListFragment;
+import com.moe.fragment.BbsListFragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
 import java.util.List;
@@ -24,12 +24,14 @@ import com.moe.database.SearchHistoryDatabase;
 import android.view.View;
 import com.moe.adapter.SearchHistoryAdapter.ViewHolder;
 import android.view.inputmethod.InputMethodManager;
+import android.graphics.drawable.VectorDrawable;
+import android.support.graphics.drawable.VectorDrawableCompat;
 
 public class SearchActivity extends EventActivity implements TextWatcher,SearchHistoryAdapter.OnItemClickListener,SearchHistoryAdapter.OnAddListener
 {
 	private EditText key;
 	private BbsItem bi;
-	private ListFragment list;
+	private BbsListFragment list;
 	private ArrayList<String> history;
 	private SearchHistoryAdapter sha;
 	private SearchHistoryDatabase shd;
@@ -51,7 +53,7 @@ public class SearchActivity extends EventActivity implements TextWatcher,SearchH
 		key.addTextChangedListener(this);
 		if(savedInstanceState!=null){
 			key.setText(savedInstanceState.getCharSequence("key"));
-			list=(ListFragment)getSupportFragmentManager().findFragmentByTag("list");
+			list=(BbsListFragment)getSupportFragmentManager().findFragmentByTag("list");
 			bi=savedInstanceState.getParcelable("bbs");
 			this.history=savedInstanceState.getStringArrayList("history");
 		}
@@ -67,7 +69,7 @@ public class SearchActivity extends EventActivity implements TextWatcher,SearchH
 			bi=new BbsItem();
 			bi.setAction("search");
 			bi.setType("title");
-			list=new ListFragment();
+			list=new BbsListFragment();
 			Bundle b=new Bundle();
 			b.putParcelable("bbs",bi);
 			list.setArguments(b);
@@ -106,7 +108,7 @@ public class SearchActivity extends EventActivity implements TextWatcher,SearchH
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		menu.add(0,0,0,"搜索");
-		menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.magnify)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.getItem(0).setIcon(VectorDrawableCompat.create(getResources(),R.drawable.magnify,getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return true;
 	}
 	

@@ -29,6 +29,7 @@ import android.content.DialogInterface;
 import android.widget.TextView;
 import java.util.Calendar;
 import com.moe.app.YearDialog;
+import android.support.graphics.drawable.VectorDrawableCompat;
 
 public class MoneyActivity extends EventActivity implements SwipeRefreshLayout.OnRefreshListener,YearDialog.OnOkListener
 {
@@ -157,7 +158,7 @@ public class MoneyActivity extends EventActivity implements SwipeRefreshLayout.O
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		menu.add(0,0,0,"filter");
-		menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.filter_variant)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.getItem(0).setIcon(VectorDrawableCompat.create(getResources(),R.drawable.filter_variant,getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return true;
 	}
 	

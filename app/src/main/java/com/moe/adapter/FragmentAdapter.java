@@ -15,7 +15,6 @@ public class FragmentAdapter extends FragmentPagerAdapter
 	@Override
 	public Fragment getItem(int p1)
 	{
-		// TODO: Implement this method
 		return list.get(p1);
 	}
 
@@ -29,7 +28,9 @@ public class FragmentAdapter extends FragmentPagerAdapter
 			case 1:
 				return "回复";
 			case 2:
-				return "相册";
+				return "动态";
+			case 3:
+				return "留言";
 		}
 		return null;
 	}

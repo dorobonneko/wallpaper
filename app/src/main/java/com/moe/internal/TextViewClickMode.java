@@ -21,6 +21,7 @@ import android.text.style.CharacterStyle;
 import android.widget.Toast;
 import com.moe.yaohuo.ViewImageActivity;
 import android.text.Selection;
+import com.moe.yaohuo.UserSpaceActivity;
 
 public class TextViewClickMode implements TextView.OnTouchListener
 {
@@ -107,11 +108,16 @@ public class TextViewClickMode implements TextView.OnTouchListener
 					widget.getContext().startActivity(new Intent(widget.getContext(),ListActivity.class).putExtra("bbs",bi));
 				}
 				else{
+					m=Pattern.compile("/bbs/userinfo.aspx.*?touserid=([\\d]*)").matcher(us.getURL());
+					if(m.find()){
+						widget.getContext().startActivity(new Intent(widget.getContext(),UserSpaceActivity.class).putExtra("uid",Integer.parseInt(m.group(1))));
+					}else{
 					String url=UrlUtils.getAbsUrl(widget.getContext(), us.getURL());
 					if(url.startsWith("http"))
 					widget.getContext().startActivity(new Intent(widget.getContext(), WebViewActivity.class).setData(Uri.parse(url)));
 					else
 						try{widget.getContext().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));}catch(Exception e){}
+						}
 				}
 			}
 		}else if(span instanceof ImageSpan){
