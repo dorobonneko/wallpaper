@@ -1,4 +1,4 @@
-package com.moe.download;
+package com.moe.thread;
 import android.os.Handler;
 import android.os.Message;
 import java.io.InputStream;

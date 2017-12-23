@@ -13,7 +13,6 @@ import android.net.Uri;
 import com.moe.utils.DocumentFileUtils;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
-import com.moe.database.DownloadDatabase;
 import com.moe.services.DownloadService;
 import android.os.Environment;
 import com.moe.utils.PreferenceUtils;
@@ -25,7 +24,6 @@ public class Download extends Thread
 	private DownloadItem pi;
 	private SharedPreferences setting;
 	private DownloadService service;
-	private DownloadDatabase dd;
 	private InputStream is=null;
 	private OutputStream os=null;
 	private Call call;
@@ -33,8 +31,7 @@ public class Download extends Thread
 		this.pi=pi;
 		setting=context.getSharedPreferences("setting",0);
 		this.service=context;
-		dd=DownloadDatabase.getInstance(context);
-	}
+		}
 
 	public void setDownloadItem(DownloadItem di)
 	{
@@ -98,7 +95,7 @@ public class Download extends Thread
 					length=response.body().contentLength();
 				pi.setTotal(length);
 				//更新数据长度
-				dd.updateTotal(pi.getUrl(),length);
+				pi.update();
 			}
 		
 			switch(response.code()){
@@ -124,11 +121,11 @@ public class Download extends Thread
 			while((len=is.read(buffer))!=-1){
 				os.write(buffer,0,len);
 				pi.setCurrent(pi.getCurrent()+len);
-				dd.updateCurrent(pi.getUrl(),pi.getCurrent());
+				pi.update();
 			}
 			os.flush();
 			pi.setState(DownloadService.State.SUCCESS);
-			dd.updateState(pi.getUrl(),DownloadService.State.SUCCESS);
+			pi.update();
 			service.onItemEnd(this,true);
 			}catch(Exception e){
 			pi.setState(DownloadService.State.ERROR);

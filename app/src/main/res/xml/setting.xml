@@ -33,7 +33,15 @@
 		android:entries="@array/exit_mode"
 		android:entryValues="@array/exit_mode"
 		android:defaultValue="按钮"/>
-	
+	<Preference
+		android:key="setting_update"
+		android:title="检查更新"/>
+	<Preference
+		android:key="setting_faq"
+		android:title="更新日志"/>
+	<Preference
+		android:key="setting_dev"
+		android:title="未来计划"/>
 	<Preference
 		android:key="setting_about"
 		android:title="关于"/>

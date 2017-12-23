@@ -73,18 +73,6 @@
 			android:name=".LeaveMessageActivity"/>
 		<activity
 			android:name=".DownloadPreferenceActivity"/>
-		<activity 
-            android:name="cn.bmob.v3.update.UpdateDialogActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
-        </activity>
-		<provider
-			android:authorities="cn.bmob.update.fileprovider"           android:name="android.support.v4.content.FileProvider"
-			android:grantUriPermissions="true"
-			android:exported="false">
-			<meta-data  
-				android:name="android.support.FILE_PROVIDER_PATHS"
-				android:resource="@xml/file_paths" />
-		</provider>
     </application>
 
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>

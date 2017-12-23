@@ -10,7 +10,12 @@ import android.app.Activity;
 import android.os.Environment;
 import android.support.v7.preference.ListPreference;
 import com.moe.yaohuo.MainActivity;
-public class SettingPreference extends PreferenceFragment implements Preference.OnPreferenceChangeListener
+import android.content.pm.*;
+import android.content.pm.PackageManager.*;
+import android.widget.*;
+import android.support.v7.app.*;
+import java.util.*;
+public class SettingPreference extends PreferenceFragment implements Preference.OnPreferenceChangeListener,Preference.OnPreferenceClickListener
 {
 	ListPreference host;
 	
@@ -36,6 +41,16 @@ public class SettingPreference extends PreferenceFragment implements Preference.
 		//host.setValue(host.getSummary()==null?null:host.getSummary().toString());
 		host.setOnPreferenceChangeListener(this);
 		findPreference("exit_mode").setOnPreferenceChangeListener(this);
+		try
+		{
+			findPreference("setting_update").setSummary("v" + getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), PackageManager.GET_CONFIGURATIONS).versionName);
+		}
+		catch (PackageManager.NameNotFoundException e)
+		{}
+		findPreference("setting_update").setOnPreferenceClickListener(this);
+		findPreference("setting_faq").setOnPreferenceClickListener(this);
+		findPreference("setting_dev").setOnPreferenceClickListener(this);
+		findPreference("setting_about").setOnPreferenceClickListener(this);
 	}
 
 	
@@ -52,6 +67,25 @@ public class SettingPreference extends PreferenceFragment implements Preference.
 		}
 		return true;
 	}
+
+	@Override
+	public boolean onPreferenceClick(Preference p1)
+	{
+		switch(p1.getKey()){
+			case "setting_update":
+				break;
+			case "setting_faq":
+				break;
+				case "setting_dev":
+			
+				
+				break;
+			case "setting_about":
+				break;
+		}
+		return false;
+	}
+
 
 
 	

@@ -231,8 +231,11 @@ public class WebViewActivity extends EventActivity implements DownloadListener
 					di.setTitle(name);
 					di.setReferer(wv.getUrl());
 					di.setTotal(size);
-					di.setDir(getSharedPreferences("setting",0).getString("path",Environment.getExternalStorageDirectory().getAbsolutePath()+"/yaohuo")+"/"+name);
+					di.setDir(getSharedPreferences("setting",0).getString("path",Environment.getExternalStorageDirectory().getAbsolutePath()+"/yaohuo"));
 					di.setType(type);
+					di.setTime(System.currentTimeMillis());
+					di.setCookie(CookieManager.getInstance().getCookie(url));
+					di.save();
 					startService(new Intent(getApplicationContext(),DownloadService.class).setAction(DownloadService.Action_Start).putExtra("down",di));
 				}
 			}).setNegativeButton("取消", null).show();

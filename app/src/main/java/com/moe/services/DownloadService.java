@@ -12,7 +12,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import com.moe.entity.DownloadItem;
 import android.os.Environment;
 import com.moe.download.Download;
-import com.moe.database.DownloadDatabase;
 import android.widget.Toast;
 import android.os.Handler;
 import android.os.Message;
@@ -47,7 +46,6 @@ public class DownloadService extends Service
 	public final static String ACTION_REFRESH="com.moe.yaohuo.DOWNLOAD_REFRESH";
 	private  ArrayList<DownloadItem> list=new ArrayList<>(),loading=new ArrayList<>();
 	private  ArrayList<Download> download=new ArrayList<>();
-	private DownloadDatabase dd;
 	private NotificationManager nm;
 	private static SSLSocketFactory ssf;
 	private NotifcationRefresh refresh;
@@ -91,9 +89,9 @@ public class DownloadService extends Service
 		DownloadItem di=intent.getParcelableExtra("down");
 		switch(intent.getAction()){
 			case Action_Start:
-				dd.insert(di);
-				dd.updateState(di.getUrl(),State.WAITING);
+				
 				di.setState(State.WAITING);
+				di.update();
 				loading.add(di);
 				list.add(di);
 				sendBroadcast(new Intent(ACTION_REFRESH).putParcelableArrayListExtra("data",loading));
@@ -138,7 +136,6 @@ public class DownloadService extends Service
 	{
 		super.onCreate();
 		nm=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		dd=DownloadDatabase.getInstance(this);
 		Intent intent=getPackageManager().getLaunchIntentForPackage(getPackageName());
 		intent.setClipData(ClipData.newPlainText("",""));
 		download_activity=PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);

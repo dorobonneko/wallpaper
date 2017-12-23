@@ -13,7 +13,6 @@ import com.moe.adapter.ViewPagerAdapter;
 import com.moe.entity.DownloadItem;
 import com.moe.adapter.DownloadAdapter;
 import android.support.v7.widget.LinearLayoutManager;
-import com.moe.database.DownloadDatabase;
 import com.moe.services.DownloadService;
 import android.os.Handler;
 import android.os.Message;
@@ -41,7 +40,6 @@ DownloadAdapter.OnItemLongClickListener
 	private List<DownloadItem> loading,success;
 	private DownloadAdapter loading_adapter,success_adapter;
 	private List<RecyclerView> list;
-	private DownloadDatabase dd;
 	private View delete,cancel;
 	private ViewPager vp;
 	private RefreshBroadcast broadcast;
@@ -115,7 +113,6 @@ DownloadAdapter.OnItemLongClickListener
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
-		dd = DownloadDatabase.getInstance(getActivity());
 		super.onActivityCreated(savedInstanceState);
 		onHiddenChanged(false);
 	}
@@ -129,10 +126,10 @@ DownloadAdapter.OnItemLongClickListener
 		if (!hidden)
 		{
 			loading.clear();
-			loading.addAll(dd.query(false));
+			//loading.addAll(dd.query(false));
 			loading_adapter.notifyDataSetChanged();
 			success.clear();
-			success.addAll(dd.query(true));
+			//success.addAll(dd.query(true));
 			success_adapter.notifyDataSetChanged();
 			getContext().registerReceiver(broadcast = new RefreshBroadcast(), new IntentFilter(DownloadService.ACTION_REFRESH));
 			/*List<DownloadItem> list=dd.query(false);
@@ -211,7 +208,7 @@ DownloadAdapter.OnItemLongClickListener
 										int index=loading.indexOf(url);
 										if (index != -1)
 										{
-											dd.delete(loading.remove(index), false);
+											//dd.delete(loading.remove(index), false);
 											loading_adapter.notifyItemRemoved(index);
 										}
 									}
@@ -223,7 +220,7 @@ DownloadAdapter.OnItemLongClickListener
 										int index=success.indexOf(url);
 										if (index != -1)
 										{
-											dd.delete(success.remove(index), false);
+											//dd.delete(success.remove(index), false);
 											success_adapter.notifyItemRemoved(index);
 										}
 									}
@@ -244,7 +241,7 @@ DownloadAdapter.OnItemLongClickListener
 										int index=loading.indexOf(url);
 										if (index != -1)
 										{
-											dd.delete(loading.remove(index), true);
+											//dd.delete(loading.remove(index), true);
 											loading_adapter.notifyItemRemoved(index);
 										}
 									}
@@ -256,7 +253,7 @@ DownloadAdapter.OnItemLongClickListener
 										int index=success.indexOf(url);
 										if (index != -1)
 										{
-											dd.delete(success.remove(index), true);
+											//dd.delete(success.remove(index), true);
 											success_adapter.notifyItemRemoved(index);
 										}
 									}

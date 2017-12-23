@@ -50,7 +50,7 @@ import android.content.DialogInterface;
 import android.provider.MediaStore;
 import android.graphics.Bitmap;
 import android.support.v4.content.ContentResolverCompat;
-import com.moe.download.LogoUpload;
+import com.moe.thread.LogoUpload;
 import com.tencent.bugly.crashreport.CrashReport;
 import android.widget.ImageView;
 import com.bumptech.glide.request.target.ViewTarget;

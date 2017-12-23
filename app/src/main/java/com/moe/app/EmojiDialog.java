@@ -29,7 +29,7 @@ import android.support.v4.content.FileProvider;
 import android.provider.MediaStore;
 import android.database.Cursor;
 import java.io.File;
-import com.moe.download.Upload;
+import com.moe.thread.Upload;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import com.moe.adapter.ImagesAdapter;

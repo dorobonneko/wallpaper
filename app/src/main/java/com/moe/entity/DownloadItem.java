@@ -5,8 +5,9 @@ import android.os.Parcelable;
 import android.os.Parcel;
 import android.app.Notification.Builder;
 import android.app.Notification;
+import com.moe.download.*;
 
-public class DownloadItem implements Parcelable
+public class DownloadItem extends DownloadObject implements Parcelable
 {
 
 	private String title,dir,url;
@@ -15,6 +16,7 @@ public class DownloadItem implements Parcelable
 	private String referer;
 	private String type;
 	private long time;
+	private String cookie;
 	public DownloadItem(){}
 	public DownloadItem(Parcel p)
 	{
@@ -27,6 +29,17 @@ public class DownloadItem implements Parcelable
 		type = p.readString();
 		time = p.readLong();
 		current=p.readLong();
+		cookie=p.readString();
+	}
+
+	public void setCookie(String cookie)
+	{
+		this.cookie = cookie;
+	}
+
+	public String getCookie()
+	{
+		return cookie;
 	}
 	public long getCurrent(){
 		return current;
@@ -152,6 +165,7 @@ public class DownloadItem implements Parcelable
 		p1.writeString(type);
 		p1.writeLong(time);
 		p1.writeLong(current);
+		p1.writeString(cookie);
 	}
 	public static Parcelable.Creator<DownloadItem> CREATOR=new Parcelable.Creator<DownloadItem>(){
 
