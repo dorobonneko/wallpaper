@@ -17,7 +17,7 @@
 
 	<TextView
 		android:id="@+id/nav_header_main_info"
-		android:textColor="#fff"
+		android:textColor="?attr/colorAccent"
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
 		android:text="未登录"
@@ -29,6 +29,7 @@
 		android:shadowRadius="1.0"/>
 
 	<ImageView
+		android:visibility="invisible"
 		android:id="@+id/message"
 		android:background="?attr/selectableItemBackgroundBorderless"
 		android:layout_height="wrap_content"

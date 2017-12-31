@@ -18,7 +18,7 @@ public class Divider extends RecyclerView.ItemDecoration
 	}
 	public Divider(int size){
 		paint.setColor(0x00000000);
-		rect.set(size,size/2,size,size);
+		rect.set(size,size/2,size,size/2);
 	}
 	public Divider(int left,int top,int right,int bottom,DisplayMetrics dm){
 		this(0x00000000,left,top,right,bottom,dm);

@@ -114,7 +114,7 @@ private TextInputEditText username,passwd;
 					finish();
 					break;
 				case 3:
-					Toast.makeText(getApplicationContext(),msg.obj.toString(),Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(),msg.obj==null?"网络错误":msg.obj.toString(),Toast.LENGTH_SHORT).show();
 					break;
 			}
 		}

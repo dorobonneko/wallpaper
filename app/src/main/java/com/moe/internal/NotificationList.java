@@ -8,9 +8,9 @@ import com.moe.download.Download;
 import com.moe.services.DownloadService;
 import java.io.File;
 import java.text.*;
+import com.moe.utils.NumberUtils;
 public class NotificationList
 {
-	private DecimalFormat df=new DecimalFormat("0.00");
 	private Context context;
 	private HashMap<String,Notification.Builder> list;
 	private static NotificationList nl;
@@ -31,7 +31,7 @@ public class NotificationList
 			builder.setOngoing(di.isLoading());
 			builder.setProgress(100,(int)(((double)di.getCurrent())/di.getTotal()*100),di.getState()==DownloadService.State.SUCCESS);
 			builder.setContentTitle(di.getTitle());
-			builder.setSubText(di.getState()==DownloadService.State.SUCCESS?"下载完成":(df.format(di.getCurrent()/1024.0/1024)+"M/"+df.format(di.getTotal()/1024.0/1024)+"M"));
+			builder.setSubText(di.getState()==DownloadService.State.SUCCESS?"下载完成":(NumberUtils.getSize(di.getCurrent())+"/"+NumberUtils.getSize(di.getTotal())));
 			return builder;
 	}
 	public void remove(DownloadItem di){

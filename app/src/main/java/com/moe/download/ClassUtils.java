@@ -1,7 +1,7 @@
 package com.moe.download;
 import java.lang.reflect.*;
 
-class ClassToType
+class ClassUtils
 {
 	public static String getType(Field class_){
 		switch(class_.getType().getSimpleName()){
@@ -21,7 +21,7 @@ class ClassToType
 				return "NULL";
 		}
 	}
-	public static boolean isAccess(Field field){
+	public static boolean isAccept(Field field){
 		switch(field.getType().getSimpleName()){
 			case "String":
 			case "int":
@@ -35,5 +35,8 @@ class ClassToType
 				return true;
 		}
 		return false;
+	}
+	public static Class getTopClass(Class class_){
+		return class_.getName().equals(DownloadObject.class.getName())?class_:getTopClass(class_.getSuperclass());
 	}
 }

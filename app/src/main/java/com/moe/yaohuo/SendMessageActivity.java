@@ -98,7 +98,7 @@ public class SendMessageActivity extends EventActivity
 				if(content.getText().toString().trim().length()>0)
 				send();
 				else
-					Toast.makeText(this,"内容不能为空",Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(),"内容不能为空",Toast.LENGTH_SHORT).show();
 				break;
 			case R.id.emoji:
 				if(emoji==null)emoji=new EmojiDialog(this);

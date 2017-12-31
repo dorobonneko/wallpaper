@@ -33,9 +33,6 @@ public class EventActivity extends BaseActivity
 		getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
 		background=getWindow().getDecorView();
 		Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
-		TypedArray ta=obtainStyledAttributes(new int[]{android.support.v7.appcompat.R.attr.colorControlNormal});
-		toolbar.setTitleTextColor(ta.getColor(0,0xffffffff));
-		ta.recycle();
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}

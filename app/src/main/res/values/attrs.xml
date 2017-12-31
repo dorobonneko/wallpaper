@@ -15,4 +15,7 @@
 	<declare-styleable name="circle_imageview">
 		<attr name="useCircle" format="reference|boolean"/>
 	</declare-styleable>
+	<declare-styleable name="app_style">
+		<attr name="colorIcons" format="reference|color"/>
+	</declare-styleable>
 </resources>

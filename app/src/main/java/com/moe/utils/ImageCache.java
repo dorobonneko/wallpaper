@@ -61,8 +61,7 @@ public class ImageCache implements ImageLoadThread.OnLoadSuccessListener
 	}
 	public static void load(String url,ImageView iv){
 		//getInstance(iv.getContext()).loadIamge(iv,url);
-		if(iv.getContext() instanceof Activity&&((Activity)iv.getContext()).isDestroyed())return;
-		DrawableRequestBuilder drb=Glide.with(iv.getContext()).load(url).diskCacheStrategy(DiskCacheStrategy.SOURCE);
+		DrawableRequestBuilder drb=Glide.with(iv.getContext().getApplicationContext()).load(url).diskCacheStrategy(DiskCacheStrategy.SOURCE);
 		//if(iv.getWidth()>0&&iv.getHeight()>0)
 			//drb.override(iv.getWidth(),iv.getHeight());
 			drb.centerCrop();

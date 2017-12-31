@@ -40,4 +40,16 @@
 		<item>65536</item>
 		<item>131072</item>
 	</string-array>
+	<string-array name="error_reload">
+		<item>不重试</item>
+		<item>1</item>
+		<item>3</item>
+		<item>5</item>
+	</string-array>
+	<string-array name="error_reload_size">
+		<item>0</item>
+		<item>1</item>
+		<item>3</item>
+		<item>5</item>
+	</string-array>
 </resources>

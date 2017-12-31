@@ -84,6 +84,7 @@ public class CollectionFragment extends Fragment implements SwipeRefreshLayout.O
 	@Override
 	public void onItemClick(CollectionAdapter sha, CollectionAdapter.ViewHolder vh)
 	{
+		if(vh.getAdapterPosition()==-1)return;
 		String url=list.get(vh.getAdapterPosition()).getSummary();
 		if(url.matches("^http.?://.*?")){
 			getActivity().startActivity(new Intent(getContext(),WebViewActivity.class).setData(Uri.parse(url)));
@@ -205,7 +206,7 @@ public class CollectionFragment extends Fragment implements SwipeRefreshLayout.O
 				case 0:
 					progress.setVisibility(View.INVISIBLE);
 					refresh.setRefreshing(false);
-					Toast.makeText(getContext(),"加载失败",Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),"加载失败",Toast.LENGTH_SHORT).show();
 					break;
 				case 1:
 					progress.setVisibility(View.INVISIBLE);
@@ -230,7 +231,7 @@ public class CollectionFragment extends Fragment implements SwipeRefreshLayout.O
 					ca.notifyItemRemoved(msg.obj);
 					break;
 				case 3:
-					Toast.makeText(getContext(),"删除失败",Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),"删除失败",Toast.LENGTH_SHORT).show();
 					break;
 				case 4:
 					Toast.makeText(getActivity(),"添加失败",Toast.LENGTH_SHORT).show();

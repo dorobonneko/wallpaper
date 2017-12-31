@@ -198,12 +198,15 @@ public class FriendActivity extends EventActivity implements SwipeRefreshLayout.
 					refresh.setRefreshing(false);
 					progress.setVisibility(progress.INVISIBLE);
 					if(msg.obj!=null){
+						int size=list.size();
 					if(isfirst){
 						isfirst=false;
 						list.clear();
+						fa.notifyItemRangeRemoved(0,size);
+						size=0;
 						}
 						list.addAll((List)msg.obj);
-						fa.notifyDataSetChanged();
+						fa.notifyItemRangeInserted(size,((List)msg.obj).size());
 						page++;
 						canload=list.size()<total;
 						}

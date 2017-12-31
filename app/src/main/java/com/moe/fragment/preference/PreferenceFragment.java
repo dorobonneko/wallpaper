@@ -9,8 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 
-public abstract class PreferenceFragment extends PreferenceFragmentCompat
+public class PreferenceFragment extends PreferenceFragmentCompat
 {
+
+	@Override
+	public void onCreatePreferences(Bundle p1, String p2)
+	{
+		// TODO: Implement this method
+	}
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)

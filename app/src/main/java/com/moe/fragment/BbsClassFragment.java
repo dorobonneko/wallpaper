@@ -84,7 +84,7 @@ public class BbsClassFragment extends AnimeFragment implements SwipeRefreshLayou
 						list.addAll((List)msg.obj);
 						ba.notifyDataSetChanged();
 					}else
-					Toast.makeText(getContext(),"加载失败",Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(),"加载失败",Toast.LENGTH_SHORT).show();
 					break;
 			}
 		}

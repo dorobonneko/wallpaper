@@ -32,9 +32,19 @@ import android.view.animation.ScaleAnimation;
 import android.webkit.MimeTypeMap;
 import java.io.File;
 import android.net.Uri;
+import com.moe.download.DownloadQuery;
+import com.moe.download.*;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.support.graphics.drawable.VectorDrawableCompat;
+import com.moe.yaohuo.PreferenceActivity;
+import android.view.Menu;
 public class DownloadFragment extends AnimeFragment implements View.OnClickListener,
 DownloadAdapter.OnItemClickListener,
-DownloadAdapter.OnItemLongClickListener
+DownloadAdapter.OnItemLongClickListener,
+DownloadQuery.Listener<DownloadItem>
 {
 	private List<DownloadItem> loading_selected,success_selected;
 	private List<DownloadItem> loading,success;
@@ -44,6 +54,17 @@ DownloadAdapter.OnItemLongClickListener
 	private ViewPager vp;
 	private RefreshBroadcast broadcast;
 	private Animation enter,exit;
+	private DownloadQuery<DownloadItem> query=null;
+	private QuerySql<DownloadItem> loading_sql,success_sql;
+	public DownloadFragment(){
+		query=new DownloadQuery<DownloadItem>(DownloadItem.class);
+		loading_sql=new QuerySql<>();
+		success_sql=new QuerySql<>();
+		loading_sql.setArgs(null,"state!=?",new String[]{DownloadService.State.SUCCESS+""},null,null,"time");
+		success_sql.setArgs(null,"state=?",new String[]{DownloadService.State.SUCCESS+""},null,null,"time desc");
+		loading_sql.setListener(this);
+		success_sql.setListener(this);
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
@@ -114,63 +135,44 @@ DownloadAdapter.OnItemLongClickListener
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
-		onHiddenChanged(false);
+		query.doQuery(loading_sql);
+		query.doQuery(success_sql);
+		getContext().registerReceiver(broadcast = new RefreshBroadcast(), new IntentFilter(DownloadService.ACTION_REFRESH));
+		setHasOptionsMenu(true);
 	}
-
-
-
 
 	@Override
-	public void onHiddenChanged(boolean hidden)
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
 	{
-		if (!hidden)
-		{
-			loading.clear();
-			//loading.addAll(dd.query(false));
-			loading_adapter.notifyDataSetChanged();
-			success.clear();
-			//success.addAll(dd.query(true));
-			success_adapter.notifyDataSetChanged();
-			getContext().registerReceiver(broadcast = new RefreshBroadcast(), new IntentFilter(DownloadService.ACTION_REFRESH));
-			/*List<DownloadItem> list=dd.query(false);
-			 for(DownloadItem di:list){
-			 getContext().startService(new Intent(getContext(),DownloadService.class).setAction(DownloadService.Action_Update).putExtra("down",di));
-			 }
-			 loading.clear();
-			 loading.addAll(list);
-			 loading_adapter.notifyDataSetChanged();
-			 success.clear();
-			 success.addAll(dd.query(true));
-			 success_adapter.notifyDataSetChanged();
-			 handler.sendEmptyMessage(0);*/
-		}
-		else
-		//handler.removeMessages(0);
-			try
-			{getContext().unregisterReceiver(broadcast);}
-			catch (Exception e)
-			{}
+		menu.add(0,0,0,"设置");
+		menu.getItem(0).setIntent(new Intent(getActivity(),PreferenceActivity.class).setAction("download")).setIcon(VectorDrawableCompat.create(getResources(),R.drawable.settings,getActivity().getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 	}
 
-	/*private Handler handler=new Handler(){
-
-		@Override
-		public void handleMessage(Message msg)
-		{
-			switch (msg.what)
-			{
-				case 0:
-					loading_adapter.notifyItemRangeChanged(0, loading.size());
-					if (loading.size() > 0)
-						sendEmptyMessageDelayed(0, 1000);
-					break;
-				case 1:
-					break;
-			}
+	
+	@Override
+	public void done(QuerySql<DownloadItem> qs, List<DownloadItem> t)
+	{
+		if(qs==loading_sql){
+			loading.clear();
+			if(t!=null)
+				loading.addAll(t);
+			loading_adapter.notifyDataSetChanged();
+			
+		}else{
+			success.clear();
+			if(t!=null)
+				success.addAll(t);
+			success_adapter.notifyDataSetChanged();
+		
 		}
+	}
 
-	};*/
 
+
+
+
+	
+	
 	@Override
 	public void onClick(View p1)
 	{
@@ -241,6 +243,8 @@ DownloadAdapter.OnItemLongClickListener
 										int index=loading.indexOf(url);
 										if (index != -1)
 										{
+											url.delete();
+											loading.remove(url);
 											//dd.delete(loading.remove(index), true);
 											loading_adapter.notifyItemRemoved(index);
 										}
@@ -253,6 +257,10 @@ DownloadAdapter.OnItemLongClickListener
 										int index=success.indexOf(url);
 										if (index != -1)
 										{
+											url.delete();
+											success.remove(url);
+											File file=new File(url.getDir(),url.getTitle());
+											if(file.exists())file.delete();
 											//dd.delete(success.remove(index), true);
 											success_adapter.notifyItemRemoved(index);
 										}
@@ -297,6 +305,7 @@ DownloadAdapter.OnItemLongClickListener
 	@Override
 	public void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder vh)
 	{
+		if(vh.getAdapterPosition()==-1)return;
 		if (delete.getVisibility() == delete.VISIBLE)
 		{
 			DownloadItem url=null;
@@ -325,14 +334,14 @@ DownloadAdapter.OnItemLongClickListener
 			switch (vh.getItemViewType())
 			{
 				case 0:
-					getContext().startService(new Intent(getContext(), DownloadService.class).setAction(loading.get(vh.getAdapterPosition()).isLoading() ?DownloadService.Action_Stop: DownloadService.Action_Start).putExtra("down", loading.get(vh.getAdapterPosition())));
+					getContext().startService(new Intent(getContext(), DownloadService.class).putExtra("down", loading.get(vh.getAdapterPosition())));
 					break;
 				case 1:
 					String title=success.get(vh.getAdapterPosition()).getTitle();
 					int index=title.lastIndexOf(".");
 					if(index!=-1){
 					String type=MimeTypeMap.getSingleton().getMimeTypeFromExtension(title.substring(index+1));
-					getContext().startActivity(new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.parse("file://"+success.get(vh.getAdapterPosition()).getDir()),type));
+					getContext().startActivity(new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.fromFile(new File(success.get(vh.getAdapterPosition()).getDir(),success.get(vh.getAdapterPosition()).getTitle())),type));
 					}
 					break;
 			}
@@ -348,8 +357,8 @@ DownloadAdapter.OnItemLongClickListener
 			cancel.startAnimation(exit);
 			loading_selected.clear();
 			success_selected.clear();
-			loading_adapter.notifyDataSetChanged();
-			success_adapter.notifyDataSetChanged();
+			loading_adapter.notifyItemRangeChanged(0,loading.size());
+			success_adapter.notifyItemRangeChanged(0,success.size());
 			return true;
 		}
 		return false;
@@ -364,27 +373,60 @@ DownloadAdapter.OnItemLongClickListener
 		public void onReceive(Context p1, Intent p2)
 		{
 			List<DownloadItem> ldi=p2.getParcelableArrayListExtra("data");
+			if(ldi==null)
+				refresh((DownloadItem)p2.getParcelableExtra("data"));
+				else
 			for (DownloadItem di:ldi)
+			refresh(di);
+			
+		}
+		public <T> void refresh(DownloadItem di){
+			if(di==null)return;
+			if (di.getState() != DownloadService.State.SUCCESS)
 			{
 				int index=loading.indexOf(di);
-				if (index != -1)
-				{
+				if(index==-1){
+					loading.add(0,di);
+					loading_adapter.notifyItemInserted(0);
+				}else{
+					loading.set(index,di);
+					loading_adapter.notifyItemChanged(index);
+				}
+			}else{
+				int index=loading.indexOf(di);
+				if(index==-1){
+					index=success.indexOf(di);
+					if(index==-1){
+						success.add(0,di);
+						success_adapter.notifyItemInserted(0);
+					}
+				}else{
 					loading.remove(index);
-					if (di.getState() == DownloadService.State.SUCCESS)
-					{
-						loading_adapter.notifyItemRemoved(index);
-						success.add(success.size(), di);
-						success_adapter.notifyItemInserted(success.size() - 1);
-					}
-					else
-					{
-						loading.add(index, di);
-						loading_adapter.notifyItemChanged(index);
-					}
+					loading_adapter.notifyItemRemoved(index);
+					success.add(0, di);
+					success_adapter.notifyItemInserted(0);
 				}
 			}
+			/*int index=loading.indexOf(di);
+			if (index != -1)
+			{
+				if (di.getState() != DownloadService.State.SUCCESS)
+				{
+					loading.set(index, di);
+					loading_adapter.notifyItemChanged(index);
+				}else if(success.contains(di)){
+					loading.remove(index);
+					loading_adapter.notifyItemRemoved(index);
+				}else{
+					loading.remove(index);
+					loading_adapter.notifyItemRemoved(index);
+					success.add(0, di);
+					success_adapter.notifyItemInserted(0);
+				}
+			}else{
+				
+			}*/
 		}
-
 
 	}
 

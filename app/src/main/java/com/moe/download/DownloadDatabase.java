@@ -1,32 +1,60 @@
 package com.moe.download;
 import android.database.sqlite.SQLiteOpenHelper;
+import java.lang.reflect.Field;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteStatement;
-import com.moe.entity.DownloadItem;
-import java.util.List;
-import com.moe.services.DownloadService;
 import android.database.Cursor;
-import java.util.ArrayList;
-import android.os.Environment;
-import java.io.File;
-import com.moe.utils.DocumentFileUtils;
-import android.support.v4.provider.DocumentFile;
-import android.net.Uri;
-import java.lang.reflect.*;
-import java.util.*;
+import android.database.SQLException;
+
 
 public class DownloadDatabase extends SQLiteOpenHelper
 {
-	private Context context;
-	private SQLiteDatabase sql;
 	private static DownloadDatabase dd;
 	private DownloadDatabase(Context context)
 	{
 		super(context.getApplicationContext(),"download",null,3);
-		sql = getReadableDatabase();
-		this.context = context.getApplicationContext();
+	}
+
+	protected void update(DownloadObject p0)
+	{
+		SQLiteDatabase sql=dd.getWritableDatabase();
+		Field[] field=p0.getClass().getDeclaredFields();
+		field = Filter.filter(field,Field.class,new Filter.Filter<Field>(){
+
+				@Override
+				public boolean isAccept(Field item)
+				{
+					return ClassUtils.isAccept(item);
+				}
+			});
+		
+		StringBuffer keys=new StringBuffer();
+		for (Field field_:field)
+		{
+			keys.append(field_.getName()).append("=?,");
+		}
+		keys.deleteCharAt(keys.length()-1);
+		SQLiteStatement state=sql.compileStatement("update "+p0.getTableName()+" set "+keys.toString()+" where _id=?");
+		state.acquireReference();
+		for (int i=0;i<field.length;i++)
+		{
+			FieldUtils.bind(state,field[i],p0,i+1);
+		}
+		state.bindLong(field.length+1,p0.getId());
+		state.executeUpdateDelete();
+		state.close();
+		state.releaseReference();
+		
+	}
+
+	protected void delete(DownloadObject p0)
+	{
+		SQLiteDatabase sql=getReadableDatabase();
+		SQLiteStatement state=sql.compileStatement("delete from "+p0.getTableName()+" where _id=?");
+		state.bindLong(1,p0.getId());
+		state.executeUpdateDelete();
+		state.close();
 	}
 
 	protected void save(DownloadObject p0)
@@ -38,15 +66,15 @@ public class DownloadDatabase extends SQLiteOpenHelper
 				@Override
 				public boolean isAccept(Field item)
 				{
-					return ClassToType.isAccess(item);
+					return ClassUtils.isAccept(item);
 				}
 			});
 		if (!dd.tableIsExist(p0.getTableName(),sql))
 		{
 			StringBuffer fields=new StringBuffer();
 			for (Field field_:field)
-				fields.append(field_.getName()).append(" ").append(ClassToType.getType(field_)).append(",");
-			fields.delete(fields.length()-1,fields.length());
+				fields.append(field_.getName()).append(" ").append(ClassUtils.getType(field_)).append(",");
+			fields.append("_id Integer Primary Key");
 			sql.execSQL("create table "+p0.getTableName()+"("+fields.toString()+")");
 		}
 		StringBuffer keys=new StringBuffer();
@@ -57,54 +85,16 @@ public class DownloadDatabase extends SQLiteOpenHelper
 			keys.append(field_.getName()).append(",");
 			values.append("?,");
 		}
-		keys.delete(keys.length()-1,keys.length());
-		values.delete(values.length()-1,values.length());
+		keys.append("_id");
+		values.append("?");
 		SQLiteStatement state=sql.compileStatement("insert into "+p0.getTableName()+"("+keys.toString()+") values("+values.toString()+")");
 		for (int i=0;i<field.length;i++)
 		{
-			//if(ClassToType.isAccess(field[i]))
-			try
-			{
-				field[i].setAccessible(true);
-				switch (field[i].getType().getSimpleName())
-				{
-					case "String":
-						state.bindString(i+1,field[i].get(p0)==null?"":field[i].get(p0).toString());
-						break;
-					case "long":
-						state.bindLong(i+1,field[i].getLong(p0));
-						break;
-					case "int":
-						state.bindLong(i+1,field[i].getInt(p0));
-						break;
-					case "char":
-						state.bindLong(i+1,field[i].getChar(p0));
-						break;
-					case "boolean":
-						state.bindLong(i+1,field[i].getBoolean(p0)?1:0);
-						break;
-					case "byte":
-						state.bindLong(i+1,field[i].getByte(p0));
-						break;
-					case "short":
-						state.bindLong(i+1,field[i].getShort(p0));
-						break;
-					case "float":
-						state.bindDouble(i+1,field[i].getFloat(p0));
-						break;
-					case "double":
-						state.bindDouble(i+1,field[i].getDouble(p0));
-						break;
-				}
-			}
-			catch (IllegalAccessException e)
-			{}
-			catch (IllegalArgumentException e)
-			{}
+			FieldUtils.bind(state,field[i],p0,i+1);
 		}
+		state.bindLong(field.length+1,p0.getId());
 		state.executeInsert();
 		state.close();
-		sql.close();
 	}
 	protected boolean tableIsExist(String tableName, SQLiteDatabase db)
 	{

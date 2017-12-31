@@ -20,6 +20,8 @@ import com.moe.utils.PreferenceUtils;
 import java.io.IOException;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
+import android.text.Html;
+import com.moe.graphics.MessageDrawable;
 public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout.OnRefreshListener,ListAdapter.OnItemClickListener,AppBarLayout.OnOffsetChangedListener
 {
 	private ArrayList<ListItem> list;
@@ -30,6 +32,8 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 	private boolean canLoadMore=true;
 	private BbsItem bbs;
 	private View progress;
+	private MenuItem message;
+	private MessageDrawable msgIcon;
 	public void load(BbsItem bi)
 	{
 		bbs = bi;
@@ -62,6 +66,7 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 			isFirst = savedInstanceState.getBoolean("isfirst");
 			total = savedInstanceState.getInt("total");
 		}
+		msgIcon=new MessageDrawable(getActivity());
 	}
 
 	@Override
@@ -184,6 +189,15 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 		catch (Exception e)
 		{}
 		Elements elements=doc.getElementsByAttributeValueMatching("class", "^line(1|2)$");
+		Elements msgs=doc.getElementsByAttributeValueStarting("href", "/bbs/messagelist.aspx");
+		if (msgs.size() > 0)
+		{
+			Matcher matcher=Pattern.compile("(?s).*?([0-9]{1,})", Pattern.DOTALL).matcher(msgs.get(0).text());
+			if (matcher.find())
+				handler.obtainMessage(2,Integer.parseInt(matcher.group(1))).sendToTarget();
+		}else{
+			handler.obtainMessage(2,0).sendToTarget();
+		}
 		List<ListItem> list=new ArrayList<>();
 		for (int i=0;i < elements.size();i++)
 		{
@@ -269,7 +283,7 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 						progress.setVisibility(progress.INVISIBLE);
 						if (msg.obj == null)
 						{
-							Toast.makeText(getContext(), "访问失败", Toast.LENGTH_SHORT).show();
+							Toast.makeText(getActivity(), "访问失败", Toast.LENGTH_SHORT).show();
 						}
 						else
 						{
@@ -290,6 +304,14 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 
 						}
 						break;
+						case 2:
+							int msg_size=(Integer)msg.obj;
+							/*if(msg_size>0){
+								message.setTitle(Html.fromHtml("消息<font color='#0097a7'>"+msg_size+"</font>"));
+							}else
+							message.setTitle("消息");*/
+							msgIcon.setMsgSize(msg_size);
+							break;
 				}
 			}
 			catch (Exception e)
@@ -375,20 +397,21 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
 	{
-		menu.add(0, 0, 0, "搜索");
-		menu.getItem(0).setIcon(VectorDrawableCompat.create(getResources(), R.drawable.magnify, getActivity().getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.add(0,0,0,"消息");
+		message=menu.getItem(0);
+		message.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+
+				@Override
+				public boolean onMenuItemClick(MenuItem p1)
+				{
+					msgIcon.setMsgSize(0);
+					return false;
+				}
+			}).setIntent(new Intent(getActivity(),MessageActivity.class)).setIcon(msgIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.add(0, 1, 1, "搜索");
+		menu.getItem(1).setIntent(new Intent(getActivity(),SearchActivity.class)).setIcon(VectorDrawableCompat.create(getResources(), R.drawable.magnify, getActivity().getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		switch (item.getItemId())
-		{
-			case 0:
-				getActivity().startActivity(new Intent(getContext(), SearchActivity.class));
-				return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+	
 
 }

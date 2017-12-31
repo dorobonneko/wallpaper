@@ -83,7 +83,7 @@ public class UserUtils
 				.userAgent(PreferenceUtils.getUserAgent())
 				.cookie(PreferenceUtils.getCookieName(context), PreferenceUtils.getCookie(context))
 				.get();
-			if (id == PreferenceUtils.getUid(context))
+			/*if (id == PreferenceUtils.getUid(context))
 			{
 				Elements msgs=doc.getElementsByAttributeValueStarting("href", "/bbs/messagelist.aspx");
 				if (msgs.size() > 0)
@@ -92,7 +92,7 @@ public class UserUtils
 					if (matcher.find())
 						ui.setMsg(Integer.parseInt(matcher.group(1)));
 				}
-			}
+			}*/
 			try
 			{
 				ui.setLogo(doc.getElementsByAttributeValue("alt", "头像").get(0).absUrl("src"));

@@ -7,7 +7,7 @@ import android.app.Notification.Builder;
 import android.app.Notification;
 import com.moe.download.*;
 
-public class DownloadItem extends DownloadObject implements Parcelable
+public class DownloadItem extends DownloadObject
 {
 
 	private String title,dir,url;
@@ -20,6 +20,7 @@ public class DownloadItem extends DownloadObject implements Parcelable
 	public DownloadItem(){}
 	public DownloadItem(Parcel p)
 	{
+		super(p);
 		title = p.readString();
 		url = p.readString();
 		dir = p.readString();
@@ -156,6 +157,7 @@ public class DownloadItem extends DownloadObject implements Parcelable
 	@Override
 	public void writeToParcel(Parcel p1, int p2)
 	{
+		super.writeToParcel(p1,p2);
 		p1.writeString(title);
 		p1.writeString(url);
 		p1.writeString(dir);

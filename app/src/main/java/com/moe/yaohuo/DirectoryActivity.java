@@ -199,7 +199,7 @@ public class DirectoryActivity extends EventActivity implements FileFilter,Compa
 						}).create().show();
 
 		}else{
-						Toast.makeText(this,"当前模式不支持",Toast.LENGTH_SHORT).show();
+						Toast.makeText(getApplicationContext(),"当前模式不支持",Toast.LENGTH_SHORT).show();
 					}
 				break;
 		}
@@ -217,7 +217,7 @@ public class DirectoryActivity extends EventActivity implements FileFilter,Compa
 	public void onClick(View p1)
 	{
 		if (current == null)
-			Toast.makeText(this, "无效的目录", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "无效的目录", Toast.LENGTH_SHORT).show();
 		else
 		{
 			setResult(RESULT_OK, new Intent().setData(Uri.parse(current.getAbsolutePath())));

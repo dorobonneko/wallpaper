@@ -210,10 +210,8 @@ public class FloorAdapter extends RecyclerView.Adapter
 		{
 			switch(p1.getId()){
 				case R.id.icon:
-					UserItem ui=list.get(getAdapterPosition()-headers.size()).getUser();
-					if(ui!=null){
-					p1.getContext().startActivity(new Intent(p1.getContext(),UserInfoActivity.class).putExtra("uid",ui.getUid()));
-					}
+					FloorItem fitem=list.get(getAdapterPosition()-headers.size());
+					p1.getContext().startActivity(new Intent(p1.getContext(),UserInfoActivity.class).putExtra("uid",fitem.getUser()==null?fitem.getUid():fitem.getUser().getUid()));
 					break;
 				case R.id.more:
 					final FloorItem fi=list.get(getAdapterPosition()-headers.size());

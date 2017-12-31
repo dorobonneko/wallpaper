@@ -8,7 +8,7 @@ public class UserItem implements Parcelable
 	private int state,sex;
 	private long exper,money;
 	private int uid;
-	private int msg;
+	//private int msg;
 	private int level;
 	private String nickName,area,registerTime,time,star;
 	private String sign;
@@ -111,7 +111,7 @@ public class UserItem implements Parcelable
 	{
 		return star;
 	}
-	public void setMsg(int msg)
+	/*public void setMsg(int msg)
 	{
 		this.msg = msg > 99 ?99: msg;
 	}
@@ -119,7 +119,7 @@ public class UserItem implements Parcelable
 	public int getMsg()
 	{
 		return msg;
-	}
+	}*/
 
 	public void setLogo(String logo)
 	{
@@ -207,7 +207,7 @@ public class UserItem implements Parcelable
 		p1.writeLong(money);
 		p1.writeInt(uid);
 		p1.writeString(logo);
-		p1.writeInt(msg);
+		//p1.writeInt(msg);
 		p1.writeInt(level);
 		p1.writeString(height);
 		p1.writeString(weight);
@@ -247,7 +247,7 @@ public class UserItem implements Parcelable
 		setMoney(p1.readLong());
 		setUid(p1.readInt());
 		setLogo(p1.readString());
-		setMsg(p1.readInt());
+		//setMsg(p1.readInt());
 		level = p1.readInt();
 		height = p1.readString();
 		weight = p1.readString();

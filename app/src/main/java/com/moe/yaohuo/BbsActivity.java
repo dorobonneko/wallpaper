@@ -628,7 +628,7 @@ SwipeRefreshLayout.OnRefreshListener
 			case R.id.edit:
 				if (why_close != null)
 				{
-					Toast.makeText(this, "本贴已结", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), "本贴已结", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				Bundle bundle=new Bundle();
@@ -674,7 +674,7 @@ SwipeRefreshLayout.OnRefreshListener
 		{
 			if (why_close != null)
 			{
-				Toast.makeText(this, "本贴已结", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "本贴已结", Toast.LENGTH_SHORT).show();
 				return;
 			}
 			Bundle bundle=new Bundle();
@@ -691,8 +691,9 @@ SwipeRefreshLayout.OnRefreshListener
 			switch (requestCode)
 			{
 				case 333:
+					int size=list.size();
 					list.clear();
-					fa.notifyDataSetChanged();
+					fa.notifyItemRangeRemoved(fa.getHeaderCount(),size);
 					page = 1;
 					loadReply();
 					break;

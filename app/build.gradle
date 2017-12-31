@@ -24,6 +24,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+	//leancloud配置
+	packagingOptions{
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+    lintOptions {
+        abortOnError false
+    }
 	
 }
 
@@ -41,5 +49,6 @@ dependencies {
 	compile 'com.tencent.bugly:nativecrashreport:+'
 	compile 'com.squareup.okhttp3:okhttp:+'
 	//compile 'cn.bmob.android:bmob-sdk:3.5.0'
+	compile ('cn.leancloud.android:avoscloud-sdk:+')
 	compile fileTree(dir: 'libs', include: ['*.jar'])
 }

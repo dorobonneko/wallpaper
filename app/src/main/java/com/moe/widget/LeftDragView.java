@@ -36,8 +36,9 @@ public class LeftDragView extends FrameLayout
 	protected void onLayout(boolean changed, int left, int top, int right, int bottom)
 	{
 		// TODO: Implement this method
-		super.onLayout(changed, left, top, right, bottom);
-		if(changed)ViewCompat.offsetLeftAndRight(getChildAt(0),this.left);
+		//super.onLayout(changed, left, top, right, bottom);
+		getChildAt(0).layout(left+this.left,top,right+this.left,bottom);
+		//if(changed)ViewCompat.offsetLeftAndRight(getChildAt(0),this.left);
 	}
 
 	@Override

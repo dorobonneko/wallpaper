@@ -131,7 +131,7 @@ public class ModBbsActivity extends EventActivity
 						}
 					}.start();
 				}else
-				Toast.makeText(this,"加载失败，无法更改",Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(),"加载失败，无法更改",Toast.LENGTH_SHORT).show();
 				break;
 			case R.id.emoji:
 				if(emoji==null)emoji=new EmojiDialog(this);

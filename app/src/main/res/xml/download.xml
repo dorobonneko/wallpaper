@@ -17,5 +17,11 @@
 		android:entryValues="@array/buffer_value"
 		android:defaultValue="4096"
 	/>
-
+	<ListPreference
+		android:title="出错重试"
+		android:key="error_size"
+		android:entries="@array/error_reload"
+		android:entryValues="@array/error_reload_size"
+		android:defaultValue="0"
+	/>
 </PreferenceScreen>

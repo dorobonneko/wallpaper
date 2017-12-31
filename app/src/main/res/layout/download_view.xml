@@ -21,7 +21,6 @@
 	</LinearLayout>
 
 	<LinearLayout
-		android:theme="@style/AppTheme.Dark"
 		android:layout_gravity="bottom|end"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -38,7 +37,7 @@
 			android:layout_marginTop="15dp"
 			android:layout_marginBottom="30dp"
 			app:srcCompat="@drawable/close"
-			app:backgroundTint="#fff"
+			app:backgroundTint="?attr/colorAccent"
 			app:borderWidth="0dp"
 			app:elevation="2dp"
 			app:fabSize="normal"
@@ -54,7 +53,7 @@
 			android:layout_marginTop="15dp"
 			android:layout_marginBottom="30dp"
 			app:srcCompat="@drawable/delete"
-			app:backgroundTint="#fff"
+			app:backgroundTint="?attr/colorAccent"
 			app:borderWidth="0dp"
 			app:elevation="2dp"
 			app:fabSize="normal"

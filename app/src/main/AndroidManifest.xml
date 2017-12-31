@@ -72,7 +72,7 @@
 		<activity
 			android:name=".LeaveMessageActivity"/>
 		<activity
-			android:name=".DownloadPreferenceActivity"/>
+			android:name=".PreferenceActivity"/>
     </application>
 
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>

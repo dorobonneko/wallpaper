@@ -83,10 +83,11 @@ public class WebViewActivity extends EventActivity implements DownloadListener
 	@Override
 	public void finish()
 	{
+		if(wv!=null){
 		wv.pauseTimers();
 		wv.stopLoading();
 		wv.destroy();
-		wv=null;
+		wv=null;}
 		super.finish();
 	}
 	
@@ -236,7 +237,7 @@ public class WebViewActivity extends EventActivity implements DownloadListener
 					di.setTime(System.currentTimeMillis());
 					di.setCookie(CookieManager.getInstance().getCookie(url));
 					di.save();
-					startService(new Intent(getApplicationContext(),DownloadService.class).setAction(DownloadService.Action_Start).putExtra("down",di));
+					startService(new Intent(getApplicationContext(),DownloadService.class).putExtra("down",di));
 				}
 			}).setNegativeButton("取消", null).show();
 			}

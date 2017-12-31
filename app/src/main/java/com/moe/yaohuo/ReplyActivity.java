@@ -115,7 +115,7 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 				InputStream is=getAssets().open("face");
 				for (String face:StringUtils.getString(is).split(","))
 					list.add(face);
-				ea.notifyDataSetChanged();
+				ea.notifyItemRangeInserted(0,list.size());
 				is.close();
 			}
 			catch (IOException e)
@@ -133,12 +133,12 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 			
 			case R.id.send:
 				if (send)
-					Toast.makeText(this, "正在发送，请勿重复点击", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), "正在发送，请勿重复点击", Toast.LENGTH_SHORT).show();
 				else
 				{
 					if (text.getText().toString().trim().length() < 2)
 					{
-						Toast.makeText(this, "内容小于两个字符", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getApplicationContext(), "内容小于两个字符", Toast.LENGTH_SHORT).show();
 					}else{
 						send=true;
 						progressBar.setVisibility(View.VISIBLE);

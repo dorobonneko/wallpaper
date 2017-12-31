@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import org.jsoup.nodes.Document;
+import android.widget.Toast;
 
 public class LogoUpload extends Thread
 {
@@ -32,6 +33,7 @@ public class LogoUpload extends Thread
 	public LogoUpload(Context context,Uri input,Callback call){
 		this.context=context;
 		this.call=call;
+		Toast.makeText(context,"正在上传",Toast.LENGTH_SHORT).show();
 		try
 		{
 			this.input = context.getContentResolver().openInputStream(input);

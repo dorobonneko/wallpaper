@@ -146,6 +146,7 @@ public class SearchActivity extends EventActivity implements TextWatcher,SearchH
 	public void afterTextChanged(Editable p1)
 	{
 		if(!canload){canload=true;return;}
+		if(history_view==null)return;
 		history_view.setVisibility(history_view.VISIBLE);
 		if(history.size()>0){
 		history.clear();

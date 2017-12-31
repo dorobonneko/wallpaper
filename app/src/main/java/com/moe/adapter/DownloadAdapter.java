@@ -13,11 +13,11 @@ import android.view.LayoutInflater;
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import com.moe.utils.NumberUtils;
 public class DownloadAdapter extends RecyclerView.Adapter
 {
 	private List<DownloadItem> selected;
 	private List<DownloadItem> list;
-	private DecimalFormat format=new DecimalFormat("0.00");
 	public DownloadAdapter(List<DownloadItem> ldi,List<DownloadItem> selected){
 		list=ldi;
 		this.selected=selected;
@@ -43,7 +43,7 @@ public class DownloadAdapter extends RecyclerView.Adapter
 					vh.state.setImageResource(R.drawable.play);
 				try{
 				vh.progress.setProgress((int)(((double)di.getCurrent())/di.getTotal()*vh.progress.getMax()));
-				vh.size.setText(format.format(di.getCurrent()/1024.0/1024)+"M/"+format.format(di.getTotal()/1024.0/1024)+"M");
+				vh.size.setText(NumberUtils.getSize(di.getCurrent())+"/"+NumberUtils.getSize(di.getTotal()));
 				}catch(Exception e){}
 				if(selected.contains(di))
 					vh.bg.setBackgroundColor(p1.itemView.getResources().getColor(R.color.divider));
@@ -52,7 +52,7 @@ public class DownloadAdapter extends RecyclerView.Adapter
 				break;
 			case 1:
 				((ViewHolder2)p1).title.setText(di.getTitle());
-				((ViewHolder2)p1).size.setText(format.format((di.getTotal()<1?new File(di.getDir()).length():di.getTotal())/1024.0/1024)+"M");
+				((ViewHolder2)p1).size.setText(NumberUtils.getSize(di.getTotal()<1?new File(di.getDir()).length():di.getTotal()));
 				if(selected.contains(di))
 					((ViewHolder2)p1).bg.setBackgroundColor(p1.itemView.getResources().getColor(R.color.divider));
 				else

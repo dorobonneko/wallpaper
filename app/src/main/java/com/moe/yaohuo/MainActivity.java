@@ -94,9 +94,7 @@ SharedPreferences.OnSharedPreferenceChangeListener
 		nmv = (NavigationView)findViewById(R.id.main_leftselectedView);
 		drawerlayout = (DrawerLayout)findViewById(R.id.main_drawerlayout);
 		Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
-		TypedArray ta=obtainStyledAttributes(new int[]{android.support.v7.appcompat.R.attr.colorControlNormal});
-		toolbar.setTitleTextColor(ta.getColor(0,0xffffffff));
-		ta.recycle();
+		
 		setSupportActionBar(toolbar);
 		try
 		{
@@ -232,11 +230,11 @@ SharedPreferences.OnSharedPreferenceChangeListener
 									}).error(VectorDrawableCompat.create(getResources(), R.drawable.logo_background, getTheme())).diskCacheStrategy(DiskCacheStrategy.ALL).into(logo);
 							}catch(Exception e){}
 						moe.edit().putString("name",ui.getName()).commit();
-						if(ui.getMsg()>0){
+						/*if(ui.getMsg()>0){
 							MainActivity.this.msg.setVisibility(View.VISIBLE);
 							MainActivity.this.msg.setText(ui.getMsg()+"");
 							//MainActivity.this.msg.setClipToOutline(true);
-							}
+							}*/
 					}
 					break;
 				case 1:
@@ -339,7 +337,7 @@ SharedPreferences.OnSharedPreferenceChangeListener
 	public void onDrawerOpened(View p1)
 	{
 		p1.setTag(null);
-		loadInfo();
+		//loadInfo();
 		//else
 		//ImageCache.load(ui.getLogo(),logo);
 	}
@@ -431,7 +429,7 @@ SharedPreferences.OnSharedPreferenceChangeListener
 			case 482:
 				new LogoUpload(this,data.getData(),this).start();
 				break;
-			case 2381:
+			case 2381://相机
 				Bitmap bit=(Bitmap) data.getExtras().get("data");
 				new LogoUpload(this,bit,this).start();
 				break;
@@ -445,8 +443,10 @@ SharedPreferences.OnSharedPreferenceChangeListener
 	@Override
 	public void callback(boolean call)
 	{
-		if(call)loadInfo();
-		else
+		if(call){
+			logo.setTag(R.id.state,false);
+			loadInfo();
+		}else
 		handler.obtainMessage(1,"头像上传失败").sendToTarget();
 	}
 
@@ -492,6 +492,9 @@ SharedPreferences.OnSharedPreferenceChangeListener
 				break;
 			case "name":
 				username.setText(p1.getString("name",null));
+				break;
+			case "exit_mode":
+				reloadExit("侧边栏".equals(p1.getString(p2,null)));
 				break;
 		}
 	}

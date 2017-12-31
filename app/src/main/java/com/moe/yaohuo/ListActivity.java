@@ -60,7 +60,7 @@ public class ListActivity extends EventActivity implements View.OnClickListener
 		switch(p1.getId()){
 			case R.id.edit:
 				if(!PreferenceUtils.isLogin(this))
-					Toast.makeText(this,"请先登录",Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(),"请先登录",Toast.LENGTH_SHORT).show();
 					else
 					startActivity(new Intent(this,AddBbsActivity.class).putExtra("bbs",bbs));
 				break;

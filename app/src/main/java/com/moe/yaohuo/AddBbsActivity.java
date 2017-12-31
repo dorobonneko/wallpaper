@@ -164,20 +164,20 @@ private void load(){
 		switch(item.getItemId()){
 			case R.id.send:
 				if(spinner.getSelectedItemPosition()==0){
-					Toast.makeText(this,"请选好板块再发布",Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(),"请选好板块再发布",Toast.LENGTH_SHORT).show();
 					return true;
 				}
 				if(send){
-					Toast.makeText(this,"正在发送，请勿重复点击",Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(),"正在发送，请勿重复点击",Toast.LENGTH_SHORT).show();
 					return true;
 				}
 				boolean flag=true;
 				if(title.getText().toString().trim().length()<2){
 					flag=false;
-					Toast.makeText(this,"标题小于两个字符",Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(),"标题小于两个字符",Toast.LENGTH_SHORT).show();
 				}else if(content.getText().toString().trim().length()<15){
 					flag=false;
-					Toast.makeText(this,"内容小于15个字符",Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(),"内容小于15个字符",Toast.LENGTH_SHORT).show();
 				}
 				if(flag){
 					send=true;
@@ -308,14 +308,14 @@ private void load(){
 		try
 		{
 			doc=conn.post();
-			if(doc.text().indexOf("返回主题")!=-1){
+			if(doc.text().indexOf("返回主题")!=-1)
 				handler.sendEmptyMessage(2);
-				return;
-				}
+				else
+				handler.obtainMessage(1,doc.text()).sendToTarget();
+				
 					
 		}catch(SocketTimeoutException st){
 			handler.sendEmptyMessage(2);
-			return;
 		}
 		catch (IOException e)
 		{
