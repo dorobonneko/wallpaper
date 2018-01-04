@@ -24,11 +24,14 @@ public class Divider extends RecyclerView.ItemDecoration
 		this(0x00000000,left,top,right,bottom,dm);
 	}
 	public Divider(DisplayMetrics dm){
-		this(0x00000000,5,dm);
+		this(0x00000000,(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,dm),dm);
+	}
+	public Divider(int color,int height){
+		paint.setColor(color);
+		rect.set(height,height,height,height);
 	}
 	public Divider(int color,int height,DisplayMetrics dm){
 	this(color,height/2,0,height/2,height,dm);
-	
 	}
 
 
@@ -37,9 +40,11 @@ public class Divider extends RecyclerView.ItemDecoration
 	{
 		//if(parent.getChildAdapterPosition(view)!=parent.getAdapter().getItemCount()-1)
 		outRect.set(rect);
+		if(parent.getChildAdapterPosition(view)!=parent.getAdapter().getItemCount()-1)
+			outRect.bottom=0;
 		}
 
-	@Override
+	/*@Override
 	public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state)
 	{
 		int childCount = parent.getChildCount();
@@ -53,7 +58,7 @@ public class Divider extends RecyclerView.ItemDecoration
             c.drawRect(left+rect.left, top+rect.top, right+rect.right, bottom+rect.bottom, paint);
         }
 
-			}
+			}*/
 
 	
 	

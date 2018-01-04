@@ -43,7 +43,7 @@ public class ListActivity extends EventActivity implements View.OnClickListener
 		}else{
 			bbs=savedInstanceState.getParcelable("bbs");
 		}
-		getSupportActionBar().setTitle(bbs.getTitle());
+		setTitle(bbs.getTitle());
 	}
 
 	@Override

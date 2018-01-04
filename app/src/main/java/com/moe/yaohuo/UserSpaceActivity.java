@@ -175,7 +175,7 @@ public class UserSpaceActivity extends BaseActivity implements View.OnClickListe
 	{
 		if(ui!=null){
 			this.ui=ui;
-			getSupportActionBar().setTitle(ui.getName());
+			setTitle(ui.getName());
 			Glide.with(UserSpaceActivity.this).load(ui.getLogo()).error(getResources().getDrawable(R.drawable.yaohuo)).diskCacheStrategy(DiskCacheStrategy.ALL).into(logo);
 
 			Glide.with(UserSpaceActivity.this).load(ui.getLogo()).asBitmap().listener(new RequestListener<String,Bitmap>(){

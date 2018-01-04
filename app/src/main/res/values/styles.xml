@@ -26,6 +26,7 @@
 		<!--<item name="android:windowBackground">@color/window_background</item>-->
 		<item name="sizeTitle">@dimen/title</item>
 		<item name="sizeSummary">@dimen/summary</item>
+		<item name="sizeTip">@dimen/tip</item>
 		<item name="actionMenuTextColor">@color/icons</item>
 		<item name="colorIcons">@color/icons</item>
 		</style>
@@ -88,6 +89,8 @@
 		<item name="colorControlNormal">@color/icons</item>
 		<item name="titleTextColor">@color/icons</item>
 		<item name="subtitleTextColor">@color/icons</item>
+		<item name="colorAccent">@color/icons</item>
+		<item name="android:textCursorDrawable">@drawable/edittext_cursor</item>
 		</style>
 	<!--<style name="EditText" parent="AppTheme">
 		<item name="android:textCursorDrawable">?android:attr/colorControlHighlight</item>

@@ -33,6 +33,7 @@ import android.support.v7.widget.RecyclerView.Adapter;
 import android.content.Intent;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.widget.Toast;
+import com.moe.widget.LoadMoreView;
 
 public class MessageActivity extends EventActivity implements SwipeRefreshLayout.OnRefreshListener,MessageAdapter.OnItemClickListener,MessageAdapter.OnDeleteListener
 {
@@ -44,7 +45,7 @@ public class MessageActivity extends EventActivity implements SwipeRefreshLayout
 	private int total;
 	private AlertDialog clear;
 	private boolean[] clear_item=new boolean[3];
-	private View progress;
+	private LoadMoreView loadMore;
 	@Override
 	protected void onSaveInstanceState(Bundle outState)
 	{
@@ -71,7 +72,6 @@ public class MessageActivity extends EventActivity implements SwipeRefreshLayout
 			total=savedInstanceState.getInt("total");
 			clear_item=savedInstanceState.getBooleanArray("clear");
 		}
-		progress=findViewById(R.id.progressbar);
 		if(list==null)list=new ArrayList<>();
 		refresh=(SwipeRefreshLayout)findViewById(R.id.refresh);
 		refresh.setOnRefreshListener(this);
@@ -79,9 +79,11 @@ public class MessageActivity extends EventActivity implements SwipeRefreshLayout
 		rv.setLayoutManager(new LinearLayoutManager(this));
 		rv.setAdapter(ma=new MessageAdapter(list));
 		rv.addOnScrollListener(new Scroll());
-		rv.addItemDecoration(new Divider(5,1,5,5,getResources().getDisplayMetrics()));
+		rv.addItemDecoration(new Divider(8,8,8,8,getResources().getDisplayMetrics()));
 		//((DefaultItemAnimator)rv.getItemAnimator()).setSupportsChangeAnimations(false);
 		rv.setItemAnimator(null);
+		loadMore=(LoadMoreView) LayoutInflater.from(this).inflate(R.layout.loadmore_view,rv,false);
+		ma.addFloorView(loadMore);
 		ma.setOnItemClickListener(this);
 		ma.setOnDeleteListener(this);
 		if(list.size()==0)
@@ -140,7 +142,7 @@ public class MessageActivity extends EventActivity implements SwipeRefreshLayout
 	private void loadMore()
 	{
 		if(!refresh.isRefreshing())
-			progress.setVisibility(View.VISIBLE);
+			loadMore.setState(LoadMoreView.State.PROGRESS);
 		new Thread(){
 			public void run(){
 				handler.obtainMessage(0,load()).sendToTarget();
@@ -195,20 +197,26 @@ public class MessageActivity extends EventActivity implements SwipeRefreshLayout
 			switch(msg.what){
 				case 0:
 					if(msg.obj!=null){
+						loadMore.setState(LoadMoreView.State.SUCCESS);
 						page++;
 						int size=list.size();
 						if(isFirst){
 							isFirst=false;
 							list.clear();
 							ma.notifyItemRangeRemoved(0,size);
-						}
+							list.addAll((List)msg.obj);
+							ma.notifyDataSetChanged();
+						}else{
 						size=list.size();
 						list.addAll((List)msg.obj);
 						ma.notifyItemRangeInserted(size,list.size()-size);
+						}
 						canload=list.size()<total;
-					}
+						if(!canload)
+							loadMore.setSummary("没有更多了");
+					}else
+					loadMore.setState(LoadMoreView.State.ERROR);
 					refresh.setRefreshing(false);
-					progress.setVisibility(View.INVISIBLE);
 					break;
 					case 1:
 						onRefresh();
@@ -263,7 +271,7 @@ public class MessageActivity extends EventActivity implements SwipeRefreshLayout
 		public void onScrolled(RecyclerView recyclerView, int dx, int dy)
 		{
 			LinearLayoutManager llm=(LinearLayoutManager) recyclerView.getLayoutManager();
-			if(dy>0&&canload&&!refresh.isRefreshing()&&progress.getVisibility()!=View.VISIBLE&&llm.findLastVisibleItemPosition()>=list.size()-3)
+			if(dy>0&&canload&&!refresh.isRefreshing()&&loadMore.getState()!=LoadMoreView.State.PROGRESS&&llm.findLastVisibleItemPosition()>llm.getItemCount()-2)
 				loadMore();
 		}
 		

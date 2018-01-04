@@ -190,10 +190,10 @@ public class FloorAdapter extends RecyclerView.Adapter
 			title=(TextView)v.findViewById(R.id.title);
 			summary=(TextView)v.findViewById(R.id.summary);
 			content=(TextView)v.findViewById(R.id.content);
-			LinearLayout.LayoutParams ll=(LinearLayout.LayoutParams)content.getLayoutParams();
+			/*LinearLayout.LayoutParams ll=(LinearLayout.LayoutParams)content.getLayoutParams();
 			if(Build.VERSION.SDK_INT>16)
 			ll.setMarginStart(ll.getMarginStart()+(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,5,content.getResources().getDisplayMetrics()));
-			content.setLayoutParams(ll);
+			content.setLayoutParams(ll);*/
 			money=(TextView)v.findViewById(R.id.money);
 			v.setOnClickListener(this);
 			/**MovementMethod mm=new MovementMethod();
@@ -230,7 +230,7 @@ public class FloorAdapter extends RecyclerView.Adapter
 						money.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
 						money.setPadding(30,0,0,0);
 						TypedArray ta=p1.getContext().obtainStyledAttributes(new int[]{android.support.v7.appcompat.R.attr.selectableItemBackground});
-						money.setForeground(ta.getDrawable(0));
+						ViewCompat.setBackground(money,ta.getDrawable(0));
 						ta.recycle();
 						money.setOnClickListener(new View.OnClickListener(){
 

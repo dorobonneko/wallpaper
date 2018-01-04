@@ -41,6 +41,7 @@ import android.content.res.Resources.NotFoundException;
 import java.io.IOException;
 import org.jsoup.nodes.Document;
 import com.moe.yaohuo.UserInfoActivity;
+import android.support.v4.view.ViewCompat;
 
 public class LeaveMessageAdapter extends RecyclerView.Adapter<LeaveMessageAdapter.ViewHolder>
 {
@@ -157,7 +158,7 @@ public class LeaveMessageAdapter extends RecyclerView.Adapter<LeaveMessageAdapte
 			money.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 			money.setPadding(30, 0, 0, 0);
 			TypedArray ta=p1.getContext().obtainStyledAttributes(new int[]{android.support.v7.appcompat.R.attr.selectableItemBackground});
-			money.setForeground(ta.getDrawable(0));
+			ViewCompat.setBackground(money,ta.getDrawable(0));
 			money.setOnClickListener(new View.OnClickListener(){
 
 					@Override
@@ -171,7 +172,7 @@ public class LeaveMessageAdapter extends RecyclerView.Adapter<LeaveMessageAdapte
 			ll.addView(money, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
 
 			TextView delete=new TextView(p1.getContext());
-			delete.setForeground(ta.getDrawable(0));
+			ViewCompat.setBackground(delete,ta.getDrawable(0));
 			ta.recycle();
 
 			delete.setText("删除");

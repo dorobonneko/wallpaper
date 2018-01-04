@@ -60,6 +60,15 @@ import android.support.graphics.drawable.VectorDrawableCompat;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import android.content.res.TypedArray;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVObject;
+import android.content.pm.PackageManager;
+import com.avos.avoscloud.AVException;
+import java.util.List;
+import com.avos.avoscloud.FindCallback;
+import com.moe.entity.DownloadItem;
+import com.moe.services.DownloadService;
+import android.os.Environment;
 
 
 public class MainActivity extends BaseActivity implements 
@@ -152,6 +161,8 @@ SharedPreferences.OnSharedPreferenceChangeListener
 		findViewById(R.id.dragView).setEnabled(false);
 		//CrashReport.testJavaCrash();
 		loadInfo();
+		if(moe.getBoolean("auot_update",false))
+		checkUpdate();
     }
 
 	@Override
@@ -379,10 +390,12 @@ SharedPreferences.OnSharedPreferenceChangeListener
 					}
 				break;
 			case android.R.id.title:
-				RecyclerView rv=(RecyclerView)findViewById(R.id.list);
+				/*RecyclerView rv=(RecyclerView)findViewById(R.id.list);
 				if(rv!=null){
 					rv.smoothScrollToPosition(0);
-				}
+				}*/
+				if(current instanceof BbsListFragment)
+					((BbsListFragment)current).onRefresh();
 				break;
 			case android.support.v7.appcompat.R.id.snackbar_action:
 				super.finish();
@@ -491,7 +504,7 @@ SharedPreferences.OnSharedPreferenceChangeListener
 				loadInfo();
 				break;
 			case "name":
-				username.setText(p1.getString("name",null));
+				username.setText(p1.getString("name","未登录"));
 				break;
 			case "exit_mode":
 				reloadExit("侧边栏".equals(p1.getString(p2,null)));
@@ -541,7 +554,61 @@ SharedPreferences.OnSharedPreferenceChangeListener
 		moe.unregisterOnSharedPreferenceChangeListener(this);
 		super.onDestroy();
 	}
+private void checkUpdate(){
+	AVQuery<AVObject> aq=new AVQuery<>();
+	aq.setClassName("update");
+	aq.orderByDescending("version_int");
+	try
+	{
+		aq.whereGreaterThan("version_int",getPackageManager().getPackageInfo(getPackageName(),PackageManager.GET_CONFIGURATIONS).versionCode);
+	}
+	catch (PackageManager.NameNotFoundException e)
+	{}
+	aq.findInBackground(new FindCallback<AVObject>(){
 
+			@Override
+			public void done(List<AVObject> p1, AVException p2)
+			{
+				if(p2==null){
+					if(p1.size()>0){
+						final AVObject aob=p1.get(0);
+						AVQuery<AVObject> aq=new AVQuery<>("message");
+						aq.whereEqualTo("name",aob.get("version"));
+						aq.findInBackground(new FindCallback<AVObject>(){
+
+								@Override
+								public void done(List<AVObject> p1, AVException p2)
+								{
+									if(p1!=null&&p1.size()>0)
+										new AlertDialog.Builder(MainActivity.this).setTitle("v"+aob.get("version").toString()).setMessage(p1.get(0).get("msg").toString()).setPositiveButton("取消",null).setNegativeButton("下载",new DialogInterface.OnClickListener(){
+
+												@Override
+												public void onClick(DialogInterface p1, int p2)
+												{
+													DownloadItem di=new DownloadItem();
+													di.setUrl(aob.get("url").toString());
+													di.setTitle("妖火"+aob.get("version").toString()+".apk");
+													di.setReferer(null);
+													di.setTotal(9);
+													di.setDir(getSharedPreferences("setting",0).getString("path",Environment.getExternalStorageDirectory().getAbsolutePath()+"/yaohuo"));
+													di.setType(null);
+													di.setTime(System.currentTimeMillis());
+													//di.setCookie(CookieManager.getInstance().getCookie(url));
+													di.save();
+													startService(new Intent(getApplicationContext(),DownloadService.class).putExtra("down",di));
+
+												}
+											}).show();
+									else
+										Toast.makeText(getApplicationContext(),"获取新版本出错",Toast.LENGTH_SHORT).show();
+
+
+								}
+							});
+					}}
+			}
+		});
+}
 	
 	
 }

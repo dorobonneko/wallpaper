@@ -7,24 +7,26 @@ import java.util.List;
 import android.view.View;
 import android.widget.TextView;
 import com.moe.entity.MsgItem;
-public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder>
+import android.text.Html;
+import com.moe.internal.ImageGetter;
+public class MessageAdapter extends LoadMoreAdapter<MessageAdapter.ViewHolder>
 {
 	private List<MsgItem> list;
 	public MessageAdapter(List<MsgItem> list){
 		this.list=list;
 	}
 	@Override
-	public ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
+	public ViewHolder onCreateViewHolderSub(ViewGroup p1, int p2)
 	{
 
 		return new ViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.message_item,p1,false));
 	}
 
 	@Override
-	public void onBindViewHolder(ViewHolder vh, int p2)
+	public void onBindViewHolderSub(ViewHolder vh, int p2)
 	{
 		MsgItem mi=list.get(p2);
-		vh.title.setText(mi.getTitle());
+		vh.title.setText(Html.fromHtml(mi.getTitle(),new ImageGetter(vh.title,true),null));
 		vh.summary.setText(mi.getFrom());
 		vh.subsummary.setText(mi.getTime());
 		if(mi.getView()==1)
@@ -34,13 +36,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 	}
 
 	@Override
-	public int getItemCount()
+	public int getItemCountSub()
 	{
 		// TODO: Implement this method
 		return list.size();
 	}
 
-	public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+	public class ViewHolder extends LoadMoreAdapter.ViewHolder implements View.OnClickListener{
 		TextView title,summary,subsummary;
 		View new_m;
 		public ViewHolder(View v){

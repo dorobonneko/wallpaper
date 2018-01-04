@@ -26,6 +26,9 @@ import com.moe.adapter.SearchHistoryAdapter.ViewHolder;
 import android.view.inputmethod.InputMethodManager;
 import android.graphics.drawable.VectorDrawable;
 import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.AppCompatEditText;
+import android.util.AttributeSet;
 
 public class SearchActivity extends EventActivity implements TextWatcher,SearchHistoryAdapter.OnItemClickListener,SearchHistoryAdapter.OnAddListener
 {
@@ -44,12 +47,14 @@ public class SearchActivity extends EventActivity implements TextWatcher,SearchH
 		imm=(InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		shd=SearchHistoryDatabase.getInstance(this);
 		super.onCreate(savedInstanceState);
-		key=new EditText(this);
+		key=(EditText) LayoutInflater.from(this).inflate(R.layout.edittext,(ViewGroup)findViewById(R.id.toolbar),false);
+		//key=(EditText) findViewById(R.id.edittext);
 		key.setTextColor(getResources().getColor(R.color.icons));
 		key.setSingleLine();
+		ViewCompat.setBackground(key,VectorDrawableCompat.create(getResources(),R.drawable.edittext,getSupportActionBar().getThemedContext().getTheme()));
 		getSupportActionBar().setDisplayShowCustomEnabled(true);
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		getSupportActionBar().setCustomView(key,new Toolbar.LayoutParams(Toolbar.LayoutParams.MATCH_PARENT,Toolbar.LayoutParams.MATCH_PARENT));
+		getSupportActionBar().setCustomView(key,new Toolbar.LayoutParams(Toolbar.LayoutParams.MATCH_PARENT,Toolbar.LayoutParams.WRAP_CONTENT));
 		key.addTextChangedListener(this);
 		if(savedInstanceState!=null){
 			key.setText(savedInstanceState.getCharSequence("key"));

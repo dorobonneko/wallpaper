@@ -341,7 +341,9 @@ DownloadQuery.Listener<DownloadItem>
 					int index=title.lastIndexOf(".");
 					if(index!=-1){
 					String type=MimeTypeMap.getSingleton().getMimeTypeFromExtension(title.substring(index+1));
-					getContext().startActivity(new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.fromFile(new File(success.get(vh.getAdapterPosition()).getDir(),success.get(vh.getAdapterPosition()).getTitle())),type));
+					try{getActivity().startActivity(new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.fromFile(new File(success.get(vh.getAdapterPosition()).getDir(),success.get(vh.getAdapterPosition()).getTitle())),type));}catch(Exception e){
+						Toast.makeText(getActivity(),"没有可用程序",Toast.LENGTH_SHORT).show();
+					}
 					}
 					break;
 			}

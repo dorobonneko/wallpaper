@@ -9,7 +9,33 @@ public class ListItem implements Parcelable
 private String title,author,time,progress,bbs;
 private int id,index;
 private int classid,userid;
+private int anime;
 	private List<String> property;
+	public ListItem(){}
+	public ListItem(Parcel p1){
+		setTitle(p1.readString());
+		setAuthor(p1.readString());
+		setTime(p1.readString());
+		setProgress(p1.readString());
+		setId(p1.readInt());
+		setIndex(p1.readInt());
+		List<String> ls=new ArrayList<>();
+		p1.readStringList(ls);
+		setProperty(ls);
+		setUserid(p1.readInt());
+		setClassid(p1.readInt());
+		setBbs(p1.readString());
+		setAnime(p1.readInt()==1);
+	}
+	public void setAnime(boolean anime)
+	{
+		this.anime = anime?1:0;
+	}
+
+	public boolean isAnime()
+	{
+		return anime==1;
+	}
 	public void setBbs(String bbs){
 		this.bbs=bbs;
 	}
@@ -124,26 +150,15 @@ private int classid,userid;
 	p1.writeInt(userid);
 	p1.writeInt(classid);
 	p1.writeString(bbs);
+	p1.writeInt(anime);
 	}
 	public static final Parcelable.Creator<ListItem> CREATOR=new Parcelable.Creator<ListItem>(){
 
 		@Override
 		public ListItem createFromParcel(Parcel p1)
 		{
-			ListItem li=new ListItem();
-			li.setTitle(p1.readString());
-			li.setAuthor(p1.readString());
-			li.setTime(p1.readString());
-			li.setProgress(p1.readString());
-			li.setId(p1.readInt());
-			li.setIndex(p1.readInt());
-			List<String> ls=new ArrayList<>();
-			p1.readStringList(ls);
-			li.setProperty(ls);
-			li.setUserid(p1.readInt());
-			li.setClassid(p1.readInt());
-			li.setBbs(p1.readString());
-			return li;
+			
+			return new ListItem(p1);
 		}
 
 		@Override

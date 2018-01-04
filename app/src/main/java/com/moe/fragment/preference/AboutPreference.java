@@ -77,7 +77,7 @@ public class AboutPreference extends PreferenceFragment implements Preference.On
 															{
 																DownloadItem di=new DownloadItem();
 																di.setUrl(aob.get("url").toString());
-																di.setTitle("妖火"+aob.get("version").toString());
+																di.setTitle("妖火"+aob.get("version").toString()+".apk");
 																di.setReferer(null);
 																di.setTotal(9);
 																di.setDir(getContext().getSharedPreferences("setting",0).getString("path",Environment.getExternalStorageDirectory().getAbsolutePath()+"/yaohuo"));

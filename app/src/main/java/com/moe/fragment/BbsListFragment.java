@@ -1,27 +1,30 @@
 package com.moe.fragment;
 import android.os.*;
-import android.support.v7.widget.*;
 import android.view.*;
-import android.view.animation.*;
 import com.moe.entity.*;
-import com.moe.view.*;
 import com.moe.yaohuo.*;
-import java.util.*;
-import java.util.regex.*;
 import org.jsoup.nodes.*;
 
 import android.content.Intent;
 import android.support.design.widget.AppBarLayout;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.widget.Toast;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import com.moe.adapter.ListAdapter;
+import com.moe.graphics.MessageDrawable;
 import com.moe.utils.PreferenceUtils;
+import com.moe.view.Divider;
+import com.moe.widget.LoadMoreView;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
-import android.text.Html;
-import com.moe.graphics.MessageDrawable;
 public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout.OnRefreshListener,ListAdapter.OnItemClickListener,AppBarLayout.OnOffsetChangedListener
 {
 	private ArrayList<ListItem> list;
@@ -31,7 +34,7 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 	private boolean isFirst;
 	private boolean canLoadMore=true;
 	private BbsItem bbs;
-	private View progress;
+	private LoadMoreView loadMore;
 	private MenuItem message;
 	private MessageDrawable msgIcon;
 	public void load(BbsItem bi)
@@ -43,9 +46,9 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		if (savedInstanceState == null)
+		if (savedInstanceState==null)
 		{
-			if (getArguments() != null)
+			if (getArguments()!=null)
 			{
 				bbs = getArguments().getParcelable("bbs");
 			}
@@ -66,16 +69,16 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 			isFirst = savedInstanceState.getBoolean("isfirst");
 			total = savedInstanceState.getInt("total");
 		}
-		msgIcon=new MessageDrawable(getActivity());
+		msgIcon = new MessageDrawable(getActivity());
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		if (list == null)list = new ArrayList<>();
+		if (list==null)list = new ArrayList<>();
 		AppBarLayout abl=(AppBarLayout) container.getRootView().findViewById(R.id.appbarlayout);
 		//if(abl!=null)abl.addOnOffsetChangedListener(this);
-		return inflater.inflate(R.layout.list_view, container, false);
+		return inflater.inflate(R.layout.list_view,container,false);
 	}
 
 	@Override
@@ -83,25 +86,27 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 	{
 		refresh = (SwipeRefreshLayout)view.findViewById(R.id.refresh);
 		refresh.setOnRefreshListener(this);
+		refresh.setColorSchemeResources(R.color.accent,R.color.primary);
 		RecyclerView rv=(RecyclerView)refresh.getChildAt(1);
-		rv.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-		rv.setAdapter(la = new ListAdapter(list));
-		rv.addItemDecoration(new Divider(getResources().getDimensionPixelSize(R.dimen.cellSpacing)));
-		ItemAnimation ia=new ItemAnimation(rv);
-		ia.setAddDuration(290);
-		ia.setRemoveDuration(150);
-		rv.setItemAnimator(ia);
+		rv.setLayoutManager(new GridLayoutManager(getActivity(),1));
+		rv.setAdapter(la=new ListAdapter(list));
+		rv.addItemDecoration(new Divider(8,8,8,8,getResources().getDisplayMetrics()));
+		/*ItemAnimation ia=new ItemAnimation(rv);
+		 ia.setAddDuration(290);
+		 ia.setRemoveDuration(150);*/
+		rv.setItemAnimator(null);
 		rv.addOnScrollListener(new Scroll());
 		la.setOnItemClickListener(this);
-		progress = view.findViewById(R.id.progressbar);
-		super.onViewCreated(view, savedInstanceState);
+		loadMore = (LoadMoreView) LayoutInflater.from(view.getContext()).inflate(R.layout.loadmore_view,rv,false);
+		la.addFloorView(loadMore);
+		super.onViewCreated(view,savedInstanceState);
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
-		if (list.size() == 0 && !(bbs.getAction().equals("search") && bbs.getKey() == null))
+		if (list.size()==0&&!(bbs.getAction().equals("search")&&bbs.getKey()==null))
 		{
 			refresh.setRefreshing(true);
 
@@ -115,7 +120,7 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 	@Override
 	public void onOffsetChanged(AppBarLayout p1, int p2)
 	{
-		refresh.setEnabled(p2 == 0);
+		refresh.setEnabled(p2==0);
 	}
 
 
@@ -124,13 +129,13 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 	{
 		if (enter)
 		{
-			AlphaAnimation aa=new AlphaAnimation(0, 1);
+			AlphaAnimation aa=new AlphaAnimation(0,1);
 			aa.setDuration(300);
 			return aa;
 		}
 		else
 		{
-			AlphaAnimation aa=new AlphaAnimation(1, 0);
+			AlphaAnimation aa=new AlphaAnimation(1,0);
 			aa.setDuration(300);
 			return aa;
 		}
@@ -147,15 +152,14 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 
 	private void loadMore()
 	{
-		total = -1;
 		if (!refresh.isRefreshing())
 		{
-			progress.setVisibility(View.VISIBLE);
+			loadMore.setState(LoadMoreView.State.PROGRESS);
 		}
 		new Thread(){
 			public void run()
 			{
-				handler.obtainMessage(1, load()).sendToTarget();
+				handler.obtainMessage(1,load()).sendToTarget();
 			}
 		}.start();
 	}
@@ -164,52 +168,54 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 		Document doc=null;
 		try
 		{
-			doc = Jsoup.connect(PreferenceUtils.getHost(getContext()) + getString(R.string.book_list))
-				.data("action", bbs.getAction())
-				.data("siteid", "1000")
-				.data("classid", bbs.getClassid() + "")
-				.data("key", bbs.getKey() == null ?"365": bbs.getKey())
-				.data("getTotal", "")
-				.data("type", bbs.getType() == null ?"days": bbs.getType())
-				.data("page", "" + page)
-				.userAgent("Mozilla/5.0 (Linux; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 Mobile Safari/537.36" + page)
+			doc = Jsoup.connect(PreferenceUtils.getHost(getContext())+getString(R.string.book_list))
+				.data("action",bbs.getAction())
+				.data("siteid","1000")
+				.data("classid",bbs.getClassid()+"")
+				.data("key",bbs.getKey()==null?"365":bbs.getKey())
+				.data("getTotal","")
+				.data("type",bbs.getType()==null?"days":bbs.getType())
+				.data("page",""+page)
+				.userAgent("Mozilla/5.0 (Linux; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 Mobile Safari/537.36"+page)
 				//.header("Cookie",moe.getString("cookie","))
 				//.cookie("ASP.NET_SessionId","eblkqa45lstya2fqedir2h45")
 				//.cookie("GUID","5e31fe031954")
-				.cookie(PreferenceUtils.getCookieName(getContext()), PreferenceUtils.getCookie(getContext()))
+				.cookie(PreferenceUtils.getCookieName(getContext()),PreferenceUtils.getCookie(getContext()))
 				//.cookie("__cm_warden_uid","d0d4ece507182501dc13d8d0dcf2d7f2cookie")
-				.header("Accept", "*/*").get();
+				.header("Accept","*/*").get();
 		}
 		catch (IOException e)
 		{return null;}
 		try
 		{
-			total = Integer.parseInt(doc.getElementsByAttributeValue("name", "getTotal").get(0).attr("value"));
+			total = Integer.parseInt(doc.getElementsByAttributeValue("name","getTotal").get(0).attr("value"));
 		}
 		catch (Exception e)
 		{}
-		Elements elements=doc.getElementsByAttributeValueMatching("class", "^line(1|2)$");
-		Elements msgs=doc.getElementsByAttributeValueStarting("href", "/bbs/messagelist.aspx");
-		if (msgs.size() > 0)
+		Elements elements=doc.getElementsByAttributeValueMatching("class","^line(1|2)$");
+		Elements msgs=doc.getElementsByAttributeValueStarting("href","/bbs/messagelist.aspx");
+		if (msgs.size()>0)
 		{
-			Matcher matcher=Pattern.compile("(?s).*?([0-9]{1,})", Pattern.DOTALL).matcher(msgs.get(0).text());
+			Matcher matcher=Pattern.compile("(?s).*?([0-9]{1,})",Pattern.DOTALL).matcher(msgs.get(0).text());
 			if (matcher.find())
 				handler.obtainMessage(2,Integer.parseInt(matcher.group(1))).sendToTarget();
-		}else{
+		}
+		else
+		{
 			handler.obtainMessage(2,0).sendToTarget();
 		}
 		List<ListItem> list=new ArrayList<>();
-		for (int i=0;i < elements.size();i++)
+		for (int i=0;i<elements.size();i++)
 		{
 			try
 			{
 				ListItem li=new ListItem();
 				Element element=elements.get(i);
 				List<Node> childs=element.childNodes();
-				li.setIndex(Integer.parseInt(childs.get(0).toString().trim().replace(".", "")));
+				li.setIndex(Integer.parseInt(childs.get(0).toString().trim().replace(".","")));
 				int n=1;
 				List<String> ls=new ArrayList<>();
-				for (;n < childs.size();n++)
+				for (;n<childs.size();n++)
 				{
 					Node node=childs.get(n);
 					if (node.nodeName().equals("a"))
@@ -223,7 +229,7 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 				}
 				Node node=childs.get(n);//地址
 				String id=node.attr("href");
-				li.setId(Integer.parseInt(id.substring(id.indexOf("-") + 1, id.indexOf("."))));
+				li.setId(Integer.parseInt(id.substring(id.indexOf("-")+1,id.indexOf("."))));
 				Matcher matcher=Pattern.compile("<a.*?>(.*?)</a>").matcher(element.toString());
 				if (matcher.find())
 					li.setTitle(matcher.group(1));
@@ -234,7 +240,7 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 				if (node.nodeName().equals("img"))
 				{
 					node = childs.get(++n);
-					if (node.toString().trim().length() == 0)
+					if (node.toString().trim().length()==0)
 						node = childs.get(++n);
 					li.setAuthor(node.toString().trim());
 				}
@@ -244,7 +250,7 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 				}
 				if (li.getAuthor().endsWith("/"))
 				{
-					li.setAuthor(li.getAuthor().substring(0, li.getAuthor().length() - 1));
+					li.setAuthor(li.getAuthor().substring(0,li.getAuthor().length()-1));
 				}
 				else
 				{
@@ -254,7 +260,7 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 				li.setProgress(node.childNode(0).toString());
 				node = childs.get(++n);//回复总数
 				String size=node.toString();
-				li.setProgress("<font color='#0097a7'>" + li.getProgress() + "</font>/" + size.substring(size.indexOf("/") + 1, size.length() - 2));
+				li.setProgress("<font color='#0097a7'>"+li.getProgress()+"</font>/"+size.substring(size.indexOf("/")+1,size.length()-2));
 				node = childs.get(++n);//时间
 				li.setTime(node.childNode(0).toString());
 				list.add(li);
@@ -275,43 +281,52 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 				{
 					case 0:
 						refresh.setRefreshing(false);
-						progress.setVisibility(progress.INVISIBLE);
+						loadMore.setState(LoadMoreView.State.ERROR);
 						break;
 					case 1:
 						int size=0;
 						refresh.setRefreshing(false);
-						progress.setVisibility(progress.INVISIBLE);
-						if (msg.obj == null)
+						if (msg.obj==null)
 						{
-							Toast.makeText(getActivity(), "访问失败", Toast.LENGTH_SHORT).show();
+							loadMore.setState(LoadMoreView.State.ERROR);
+							//Toast.makeText(getActivity(), "访问失败", Toast.LENGTH_SHORT).show();
 						}
 						else
 						{
-
-							page++;
-							if (isFirst)
-							{
-								isFirst = false;
-								size = list.size();
-								list.clear();
-								la.notifyItemRangeRemoved(0, size);
-								la.setAnime(false);
-							}
-							size = list.size();
-							list.addAll((List)msg.obj);
-							la.notifyItemRangeInserted(size, list.size() - size);
-							canLoadMore = list.size() < total;
+							loadMore.setState(LoadMoreView.State.SUCCESS);
+							sendMessageDelayed(obtainMessage(3,msg.obj),300);
 
 						}
 						break;
-						case 2:
-							int msg_size=(Integer)msg.obj;
-							/*if(msg_size>0){
-								message.setTitle(Html.fromHtml("消息<font color='#0097a7'>"+msg_size+"</font>"));
-							}else
-							message.setTitle("消息");*/
-							msgIcon.setMsgSize(msg_size);
-							break;
+					case 2:
+						int msg_size=(Integer)msg.obj;
+						/*if(msg_size>0){
+						 message.setTitle(Html.fromHtml("消息<font color='#0097a7'>"+msg_size+"</font>"));
+						 }else
+						 message.setTitle("消息");*/
+						msgIcon.setMsgSize(msg_size);
+						break;
+					case 3:
+						page++;
+						if (isFirst)
+						{
+							isFirst = false;
+							size = list.size();
+							list.clear();
+							la.notifyItemRangeRemoved(0,size);
+							la.setAnime(false);
+							list.addAll((List)msg.obj);
+							la.notifyDataSetChanged();
+						}
+						else
+						{
+							size = list.size();
+							list.addAll((List)msg.obj);
+							la.notifyItemRangeInserted(size,list.size()-size);
+
+						}
+						canLoadMore = list.size()<total;
+						break;
 				}
 			}
 			catch (Exception e)
@@ -325,7 +340,7 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 	{
 		try
 		{
-			getActivity().startActivity(new Intent(getContext(), BbsActivity.class).putExtra("bbs", list.get(vh.getAdapterPosition())));
+			getActivity().startActivity(new Intent(getContext(),BbsActivity.class).putExtra("bbs",list.get(vh.getAdapterPosition())));
 		}
 		catch (Exception e)
 		{}
@@ -352,11 +367,11 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 		@Override
 		public void onScrolled(RecyclerView recyclerView, int dx, int dy)
 		{
-			if (dy > 0 && canLoadMore && !refresh.isRefreshing() && progress.getVisibility() != View.VISIBLE)
+			if (dy>0&&canLoadMore&&!refresh.isRefreshing()&&loadMore.getState()!=LoadMoreView.State.PROGRESS)
 			{
 				RecyclerView.LayoutManager ll=recyclerView.getLayoutManager();
 				GridLayoutManager glm=(GridLayoutManager)ll;
-				if (glm.findLastVisibleItemPosition() > glm.getItemCount() - glm.getSpanCount() * 4)loadMore();
+				if (glm.findLastVisibleItemPosition()>glm.getItemCount()-glm.getSpanCount()*2)loadMore();
 			}
 		}
 
@@ -367,7 +382,7 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 	{
 		if (bbs.getAction().equals("search"))return;
 		View v=getView().getRootView().findViewById(R.id.edit);
-		if (v != null)
+		if (v!=null)
 		{
 			if (hidden)
 			{
@@ -384,12 +399,12 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 	@Override
 	public void onSaveInstanceState(Bundle outState)
 	{
-		outState.putParcelable("bbs", bbs);
-		outState.putParcelableArrayList("list", list);
-		outState.putInt("page", page);
-		outState.putBoolean("canloadmore", canLoadMore);
-		outState.putInt("total", total);
-		outState.putBoolean("isfirst", isFirst);
+		outState.putParcelable("bbs",bbs);
+		outState.putParcelableArrayList("list",list);
+		outState.putInt("page",page);
+		outState.putBoolean("canloadmore",canLoadMore);
+		outState.putInt("total",total);
+		outState.putBoolean("isfirst",isFirst);
 
 		super.onSaveInstanceState(outState);
 	}
@@ -398,7 +413,7 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
 	{
 		menu.add(0,0,0,"消息");
-		message=menu.getItem(0);
+		message = menu.getItem(0);
 		message.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
 
 				@Override
@@ -408,10 +423,14 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 					return false;
 				}
 			}).setIntent(new Intent(getActivity(),MessageActivity.class)).setIcon(msgIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		menu.add(0, 1, 1, "搜索");
-		menu.getItem(1).setIntent(new Intent(getActivity(),SearchActivity.class)).setIcon(VectorDrawableCompat.create(getResources(), R.drawable.magnify, getActivity().getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.add(0,1,1,"搜索");
+		menu.getItem(1).setIntent(new Intent(getActivity(),SearchActivity.class)).setIcon(VectorDrawableCompat.create(getResources(),R.drawable.magnify,getActivity().getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		/*menu.add(0,2,2,"测试");
+		 ProgressDrawable pd;
+		 menu.getItem(2).setIcon(pd=new ProgressDrawable(getContext())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		 pd.setProgressState(ProgressDrawable.State.SUCCESS);*/
 	}
 
-	
+
 
 }

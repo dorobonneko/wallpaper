@@ -35,8 +35,8 @@
 			<com.moe.widget.CircleImageView
 				app:useCircle="true"
 				android:id="@+android:id/icon"
-				android:layout_width="70dp"
-				android:layout_height="70dp"
+				android:layout_width="64dp"
+				android:layout_height="64dp"
 				android:layout_marginBottom="35dp"
 				android:layout_marginStart="35dp"
 				android:layout_gravity="bottom"

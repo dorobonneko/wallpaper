@@ -11,6 +11,7 @@ import android.support.design.widget.TabLayout;
 import com.moe.yaohuo.R;
 import com.moe.internal.TextViewClickMode;
 import android.util.TypedValue;
+import android.support.v4.view.ViewCompat;
 
 public class ActivedAdapter extends RecyclerView.Adapter<ActivedAdapter.ViewHolder>
 {
@@ -29,7 +30,7 @@ public class ActivedAdapter extends RecyclerView.Adapter<ActivedAdapter.ViewHold
 		TypedArray ta=parent.getContext().obtainStyledAttributes(new int[]{android.support.v7.appcompat.R.attr.listPreferredItemHeightSmall});
 		tv.setMinHeight(ta.getDimensionPixelSize(0,0));
 		ta.recycle();
-		cv.setElevation(0);
+		ViewCompat.setElevation(cv,0);
 		tv.setTextSize(TypedValue.COMPLEX_UNIT_PX,tv.getResources().getDimension(R.dimen.title));
 		new TextViewClickMode(tv);
 		return new ViewHolder(cv);

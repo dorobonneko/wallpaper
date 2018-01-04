@@ -4,18 +4,20 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	
 	android:layout_width="match_parent"
-	android:layout_height="?attr/listPreferredItemHeight"
+	android:layout_height="wrap_content"
 	android:foreground="?attr/selectableItemBackground"
-	app:cardElevation="0dp">
+	app:cardElevation="1dp"
+	app:cardCornerRadius="2dp">
 
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
+		android:layout_height="wrap_content"
+		android:minHeight="?attr/listPreferredItemHeightSmall"
 		android:gravity="center_vertical"
-		android:paddingStart="5dp"
-		android:paddingEnd="10dp"
-		android:paddingTop="3dp"
-		android:paddingBottom="5dp">
+		android:paddingStart="16dp"
+		android:paddingEnd="16dp"
+		android:paddingTop="8dp"
+		android:paddingBottom="8dp">
 
 		<ImageView
 			android:visibility="invisible"
@@ -27,30 +29,30 @@
 
 		<LinearLayout
 			android:layout_height="match_parent"
-			android:layout_width="wrap_content"
+			android:layout_width="match_parent"
 			android:orientation="vertical"
 			android:layout_weight="1.0">
 
 			<TextView
 				android:id="@+android:id/title"
 				android:textColor="?android:attr/textColorPrimary"
-				android:textSize="18sp"
+				android:textSize="?attr/sizeTitle"
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:singleLine="true"
 				android:gravity="start"/>
 
 			<LinearLayout
-				android:layout_height="match_parent"
+				android:layout_height="wrap_content"
 				android:layout_width="match_parent"
-				android:gravity="bottom">
+				android:gravity="bottom"
+				android:orientation="horizontal">
 
 				<TextView
 					android:id="@+android:id/summary"
 					android:textColor="?android:attr/textColorSecondary"
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:textSize="12sp"
+					android:textSize="?attr/sizeSummary"
 					android:gravity="start"/>
 
 				<View
@@ -63,13 +65,14 @@
 					android:textColor="?android:attr/textColorSecondary"
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:textSize="12sp"/>
+					android:textSize="?attr/sizeTip"/>
 
 			</LinearLayout>
 
 		</LinearLayout>
 
 		<ImageView
+			android:visibility="gone"
 			android:id="@+id/delete"
 			android:background="?attr/selectableItemBackgroundBorderless"
 			android:layout_height="wrap_content"

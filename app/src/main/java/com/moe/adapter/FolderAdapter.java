@@ -9,7 +9,7 @@ import android.widget.TextView;
 import android.content.res.TypedArray;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
-public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder>
+public class FolderAdapter extends LoadMoreAdapter<FolderAdapter.ViewHolder>
 {
 
 	
@@ -18,13 +18,13 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
 		this.list=list;
 	}
 	@Override
-	public FolderAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
+	public FolderAdapter.ViewHolder onCreateViewHolderSub(ViewGroup p1, int p2)
 	{
 		return new ViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.folder_item_view,p1,false));
 	}
 
 	@Override
-	public void onBindViewHolder(FolderAdapter.ViewHolder p1, int p2)
+	public void onBindViewHolderSub(FolderAdapter.ViewHolder p1, int p2)
 	{
 		p1.name.setText(list.get(p2).getName());
 		if(list.get(p2).isDirectory())
@@ -34,11 +34,11 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
 	}
 
 	@Override
-	public int getItemCount()
+	public int getItemCountSub()
 	{
 		return list.size();
 	}
-	public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+	public class ViewHolder extends LoadMoreAdapter.ViewHolder implements View.OnClickListener{
 		TextView name;
 		ImageView icon;
 		public ViewHolder(View v){

@@ -142,7 +142,7 @@ public class WebViewActivity extends EventActivity implements DownloadListener
 		@Override
 		public void onReceivedTitle(WebView view, String title)
 		{
-			getSupportActionBar().setTitle(title);
+			setTitle(title);
 		}
 		
 		

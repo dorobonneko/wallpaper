@@ -2,7 +2,9 @@
 <resources>
 	<declare-styleable name="textview">
 		<attr name="sizeTitle" format="reference|dimension"/>
-			<attr name="sizeSummary" format="reference|dimension"/>
+		<attr name="sizeSummary" format="reference|dimension"/>
+		<attr name="sizeTip" format="reference|dimension"/>
+		
 	</declare-styleable>
 	<declare-styleable name="logo_background">
 		<attr name="direction">

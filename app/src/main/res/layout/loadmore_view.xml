@@ -1,0 +1,23 @@
+<com.moe.widget.LoadMoreView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+	android:minHeight="?attr/listPreferredItemHeightSmall"
+    android:orientation="horizontal"
+	android:gravity="center">
+    <ImageView
+		android:id="@+id/state"
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:minWidth="40dp"
+		android:minHeight="40dp"
+		android:scaleType="centerInside"
+		android:adjustViewBounds="true"
+		/>
+	<TextView
+		android:id="@+android:id/summary"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:singleLine="true"
+		android:textSize="?attr/sizeSummary"
+		android:textColor="?android:attr/textColorSecondary"/>
+</com.moe.widget.LoadMoreView>

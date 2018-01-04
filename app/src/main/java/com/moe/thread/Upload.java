@@ -80,13 +80,14 @@ public class Upload extends Thread
 			
 			pid=new JSONObject(StringUtils.getString(in)).getString("pid");
 			state=1;
-			return;
 		}
 		catch (Exception e)
-		{}finally{
+		{
+			state=2;
+		}finally{
 			close();
 		}
-		state=2;
+		
 	}
 	
 }

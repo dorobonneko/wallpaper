@@ -36,14 +36,16 @@ import android.graphics.drawable.VectorDrawable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import java.util.Collections;
 
 public class MessageViewActivity extends EventActivity implements SwipeRefreshLayout.OnRefreshListener,View.OnClickListener
 {
 	private int id,uid;
 	private SwipeRefreshLayout refresh;
-	private ArrayList<FloorItem> list;
+	private ArrayList<FloorItem> list_data;
 	private FloorAdapter fa;
 	private SharedPreferences moe;
+	private RecyclerView list;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -51,28 +53,28 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setTitle("查看消息");
 		ImageView iv=(ImageView)findViewById(R.id.edit);
-		iv.setVisibility(iv.VISIBLE);
+		iv.setVisibility(iv.GONE);
 		iv.setImageResource(R.drawable.reply);
 		iv.setOnClickListener(this);
 		LayoutInflater.from(this).inflate(R.layout.list_view,(ViewGroup)findViewById(R.id.main_index),true);
 		refresh=(SwipeRefreshLayout)findViewById(R.id.refresh);
 		refresh.setOnRefreshListener(this);
-		RecyclerView rv=(RecyclerView)findViewById(R.id.list);
-		rv.setLayoutManager(new LinearLayoutManager(this));
-		rv.addItemDecoration(new Divider(getResources().getDisplayMetrics()));
+		list=(RecyclerView)findViewById(R.id.list);
+		list.setLayoutManager(new LinearLayoutManager(this));
+		list.addItemDecoration(new Divider(8,0,8,0,getResources().getDisplayMetrics()));
 		if(savedInstanceState!=null){
-			list=savedInstanceState.getParcelableArrayList("list");
+			list_data=savedInstanceState.getParcelableArrayList("list");
 			id=savedInstanceState.getInt("id");
 			uid=savedInstanceState.getInt("uid");
 		}else{
 			id=getIntent().getIntExtra("id",0);
 		}
-		if(list==null)list=new ArrayList<>();
+		if(list_data==null)list_data=new ArrayList<>();
 		ListItem li=new ListItem();
 		li.setId(id);
-		rv.setAdapter(fa=new FloorAdapter(list,li));
+		list.setAdapter(fa=new FloorAdapter(list_data,li));
 		
-		if(list.size()==0){
+		if(list_data.size()==0){
 			refresh.setRefreshing(true);
 		onRefresh();
 		}
@@ -85,11 +87,13 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 			switch(msg.what){
 				case 0:
 					if(msg.obj!=null){
-						int size=list.size();
-						list.clear();
+						int size=list_data.size();
+						list_data.clear();
 						fa.notifyItemRangeRemoved(0,size);
-						list.addAll((List)msg.obj);
-						fa.notifyItemRangeInserted(0,list.size());
+						list_data.addAll((List)msg.obj);
+						Collections.reverse(list_data);
+						fa.notifyItemRangeInserted(0,list_data.size());
+						list.scrollToPosition(list_data.size()-1);
 					}else
 					Toast.makeText(getApplicationContext(),"加载失败",Toast.LENGTH_SHORT).show();
 					refresh.setRefreshing(false);
@@ -163,7 +167,7 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 	{
 		switch(p1.getId()){
 			case R.id.edit:
-				if(list.size()>0)
+				if(list_data.size()>0)
 				startActivityForResult(new Intent(this,SendMessageActivity.class).putExtra("uid",uid),452);
 				break;
 		}
@@ -182,7 +186,7 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 	@Override
 	protected void onSaveInstanceState(Bundle outState)
 	{
-		outState.putParcelableArrayList("list",list);
+		outState.putParcelableArrayList("list",list_data);
 		outState.putInt("id",id);
 		outState.putInt("uid",uid);
 		super.onSaveInstanceState(outState);
@@ -193,6 +197,8 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 	{
 		menu.add(0,0,0,"删除");
 		menu.getItem(0).setIcon(VectorDrawableCompat.create(getResources(),R.drawable.delete,getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.add(0,1,1,"回复");
+		menu.getItem(1).setIcon(VectorDrawableCompat.create(getResources(),R.drawable.reply,getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		
 		return true;
 	}
@@ -235,6 +241,9 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 							}.start();
 						}
 					}).show();
+				break;
+			case 1:
+				startActivityForResult(new Intent(this,SendMessageActivity.class).putExtra("uid",uid),452);
 				break;
 		}
 		return super.onOptionsItemSelected(item);

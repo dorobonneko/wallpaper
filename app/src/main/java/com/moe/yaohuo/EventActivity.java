@@ -16,6 +16,11 @@ import android.view.ViewGroup;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.graphics.drawable.TypedArrayUtils;
 import android.content.res.TypedArray;
+import android.widget.TextView;
+import java.lang.reflect.Field;
+import android.util.TypedValue;
+import com.moe.internal.ImageGetter;
+import android.text.Html;
 
 public class EventActivity extends BaseActivity
 {
@@ -24,6 +29,8 @@ public class EventActivity extends BaseActivity
 	private int mode;
 	private View view,background;
 	private long time;
+	private TextView title;
+	private ImageGetter ig;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -34,9 +41,17 @@ public class EventActivity extends BaseActivity
 		background=getWindow().getDecorView();
 		Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
+		try
+		{
+			Field title=android.support.v7.widget.Toolbar.class.getDeclaredField("mTitleTextView");
+			title.setAccessible(true);
+			this.title=(TextView) title.get(findViewById(R.id.toolbar));
+			this.title.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+		}
+		catch (Exception e)
+		{}
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
-	
 	/*@Override
 	public boolean dispatchTouchEvent(MotionEvent event)
 	{
@@ -171,6 +186,16 @@ public class EventActivity extends BaseActivity
 		// TODO: Implement this method
 		super.finish();
 		overridePendingTransition(0,0);
+	}
+
+	@Override
+	public void setTitle(CharSequence title)
+	{
+		if(this.title!=null)
+			this.title.setText(Html.fromHtml(title.toString(),ig==null?ig=new ImageGetter(this.title,true):ig,null));
+			else
+			getSupportActionBar().setTitle(title);
+			
 	}
 	
 }

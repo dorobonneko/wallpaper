@@ -88,15 +88,21 @@
 				android:layout_height="match_parent"
 				android:orientation="vertical">
 
-				<LinearLayout
+				<RelativeLayout
 					android:background="#fff"
-					android:orientation="vertical"
-					android:paddingStart="25dp"
+					android:paddingStart="16dp"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
+					android:paddingTop="8dp"
 					android:minHeight="?attr/listPreferredItemHeight"
-					android:gravity="center_vertical">
-
+					>
+					<LinearLayout
+						android:layout_centerVertical="true"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:orientation="vertical"
+						android:paddingEnd="16dp"
+						android:paddingBottom="7dp">
 					<TextView
 						android:textSize="?attr/sizeSummary"
 						android:singleLine="true"
@@ -112,20 +118,22 @@
 						android:layout_height="wrap_content"
 						android:id="@+id/user_info_view_uid"
 						android:textColor="?android:attr/textColorPrimary"/>
+					</LinearLayout>
+					<View
+						android:layout_alignParentBottom="true"
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:background="?android:attr/listDivider"/>
+					
+				</RelativeLayout>
 
-				</LinearLayout>
-
-				<View
-					android:layout_width="match_parent"
-					android:layout_height="1px"
-					android:background="?android:attr/listDivider"/>
-
-				<RelativeLayout
-					android:background="#fff"
-					android:layout_width="match_parent"
-					android:layout_height="?attr/listPreferredItemHeight"
+				
+				<FrameLayout
 					android:minHeight="?attr/listPreferredItemHeight"
 					
+					android:background="#fff"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
 					>
 					<Button
 						android:id="@+id/user_info_view_space"
@@ -133,7 +141,10 @@
 						android:layout_height="match_parent"
 						android:background="?attr/selectableItemBackground"/>
 					<LinearLayout
-						android:layout_marginStart="25dp"
+						android:layout_marginBottom="8dp"
+						android:layout_marginEnd="16dp"
+						android:layout_marginTop="8dp"
+						android:layout_marginStart="16dp"
 						android:layout_centerVertical="true"
 						android:layout_width="match_parent"
 						android:layout_height="match_parent"
@@ -160,14 +171,13 @@
 
 					<ImageView
 						android:adjustViewBounds="true"
-						android:layout_marginEnd="25dp"
-						android:layout_height="wrap_content"
-						android:layout_width="wrap_content"
+						android:layout_height="40dp"
+						android:layout_width="40dp"
+						android:scaleType="centerInside"
 						app:srcCompat="@drawable/chevron_right"
-						android:layout_centerVertical="true"
-						android:layout_alignParentEnd="true"/>
+						android:layout_gravity="end|center_vertical"/>
 
-				</RelativeLayout>
+				</FrameLayout>
 
 			</LinearLayout>
 
@@ -178,7 +188,7 @@
 			android:background="#fff"
 			android:layout_gravity="bottom"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
+			android:layout_height="48dp"
 			android:orientation="horizontal">
 
 			<Button
@@ -186,7 +196,7 @@
 				android:background="?attr/selectableItemBackground"
 				android:text="发消息"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_height="match_parent"
 				android:layout_weight="1"/>
 
 			<Button
@@ -194,7 +204,7 @@
 				android:background="?attr/selectableItemBackground"
 				android:text="加好友"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_height="match_parent"
 				android:layout_weight="1"/>
 
 		</LinearLayout>

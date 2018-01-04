@@ -11,7 +11,7 @@ import android.animation.Animator;
 import android.widget.TextView;
 import android.text.Html;
 import com.moe.internal.ImageGetter;
-public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder>
+public class ListAdapter extends LoadMoreAdapter<ListAdapter.ViewHolder>
 {
 	private View parent;
 	private boolean anime=false;
@@ -20,7 +20,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder>
 		this.list=list;
 	}
 	@Override
-	public ListAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
+	public ListAdapter.ViewHolder onCreateViewHolderSub(ViewGroup p1, int p2)
 	{
 		parent=p1;
 		return new ViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.list_item,p1,false));
@@ -31,7 +31,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder>
 	
 
 	@Override
-	public void onBindViewHolder(ListAdapter.ViewHolder vh, int p2)
+	public void onBindViewHolderSub(ListAdapter.ViewHolder vh, int p2)
 	{
 		vh.itemView.setId(p2);
 		ListItem li=list.get(p2);
@@ -47,23 +47,26 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder>
 			vh.property.setText(Html.fromHtml(sb.toString()));
 		}else
 		vh.property.setText(null);
-		if(anime){
-			final float[] value=new float[]{0,1};
-			Animator anime=ObjectAnimator.ofFloat(vh.itemView,"Alpha",value);
+		if(anime&&!li.isAnime()){
+			final float[] value=new float[]{vh.itemView.getMeasuredWidth(),0};
+			vh.itemView.setTranslationX(vh.itemView.getMeasuredWidth());
+			Animator anime=ObjectAnimator.ofFloat(vh.itemView,"TranslationX",value);
 			anime.setDuration(500);
 			anime.start();
 		}
+		li.setAnime(true);
+		
 	}
 
 	@Override
-	public int getItemCount()
+	public int getItemCountSub()
 	{
 		return list.size();
 	}
 
 	
 	
-	public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+	public class ViewHolder extends LoadMoreAdapter.ViewHolder implements View.OnClickListener{
 		private TextView title,author,progress,time,property;
 		public ViewHolder(View v){
 			super(v);

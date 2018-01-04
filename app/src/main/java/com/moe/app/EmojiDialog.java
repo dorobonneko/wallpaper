@@ -245,7 +245,7 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 						break;
 				}
 			}
-			text.getText().insert(text.getSelectionEnd(),data);
+			text.getText().replace(text.getSelectionStart(),text.getSelectionEnd(),data);
 			dismiss();
 			}
 	}
@@ -324,7 +324,7 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 							}
 					}else
 					if(progress.isShowing())
-						sendEmptyMessageDelayed(1,1000);
+						sendEmptyMessageDelayed(1,100);
 					break;
 				case 2:
 					break;

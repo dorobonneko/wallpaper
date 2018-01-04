@@ -28,6 +28,8 @@ import android.content.Intent;
 import com.moe.yaohuo.ListActivity;
 import com.moe.utils.BbsUtils;
 import android.widget.Toast;
+import com.moe.view.GridDivider;
+import android.util.TypedValue;
 public class BbsClassFragment extends AnimeFragment implements SwipeRefreshLayout.OnRefreshListener,BbsAdapter.OnItemClickListener
 {
 	private List<BbsItem> list=new ArrayList<>();
@@ -47,7 +49,7 @@ public class BbsClassFragment extends AnimeFragment implements SwipeRefreshLayou
 		RecyclerView rv=(RecyclerView)srl.getChildAt(1);
 		rv.setLayoutManager(new GridLayoutManager(getActivity(),2));
 		rv.setAdapter(ba=new BbsAdapter(list=new ArrayList<>()));
-		rv.addItemDecoration(new Divider(getResources().getDisplayMetrics()));
+		rv.addItemDecoration(new GridDivider((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,getResources().getDisplayMetrics())));
 		ba.setOnItemClickListener(this);
 	}
 

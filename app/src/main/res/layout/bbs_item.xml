@@ -4,9 +4,8 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:minHeight="?attr/listPreferredItemHeight"
-	app:cardCornerRadius="5dp"
-	app:cardElevation="0dp"
+	app:cardCornerRadius="2dp"
+	app:cardElevation="1dp"
 	android:foreground="?attr/selectableItemBackground">
 
 	<LinearLayout
@@ -15,27 +14,31 @@
 		android:layout_height="match_parent"
 		android:orientation="horizontal"
 		android:gravity="center_vertical"
-		android:paddingLeft="10dp"
-		android:paddingRight="10dp">
+		android:paddingStart="16dp"
+		android:paddingEnd="16dp"
+		android:paddingTop="8dp"
+		android:paddingBottom="8dp">
 
 		<com.moe.widget.CircleImageView
 			android:scaleType="centerCrop"
-			android:layout_height="?attr/listPreferredItemHeightSmall"
-			android:layout_width="?attr/listPreferredItemHeightSmall"
-			android:id="@+android:id/icon"/>
+			android:layout_height="40dp"
+			android:layout_width="40dp"
+			android:id="@+android:id/icon"
+			android:layout_marginEnd="16dp"/>
 
 		<LinearLayout
 			android:layout_height="match_parent"
 			android:layout_width="match_parent"
 			android:orientation="vertical"
 			android:layout_weight="1.0"
-			android:paddingStart="5dp"
 			android:gravity="start|center_vertical">
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:orientation="horizontal">
 			<TextView
+				android:singleLine="true"
+				android:textSize="?attr/sizeTitle"
 				android:textColor="?android:attr/textColorPrimary"
 				android:id="@+android:id/title"
 				android:layout_height="wrap_content"
@@ -44,7 +47,8 @@
 				android:layout_width="wrap_content"
 				android:layout_height="1px"
 				android:layout_weight="1"/>
-				<TextView
+			<TextView
+				android:textSize="?attr/sizeSummary"
 					android:singleLine="true"
 					android:textColor="?attr/colorAccent"
 					android:id="@+id/subTitle"
@@ -53,13 +57,13 @@
 				
 			</LinearLayout>
 			<TextView
-				android:textSize="12sp"
+				android:singleLine="true"
+				android:textSize="?attr/sizeTip"
 				android:textColor="?android:textColorSecondary"
 				android:id="@+android:id/summary"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:textAppearance="?android:attr/textAppearanceSmall"/>
-
+				/>
 		</LinearLayout>
 
 	</LinearLayout>

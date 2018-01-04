@@ -31,7 +31,7 @@ public class ExitPreference extends Preference
 					@Override
 					public void onClick(DialogInterface p1, int p2)
 					{
-						getSharedPreferences().edit().putInt("uid",0).putString("pwd","").putString("name",null).putString("cookie","").commit();
+						getSharedPreferences().edit().putBoolean("login",false).putInt("uid",0).putString("pwd","").putString("name",null).putString("cookie","").commit();
 					}
 				}).setNegativeButton("手滑了", null).show();
 		}else ad.show();
