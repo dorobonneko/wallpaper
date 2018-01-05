@@ -8,8 +8,9 @@ import android.widget.Button;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
+import android.util.TypedValue;
 
-public class UbbAdapter extends RecyclerView.Adapter<UbbAdapter.ViewHolder>
+public class UbbAdapter extends EventAdapter<UbbAdapter.ViewHolder>
 {
 	private List<UbbItem> list;
 	public UbbAdapter(List<UbbItem> list){
@@ -33,14 +34,13 @@ public class UbbAdapter extends RecyclerView.Adapter<UbbAdapter.ViewHolder>
 	@Override
 	public int getItemCount()
 	{
-		// TODO: Implement this method
 		return list.size();
 	}
 	
-	public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+	public class ViewHolder extends EventAdapter.ViewHolder{
 		Button btn;
 		public ViewHolder(View v){
-			super(v);
+			super(UbbAdapter.this,v);
 			TypedArray ta=v.getContext().obtainStyledAttributes(new int[]{android.support.v7.appcompat.R.attr.selectableItemBackground});
 			ViewCompat.setBackground(v,ta.getDrawable(0));
 			ta.recycle();
@@ -50,23 +50,10 @@ public class UbbAdapter extends RecyclerView.Adapter<UbbAdapter.ViewHolder>
 			btn.setMinHeight(0);
 			btn.setMinWidth(0);
 			btn.setMinEms(0);
-			btn.setPadding(35,20,35,20);
-			v.setOnClickListener(this);
-		}
-
-		@Override
-		public void onClick(View p1)
-		{
-			if(oicl!=null)oicl.onItemClick(UbbAdapter.this,this);
-		}
-
+			int _16=(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,16,v.getResources().getDisplayMetrics());
+			btn.setPadding(_16,_16/2,_16,_16/2);
+			}
 		
 	}
-	public void setOnItemClickListener(OnItemClickListener l){
-		oicl=l;
-	}
-	private OnItemClickListener oicl;
-	public abstract interface OnItemClickListener{
-		void onItemClick(RecyclerView.Adapter adapter,RecyclerView.ViewHolder vh);
-	}
+	
 }

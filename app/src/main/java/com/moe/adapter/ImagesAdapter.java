@@ -29,26 +29,4 @@ public class ImagesAdapter extends EmojiAdapter
 	{
 		Glide.with(vh.icon.getContext()).load(list.get(p2)).diskCacheStrategy(DiskCacheStrategy.ALL).into(vh.icon);
 	}
-	public class ViewHolder extends EmojiAdapter.ViewHolder implements View.OnLongClickListener{
-		public ViewHolder(View v){
-			super(v);
-			v.setOnLongClickListener(this);
-		}
-
-		@Override
-		public boolean onLongClick(View p1)
-		{
-			if(oilcl!=null)return oilcl.onItemLongClick(ImagesAdapter.this,this);
-			return false;
-		}
-
-		
-	}
-	public void setOnItemLongClickListener(OnItemLongClickListener l){
-		oilcl=l;
-	}
-	private OnItemLongClickListener oilcl;
-	public abstract interface OnItemLongClickListener{
-		boolean onItemLongClick(RecyclerView.Adapter adapter,RecyclerView.ViewHolder vh);
-	}
 }

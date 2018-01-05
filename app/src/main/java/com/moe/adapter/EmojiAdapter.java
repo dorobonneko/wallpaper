@@ -11,7 +11,8 @@ import com.moe.utils.ImageCache;
 import com.moe.utils.PreferenceUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-public class EmojiAdapter extends RecyclerView.Adapter<EmojiAdapter.ViewHolder>
+import android.view.MotionEvent;
+public class EmojiAdapter extends EventAdapter<EmojiAdapter.ViewHolder>
 {
 	private List<String> list;
 	public EmojiAdapter(List<String> list){
@@ -20,7 +21,6 @@ public class EmojiAdapter extends RecyclerView.Adapter<EmojiAdapter.ViewHolder>
 	@Override
 	public EmojiAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2)
 	{
-	
 		return new ViewHolder(LayoutInflater.from(p1.getContext()).inflate(R.layout.face,p1,false));
 	}
 
@@ -29,7 +29,7 @@ public class EmojiAdapter extends RecyclerView.Adapter<EmojiAdapter.ViewHolder>
 	{
 		vh.title.setText(list.get(p2));
 		//ImageCache.load(PreferenceUtils.getHost(vh.icon.getContext())+"/face/"+list.get(p2)+".gif",vh.icon);
-		Glide.with(vh.icon.getContext()).load(PreferenceUtils.getHost(vh.icon.getContext())+"/face/"+list.get(p2)+".gif").diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.yaohuo).into(vh.icon);
+		try{Glide.with(vh.icon.getContext()).load(PreferenceUtils.getHost(vh.icon.getContext())+"/face/"+list.get(p2)+".gif").asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.yaohuo).into(vh.icon);}catch(Exception e){}
 	}
 
 	@Override
@@ -39,29 +39,29 @@ public class EmojiAdapter extends RecyclerView.Adapter<EmojiAdapter.ViewHolder>
 		return list.size();
 	}
 	
-	public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+	public class ViewHolder extends EventAdapter.ViewHolder implements View.OnTouchListener
+	{
+
+		@Override
+		public boolean onTouch(View p1, MotionEvent p2)
+		{
+			return oitl!=null&&oitl.OnItemTouch(p2);
+		}
+		
 		ImageView icon;
 		TextView title;
 		public ViewHolder(View v){
-			super(v);
+			super(EmojiAdapter.this,v);
 			icon=(ImageView)v.findViewById(android.R.id.icon);
 			title=(TextView)v.findViewById(android.R.id.title);
-			v.setOnClickListener(this);
+			if(oitl!=null)v.setOnTouchListener(this);
 		}
-
-		@Override
-		public void onClick(View p1)
-		{
-			if(oicl!=null)oicl.onItemClick(EmojiAdapter.this,this);
-		}
-
-		
 	}
-	private OnItemClickListener oicl;
-	public void setOnItemClickListener(OnItemClickListener l){
-		oicl=l;
+	private OnItemTouchListener oitl;
+	public void setOnItemTouchListener(OnItemTouchListener oitl){
+		this.oitl=oitl;
 	}
-	public abstract interface OnItemClickListener{
-		void onItemClick(RecyclerView.Adapter ra,RecyclerView.ViewHolder vh);
+	public abstract interface OnItemTouchListener{
+		boolean OnItemTouch(MotionEvent event);
 	}
 }

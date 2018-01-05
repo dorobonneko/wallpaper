@@ -12,7 +12,6 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/tablayout"/>
-
 	<ViewFlipper
 		android:id="@+id/toggle"
 		android:layout_width="match_parent"
@@ -23,12 +22,35 @@
 			android:id="@+id/emoji_list"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"/>
-
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:orientation="vertical">
+			<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingTop="16dp">
 
+				<TextView
+					android:layout_marginStart="16dp"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="添加ubb"
+					android:layout_alignParentStart="true"
+					android:layout_centerVertical="false"/>
+
+				<ImageView
+
+					android:id="@+id/ubb_add"
+					android:layout_marginEnd="15dp"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:background="?attr/selectableItemBackgroundBorderless"
+					app:srcCompat="@drawable/plus"
+					android:layout_alignParentEnd="true"
+					android:layout_centerVertical="false"/>
+
+			</RelativeLayout>
 			<android.support.v7.widget.RecyclerView
 				android:id="@+id/ubb_ready"
 				android:layout_width="match_parent"
@@ -56,7 +78,7 @@
 					android:minHeight="0px"
 					android:minEms="0"
 					android:id="@+id/clear"
-					android:padding="10dp"
+					android:padding="8dp"
 					android:background="?attr/selectableItemBackground"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
@@ -66,7 +88,7 @@
 					android:minHeight="0px"
 					android:minEms="0"
 					android:id="@+id/insert"
-					android:padding="10dp"
+					android:padding="8dp"
 					android:background="?attr/selectableItemBackground"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
@@ -74,7 +96,6 @@
 			</LinearLayout>
 
 		</LinearLayout>
-
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
@@ -84,10 +105,9 @@
 			<RelativeLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:paddingTop="15dp">
+				android:paddingTop="16dp">
 
 				<TextView
-					android:layout_marginStart="15dp"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:text="上传图片"
@@ -97,7 +117,7 @@
 				<ImageView
 					
 					android:id="@+id/file_add"
-					android:layout_marginEnd="15dp"
+					android:layout_marginEnd="16dp"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:background="?attr/selectableItemBackgroundBorderless"
@@ -115,10 +135,9 @@
 		</LinearLayout>
 
 	</ViewFlipper>
-
 	<Button
 		android:id="@+id/cancel"
-		android:layout_margin="10dp"
+		android:layout_margin="8dp"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:text="取消"

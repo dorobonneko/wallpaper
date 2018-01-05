@@ -39,6 +39,7 @@ import android.content.DialogInterface;
 import android.text.TextUtils;
 import com.moe.app.EmojiDialog;
 import java.net.SocketTimeoutException;
+import com.moe.adapter.EventAdapter;
 
 public class ReplyActivity extends EventActivity implements View.OnClickListener,EmojiAdapter.OnItemClickListener
 {
@@ -306,7 +307,7 @@ public class ReplyActivity extends EventActivity implements View.OnClickListener
 	}
 
 	@Override
-	public void onItemClick(RecyclerView.Adapter ra, RecyclerView.ViewHolder vh)
+	public void onItemClick(EventAdapter ra, EventAdapter.ViewHolder vh)
 	{
 		text.getText().insert(text.getSelectionStart(), "[img]/face/" + list.get(vh.getAdapterPosition()) + ".gif[/img]");
 	}

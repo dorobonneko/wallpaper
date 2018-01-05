@@ -294,7 +294,7 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 						else
 						{
 							loadMore.setState(LoadMoreView.State.SUCCESS);
-							sendMessageDelayed(obtainMessage(3,msg.obj),300);
+							sendMessageDelayed(obtainMessage(3,msg.obj),150);
 
 						}
 						break;
