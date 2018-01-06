@@ -16,7 +16,7 @@ public class DownloadDatabase extends SQLiteOpenHelper
 		super(context.getApplicationContext(),"download",null,3);
 	}
 
-	protected void update(DownloadObject p0)
+	protected void update(final DownloadObject p0)
 	{
 		SQLiteDatabase sql=dd.getWritableDatabase();
 		Field[] field=p0.getClass().getDeclaredFields();
@@ -41,8 +41,13 @@ public class DownloadDatabase extends SQLiteOpenHelper
 		{
 			FieldUtils.bind(state,field[i],p0,i+1);
 		}
+		
 		state.bindLong(field.length+1,p0.getId());
-		state.executeUpdateDelete();
+		int size=state.executeUpdateDelete();
+		if(size==0)
+		{
+			toString();
+		}
 		state.close();
 		state.releaseReference();
 		
@@ -57,7 +62,7 @@ public class DownloadDatabase extends SQLiteOpenHelper
 		state.close();
 	}
 
-	protected void save(DownloadObject p0)
+	protected boolean save(DownloadObject p0)
 	{
 		SQLiteDatabase sql=dd.getReadableDatabase();
 		Field[] field=p0.getClass().getDeclaredFields();
@@ -93,8 +98,14 @@ public class DownloadDatabase extends SQLiteOpenHelper
 			FieldUtils.bind(state,field[i],p0,i+1);
 		}
 		state.bindLong(field.length+1,p0.getId());
+		try{
 		state.executeInsert();
+		}catch(Exception e){
+			return false;
+		}finally{
 		state.close();
+		}
+		return true;
 	}
 	protected boolean tableIsExist(String tableName, SQLiteDatabase db)
 	{

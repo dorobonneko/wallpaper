@@ -31,6 +31,7 @@ public class NotificationList
 			builder.setOngoing(di.isLoading());
 			builder.setProgress(100,(int)(((double)di.getCurrent())/di.getTotal()*100),di.getState()==DownloadService.State.SUCCESS);
 			builder.setContentTitle(di.getTitle());
+			builder.setNumber(di.getState()==DownloadService.State.SUCCESS?-1:(int)(((double)di.getCurrent())/di.getTotal()*100));
 			builder.setSubText(di.getState()==DownloadService.State.SUCCESS?"下载完成":(NumberUtils.getSize(di.getCurrent())+"/"+NumberUtils.getSize(di.getTotal())));
 			return builder;
 	}

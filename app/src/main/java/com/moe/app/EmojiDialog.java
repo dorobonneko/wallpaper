@@ -60,10 +60,14 @@ import android.widget.FrameLayout;
 import android.view.Display;
 import android.graphics.Rect;
 import com.moe.widget.PopupBackground;
+import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
+import org.json.JSONException;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.text.TextUtils;
 public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedListener,View.OnClickListener,EventAdapter.OnItemClickListener,EventAdapter.OnItemLongClickListener,EmojiAdapter.OnItemTouchListener,PopupWindow.OnDismissListener
 {
-
-
 	private ArrayList<String> emoji_list,images_list;
 	private EditText text;
 	private ViewFlipper toggle;
@@ -71,10 +75,12 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 	private Upload up;
 	private ImagesDatabase database;
 	private ArrayList<UbbItem> ubb_list,ubb_ready_list;
-	private EditText ubb_key;
+	//private EditText ubb_key;//已不再使用
 	private RecyclerView ready;
-	private EventAdapter images,emoji,ubb;
+	private EventAdapter images,emoji,ubb,ubb_ready;
 	private PopupWindow emoji_show;
+	private JSONArray ubb_json;
+	private AlertDialog ubb_add;
 	public EmojiDialog(Activity activity)
 	{
 		super(activity);
@@ -107,9 +113,10 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 		toggle.setOutAnimation(getContext(),R.anim.slide_out);
 		findViewById(R.id.cancel).setOnClickListener(this);
 		findViewById(R.id.file_add).setOnClickListener(this);
-		ubb_key = (EditText) findViewById(R.id.key);
+		//ubb_key = (EditText) findViewById(R.id.key);
 		findViewById(R.id.insert).setOnClickListener(this);
 		findViewById(R.id.clear).setOnClickListener(this);
+		findViewById(R.id.ubb_add).setOnClickListener(this);
 		//emoji
 		RecyclerView emoji=(RecyclerView) findViewById(R.id.emoji_list);
 		emoji.setLayoutManager(new GridLayoutManager(getContext(),4));
@@ -147,34 +154,21 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 		ubb.getLayoutManager().setAutoMeasureEnabled(false);
 		if (ubb_list==null)
 			ubb_list = new ArrayList<>();
-		if (ubb_list.size()==0)
-		{
-			try
-			{
-				JSONArray ja=new JSONArray(StringUtils.getString(getContext().getAssets().open("ubb")));
-				for (int i=0;i<ja.length();i++)
-				{
-					JSONObject jo=ja.getJSONObject(i);
-					UbbItem ui=new UbbItem();
-					ui.setTitle(jo.getString("tit"));
-					ui.setData(jo.getString("data"));
-					ui.setMode(jo.getInt("mode"));
-					ubb_list.add(ui);
-				}
-			}
-			catch (Exception e)
-			{}
-		}
-		UbbAdapter ua=new UbbAdapter(ubb_list);
-		ua.setOnItemClickListener(this);
-		ubb.setAdapter(ua);
+		this.ubb = new UbbAdapter(ubb_list);
+		this.ubb.setOnItemClickListener(this);
+		this.ubb.setOnItemLongClickListener(this);
+		ubb.setAdapter(this.ubb);
 		//ubb_ready
 		ready = (RecyclerView) findViewById(R.id.ubb_ready);
 		ready.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
 		if (ubb_ready_list==null)ubb_ready_list = new ArrayList<>();
-		ready.setAdapter(this.ubb=new UbbAdapter(ubb_ready_list));
-		this.ubb.setOnItemClickListener(this);
+		ready.setAdapter(ubb_ready=new UbbAdapter(ubb_ready_list));
+		ubb_ready.setOnItemClickListener(this);
 		ready.addItemDecoration(new Divider(0xffaaaaaa,0,0,0,2,getContext().getResources().getDisplayMetrics()));
+		ViewCompat.setBackground(ready,VectorDrawableCompat.create(getContext().getResources(),R.drawable.ubb_ready_background,getContext().getTheme()));
+		if (ubb_list.size()==0)
+			loadUbb();
+
 	}
 
 	@Override
@@ -186,7 +180,7 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 		b.putStringArrayList("images",images_list);
 		b.putParcelableArrayList("ubb_list",ubb_list);
 		b.putParcelableArrayList("ubb_ready_list",ubb_ready_list);
-		emoji_show=null;
+		emoji_show = null;
 		return b;
 	}
 
@@ -220,7 +214,7 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 				((Activity)getContext()).startActivityForResult(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"),9731);
 				break;
 			case R.id.insert:
-				StringBuffer sb=new StringBuffer(ubb_key.getText());
+				StringBuffer sb=new StringBuffer(text.getText().subSequence(text.getSelectionStart(),text.getSelectionEnd()));
 				for (UbbItem ui:ubb_ready_list)
 				{
 					int index=ui.getData().indexOf("=");
@@ -232,7 +226,54 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 			case R.id.clear:
 				int size=ubb_ready_list.size();
 				ubb_ready_list.clear();
-				ubb.notifyItemRangeRemoved(0,size);
+				ubb_ready.notifyItemRangeRemoved(0,size);
+				break;
+			case R.id.ubb_add:
+				if (ubb_add==null)
+				{
+					final View v=LayoutInflater.from(getContext()).inflate(R.layout.ubb_add_view,null);
+					ubb_add = new AlertDialog.Builder(getContext()).setTitle("添加ubb").setView(v).setPositiveButton("取消",null).setNegativeButton("添加",new DialogInterface.OnClickListener(){
+
+							@Override
+							public void onClick(DialogInterface p1, int p2)
+							{
+								TextView title=(TextView) v.findViewById(R.id.title);
+								TextView data=(TextView) v.findViewById(R.id.summary);
+								Spinner mode=(Spinner) v.findViewById(R.id.mode);
+								boolean flag=true;
+								if (TextUtils.isEmpty(title.getText()))
+									flag = false;
+								if (TextUtils.isEmpty(data.getText()))
+									flag = false;
+								if (flag)
+								{
+									JSONObject jo=new JSONObject();
+									try
+									{
+										jo.put("tit",title.getText());
+										jo.put("data",data.getText());
+										jo.put("mode",mode.getSelectedItemPosition());
+										ubb_json.put(jo);
+										commit();
+										UbbItem ui=new UbbItem();
+										ui.setTitle(title.getText().toString());
+										ui.setData(data.getText().toString());
+										ui.setMode(mode.getSelectedItemPosition());
+										ubb_list.add(ui);
+										ubb.notifyItemInserted(ubb_list.size()-1);
+									}
+									catch (JSONException e)
+									{}
+								}
+								else
+								{
+									Toast.makeText(getContext(),"内容不能为空",Toast.LENGTH_SHORT).show();
+								}
+
+							}
+						}).create();
+				}
+				ubb_add.show();
 				break;
 		}
 	}
@@ -244,33 +285,33 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 		if (text!=null)
 		{
 			String data=null;
-			if (ra instanceof ImagesAdapter)
+			if (ra==images)
 			{
 				data = "[img]"+images_list.get(vh.getAdapterPosition())+"[/img]";
 			}
-			else if (ra instanceof EmojiAdapter)
+			else if (ra==emoji)
 			{
 				data = "[img]/face/"+emoji_list.get(vh.getAdapterPosition())+".gif[/img]";
 			}
-			else if (ra==ubb)
+			else if (ra==ubb_ready)
 			{
 				ubb_ready_list.remove(vh.getAdapterPosition());
 				ubb.notifyItemRemoved(vh.getAdapterPosition());
 				return;
 			}
-			else
+			else if (ra==ubb)
 			{
 				UbbItem ui=ubb_list.get(vh.getAdapterPosition());
 				switch (ui.getMode())
 				{
 					case 0:
 						ubb_ready_list.add(ubb_list.get(vh.getAdapterPosition()));
-						ubb.notifyItemInserted(ubb_ready_list.size()-1);
+						ubb_ready.notifyItemInserted(ubb_ready_list.size()-1);
 						ready.scrollToPosition(ubb_ready_list.size()-1);
 						return;
 					case 1:
 						int index=ui.getData().indexOf("=");
-						data = "["+ui.getData()+"]"+ubb_key.getText().toString()+"[/"+(index==-1?ui.getData():ui.getData().substring(0,index))+"]";
+						data = "["+ui.getData()+"]"+text.getText().subSequence(text.getSelectionStart(),text.getSelectionEnd()).toString()+"[/"+(index==-1?ui.getData():ui.getData().substring(0,index))+"]";
 						break;
 					case 2:
 						data = "["+ui.getData()+"]";
@@ -369,6 +410,23 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 						sendEmptyMessageDelayed(1,100);
 					break;
 				case 2:
+					//加载ubb
+					try
+					{
+						ubb_json = (JSONArray) msg.obj;
+						for (int i=0;i<ubb_json.length();i++)
+						{
+							JSONObject jo=ubb_json.getJSONObject(i);
+							UbbItem ui=new UbbItem();
+							ui.setTitle(jo.getString("tit"));
+							ui.setData(jo.getString("data"));
+							ui.setMode(jo.getInt("mode"));
+							ubb_list.add(ui);
+							ubb.notifyItemInserted(ubb_list.size()-1);
+						}
+					}
+					catch (Exception e)
+					{}
 					break;
 			}
 		}
@@ -393,13 +451,14 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 		}
 		else if (adapter==emoji)
 		{
-			if(emoji_show==null){
+			if (emoji_show==null)
+			{
 				FrameLayout group=new PopupBackground(getContext());
 				ImageView image=new ImageView(getContext());
 				image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 				int size=(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,72,getContext().getResources().getDisplayMetrics());
 				group.addView(image,size,size);
-				emoji_show=new PopupWindow();
+				emoji_show = new PopupWindow();
 				emoji_show.setContentView(group);
 				Display display=getWindow().getWindowManager().getDefaultDisplay();
 				emoji_show.setWidth(display.getWidth());
@@ -422,16 +481,32 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 			//wl.alpha=0.8f;
 			//getWindow().setAttributes(wl);
 		}
+		else if (adapter==ubb)
+		{
+			//删除ubb
+			new AlertDialog.Builder(getContext()).setTitle("确认删除？").setMessage(ubb_list.get(vh.getAdapterPosition()).getTitle()).setNegativeButton("手滑了",null).setPositiveButton("确认",new DialogInterface.OnClickListener(){
+
+					@Override
+					public void onClick(DialogInterface p1, int p2)
+					{
+						ubb_json.remove(vh.getAdapterPosition());
+						ubb_list.remove(vh.getAdapterPosition());
+						ubb.notifyItemRemoved(vh.getAdapterPosition());
+						commit();
+					}
+				}).show();
+		}
 		return true;
 	}
 
 	@Override
 	public boolean OnItemTouch(MotionEvent event)
 	{
-		switch(event.getAction()){
+		switch (event.getAction())
+		{
 			case event.ACTION_CANCEL:
 			case event.ACTION_UP:
-				if(emoji_show!=null&&emoji_show.isShowing())
+				if (emoji_show!=null&&emoji_show.isShowing())
 					emoji_show.dismiss();
 				break;
 		}
@@ -442,7 +517,7 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 	public void onDismiss()
 	{
 		WindowManager.LayoutParams wl=getWindow().getAttributes();
-		wl.alpha=1f;
+		wl.alpha = 1f;
 		getWindow().setAttributes(wl);
 	}
 
@@ -465,5 +540,85 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 		{
 			Toast.makeText(getContext(),"无可编辑视图",Toast.LENGTH_SHORT).show();
 		}
+	}
+	private void loadUbb()
+	{
+		new Thread(){
+			public void run()
+			{
+				File file=new File(getContext().getFilesDir(),"ubb");
+				ByteArrayOutputStream baos=new ByteArrayOutputStream();
+				byte[] buffer=new byte[512];
+				int len=0;
+
+				if (!file.exists())
+				{
+					try
+					{
+						OutputStream os=getContext().openFileOutput("ubb",getContext().MODE_PRIVATE);
+						InputStream is=getContext().getAssets().open("ubb");
+						while ((len=is.read(buffer))!=-1)
+						{
+							baos.write(buffer,0,len);
+							os.write(buffer,0,len);
+						}
+						baos.flush();
+						os.flush();
+						is.close();
+						os.close();
+					}
+					catch (IOException e)
+					{}
+				}
+				else
+				{
+					try
+					{
+						InputStream is=getContext().openFileInput("ubb");
+						while ((len=is.read(buffer))!=-1)
+						{
+							baos.write(buffer,0,len);
+						}
+						baos.flush();
+						is.close();
+					}
+					catch (IOException e)
+					{}
+				}
+				try
+				{
+					handler.obtainMessage(2,new JSONArray(baos.toString())).sendToTarget();
+				}
+				catch (JSONException e)
+				{}
+				try
+				{
+					baos.close();
+				}
+				catch (IOException e)
+				{}
+			}
+		}.start();
+	}
+	private Object sync=new Object();
+	private void commit()
+	{
+		new Thread(){
+			public void run()
+			{
+				synchronized (sync)
+				{
+					try
+					{
+						OutputStream os=getContext().openFileOutput("ubb",getContext().MODE_PRIVATE);
+						os.write(ubb_json.toString().getBytes());
+						os.flush();
+						os.close();
+					}
+					catch (IOException e)
+					{}
+				}
+			}
+		}.start();
 	}
 }

@@ -11,167 +11,145 @@ public class DownloadQuery<T extends DownloadObject> implements Handler.Callback
 {
 	private String table;
 	private Class class_;
-	private Handler handler,queryHandler;
-	private QueryThread qt;
-	private Queue<QuerySql> queue;
-	public DownloadQuery(Class<T> class_){
+	private Handler handler;
+	public DownloadQuery(Class<T> class_)
+	{
 		this(class_,class_.getSimpleName());
 	}
-	public DownloadQuery(Class<T> class_,String table){
-		this.table=table;
-		this.class_=class_;
-		queue=new LinkedBlockingDeque<QuerySql>();
-		handler=new Handler(this);
-		qt=new QueryThread();
-		qt.start();
+	public DownloadQuery(Class<T> class_, String table)
+	{
+		this.table = table;
+		this.class_ = class_;
+		handler = new Handler(this);
 	}
-	
-	public void doQuery(QuerySql qs){
+
+	public void doQuery(QuerySql qs)
+	{
 		qs.setTable(table);
-		queue.add(qs);
-		if(queryHandler!=null)
-		queryHandler.obtainMessage(0).sendToTarget();
+		new QueryThread(qs).start();
 	}
-	public void doQuery(String sql,Listener<T> listener){
+	public void doQuery(String sql, Listener<T> listener)
+	{
 		QuerySql qs=new QuerySql(sql);
 		qs.setListener(listener);
 		qs.setTable(table);
-		queue.add(qs);
-		if(queryHandler!=null)
-		queryHandler.obtainMessage(0).sendToTarget();
+		new QueryThread(qs).start();
 	}
 
 	@Override
 	public boolean handleMessage(Message p1)
 	{
-		switch(p1.what){
+		switch (p1.what)
+		{
 			case 0:
-				if(p1.obj instanceof Object[]){
+				if (p1.obj instanceof Object[])
+				{
 					Object[] o=(Object[])p1.obj;
 					QuerySql qs=(QuerySql) o[0];
 					qs.getListener().done(qs,(List)o[1]);
-					}
-					else{
-					QuerySql qs=(QuerySql) p1.obj;
-				qs.getListener().done(qs,null);
 				}
-				
+				else
+				{
+					QuerySql qs=(QuerySql) p1.obj;
+					qs.getListener().done(qs,null);
+				}
+
 				break;
 		}
 		return true;
 	}
 
-	
-	public static abstract interface Listener<T extends DownloadObject>{
-		public void done(QuerySql<T> qs,List<T> t);
-	}
-	class QueryThread extends Thread implements Handler.Callback
-	{
 
+	public static abstract interface Listener<T extends DownloadObject>
+	{
+		public void done(QuerySql<T> qs, List<T> t);
+	}
+	class QueryThread extends Thread 
+	{
+		private QuerySql qs;
+		public QueryThread(QuerySql qs)
+		{
+			this.qs = qs;
+		}
 		@Override
 		public void run()
 		{
-			Looper.prepare();
-			queryHandler=new Handler(this);
-			if(queue.size()>0)queryHandler.sendEmptyMessage(0);
-			Looper.loop();
+			DownloadDatabase dd=DownloadDatabase.getInstance();
+			SQLiteDatabase sql=dd.getReadableDatabase();
+			Cursor cursor=null;
+			try
+			{
+				cursor = sql.rawQuery(qs.getSql(),null);
 			}
-
-		@Override
-		public boolean handleMessage(Message p1)
-		{
-			switch(p1.what){
-				case 0:
-					DownloadDatabase dd=DownloadDatabase.getInstance();
-					SQLiteDatabase sql=dd.getReadableDatabase();
-					QuerySql qs=queue.remove();
-					Cursor cursor=null;
-					try{
-						cursor=sql.rawQuery(qs.getSql(),null);
-					}catch(Exception e){}
-					if(cursor!=null){
-						List<T> list=new ArrayList<>();
-						while(cursor.moveToNext()){
+			catch (Exception e)
+			{}
+			if (cursor!=null)
+			{
+				List<T> list=new ArrayList<>();
+				while (cursor.moveToNext())
+				{
+					try
+					{
+						T item=null;
+						try
+						{
+							Constructor con=class_.getConstructor(String.class);
+							item = (T) con.newInstance(new Object[]{table});
+						}
+						catch (Exception e)
+						{
+							item = (T)class_.newInstance();
+						}
+						for (String name:cursor.getColumnNames())
+						{
 							try
 							{
-								T item=null;
-								try
+								Field field=FieldUtils.getField(class_,name);
+								field.setAccessible(true);
+								switch (field.getType().getSimpleName())
 								{
-									Constructor con=class_.getConstructor(String.class);
-									try
-									{
-										item = (T) con.newInstance(new Object[]{table});
-									}
-									catch (InvocationTargetException e)
-									{}
-									catch (InstantiationException e)
-									{}
-									catch (IllegalAccessException e)
-									{}
-									catch (IllegalArgumentException e)
-									{}
+									case "String":
+										field.set(item,cursor.getString(cursor.getColumnIndex(name)));
+										break;
+									case "long":
+										field.setLong(item,cursor.getLong(cursor.getColumnIndex(name)));
+										break;
+									case "int":
+										field.setInt(item,cursor.getInt(cursor.getColumnIndex(name)));
+										break;
+									case "char":
+										field.setChar(item,(char)cursor.getInt(cursor.getColumnIndex(name)));
+										break;
+									case "boolean":
+										field.setBoolean(item,cursor.getInt(cursor.getColumnIndex(name))==1);
+										break;
+									case "byte":
+										field.setByte(item,(byte)cursor.getShort(cursor.getColumnIndex(name)));
+										break;
+									case "short":
+										field.setShort(item,cursor.getShort(cursor.getColumnIndex(name)));
+										break;
+									case "float":
+										field.setFloat(item,(float)cursor.getDouble(cursor.getColumnIndex(name)));
+										break;
+									case "double":
+										field.setDouble(item,cursor.getDouble(cursor.getColumnIndex(name)));
+										break;
 								}
-								catch (NoSuchMethodException e)
-								{}
-								catch (SecurityException e)
-								{}
-								if(item==null)item=(T)class_.newInstance();
-								for(String name:cursor.getColumnNames()){
-									try
-									{
-										Field field=FieldUtils.getField(class_,name);
-										field.setAccessible(true);
-										switch (field.getType().getSimpleName())
-										{
-											case "String":
-												field.set(item,cursor.getString(cursor.getColumnIndex(name)));
-												break;
-											case "long":
-												field.setLong(item,cursor.getLong(cursor.getColumnIndex(name)));
-												break;
-											case "int":
-												field.setInt(item,cursor.getInt(cursor.getColumnIndex(name)));
-												break;
-											case "char":
-												field.setChar(item,(char)cursor.getInt(cursor.getColumnIndex(name)));
-												break;
-											case "boolean":
-												field.setBoolean(item,cursor.getInt(cursor.getColumnIndex(name))==1);
-												break;
-											case "byte":
-												field.setByte(item,(byte)cursor.getShort(cursor.getColumnIndex(name)));
-												break;
-											case "short":
-												field.setShort(item,cursor.getShort(cursor.getColumnIndex(name)));
-												break;
-											case "float":
-												field.setFloat(item,(float)cursor.getDouble(cursor.getColumnIndex(name)));
-												break;
-											case "double":
-												field.setDouble(item,cursor.getDouble(cursor.getColumnIndex(name)));
-												break;
-										}
-									}
-									catch(NullPointerException e)
-									{throw new RuntimeException("table is not match with "+class_.getSimpleName());}
-								}
-								list.add(item);
 							}
-							catch (InstantiationException e)
-							{}
-							catch (IllegalAccessException e)
-							{}
+							catch (Exception e)
+							{throw new RuntimeException("table is not match with "+class_.getSimpleName());}
 						}
-						if(cursor!=null)
-						cursor.close();
-						handler.obtainMessage(0,new Object[]{qs,list}).sendToTarget();
-					}else
-					handler.obtainMessage(0,qs).sendToTarget();
-					break;
-			}
-			return true;
-		}
+						list.add(item);
+					}
+					catch (Exception e)
+					{}
 
-		
-	}
-	}
+				}
+				if (cursor!=null)
+					cursor.close();
+				handler.obtainMessage(0,new Object[]{qs,list}).sendToTarget();
+
+			}
+
+		}}}

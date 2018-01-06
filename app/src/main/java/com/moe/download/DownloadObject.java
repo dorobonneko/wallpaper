@@ -35,9 +35,9 @@ public class DownloadObject implements Parcelable
 	{
 		return table;
 	}
-	public void save(){
+	public boolean save(){
 		DownloadDatabase dd=DownloadDatabase.getInstance();
-		dd.save(this);
+		return dd.save(this);
 	}
 	public void update(){
 		DownloadDatabase dd=DownloadDatabase.getInstance();

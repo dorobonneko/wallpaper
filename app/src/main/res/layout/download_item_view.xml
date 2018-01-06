@@ -4,27 +4,30 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	app:cardCornerRadius="3dp"
+	app:cardCornerRadius="2dp"
 	app:cardElevation="1dp"
 	android:foreground="?attr/selectableItemBackground">
 
-	<LinearLayout
-		android:textColor="?android:attr/textColorPrimary"
+	<com.moe.widget.DownloadProgressBar
 		android:minHeight="?attr/listPreferredItemHeight"
-		android:id="@+id/background"
+		android:id="@+id/progressBar"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
-		android:paddingStart="12dp"
-		android:paddingEnd="12dp"
-		android:gravity="center_vertical">
+		android:gravity="center_vertical"
+		android:paddingStart="16dp"
+		android:paddingEnd="16dp"
+		android:paddingTop="8dp"
+		android:paddingBottom="8dp">
 
 		<ImageView
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
+			android:scaleType="centerInside"
+			android:layout_height="40dp"
+			android:layout_width="40dp"
 			app:srcCompat="@drawable/download"/>
 
 		<LinearLayout
+			android:paddingStart="8dp"
 			android:layout_height="match_parent"
 			android:layout_width="wrap_content"
 			android:orientation="vertical"
@@ -37,34 +40,31 @@
 				android:layout_height="wrap_content"
 				android:layout_width="match_parent"
 				android:gravity="center_vertical"
-				android:textSize="?attr/sizeTitle"/>
-
-			<ProgressBar
-				android:focusable="false"
-				android:clickable="false"
-				android:id="@+id/download_item_view_progress"
-				style="?android:attr/progressBarStyleHorizontal"
-				android:layout_height="wrap_content"
-				android:layout_width="match_parent"/>
+				android:textSize="?attr/sizeSummary"
+				android:minLines="1"
+				android:ellipsize="middle"
+				android:textColor="?android:attr/textColorPrimary"/>
 
 			<TextView
+				android:minLines="1"
 				android:textColor="?android:attr/textColorSecondary"
 				android:singleLine="true"
 				android:id="@+android:id/summary"
 				android:layout_height="wrap_content"
 				android:layout_width="match_parent"
 				android:gravity="center_vertical"
-				android:textSize="?attr/sizeSummary"/>
+				android:textSize="?attr/sizeTip"/>
 
 		</LinearLayout>
 
 		<ImageView
+			android:layout_marginStart="16dp"
 			android:id="@+id/download_item_view_state"
-			android:layout_height="match_parent"
-			android:layout_width="wrap_content"
+			android:layout_height="40dp"
+			android:layout_width="40dp"
 			app:srcCompat="@drawable/play"
 			android:scaleType="centerInside"/>
 
-	</LinearLayout>
+	</com.moe.widget.DownloadProgressBar>
 
 </android.support.v7.widget.CardView>

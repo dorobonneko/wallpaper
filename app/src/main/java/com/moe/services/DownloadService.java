@@ -195,9 +195,10 @@ public class DownloadService extends Service
 							intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						}
 						int index=di.getDir().lastIndexOf(".");
-						intent.setDataAndType(contentUri,index==-1?"*/*":MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(di.getDir().substring(index+1))));
-						PendingIntent pi=PendingIntent.getActivity(getApplicationContext(),233,intent,PendingIntent.FLAG_ONE_SHOT);
+						intent.setDataAndType(contentUri,index==-1?"*/*":di.getType()==null?MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(di.getDir().substring(index+1))):di.getType());
+						PendingIntent pi=PendingIntent.getActivity(getApplicationContext(),233,intent,PendingIntent.FLAG_UPDATE_CURRENT);
 						nb.setContentIntent(pi);
+						nb.setAutoCancel(true);
 						if (di.getTitle().matches(".*.apk"))
 							startActivity(intent);
 						nm.notify(di.getUrl().hashCode(),Build.VERSION.SDK_INT>15?nb.build():nb.getNotification());
@@ -212,7 +213,6 @@ public class DownloadService extends Service
 	}
 	public static class State
 	{
-		public final static int UNKNOW=0;
 		public final static int WAITING=1;
 		public final static int LOADING=2;
 		public final static int SUCCESS=3;

@@ -594,6 +594,7 @@ private void checkUpdate(){
 													di.setType(null);
 													di.setTime(System.currentTimeMillis());
 													//di.setCookie(CookieManager.getInstance().getCookie(url));
+													di.setId(di.getTitle().hashCode());
 													di.save();
 													startService(new Intent(getApplicationContext(),DownloadService.class).putExtra("down",di));
 

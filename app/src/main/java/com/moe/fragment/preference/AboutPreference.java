@@ -84,6 +84,7 @@ public class AboutPreference extends PreferenceFragment implements Preference.On
 																di.setType(null);
 																di.setTime(System.currentTimeMillis());
 																//di.setCookie(CookieManager.getInstance().getCookie(url));
+																di.setId(di.getTitle().hashCode());
 																di.save();
 																getContext().startService(new Intent(getContext(),DownloadService.class).putExtra("down",di));
 																

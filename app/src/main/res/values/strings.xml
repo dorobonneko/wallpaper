@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="添加ubb">添加ubb</string>
+    <string name="清空">清空</string>
+    <string name="插入">插入</string>
+    <string name="上传图片">上传图片</string>
+    <string name="取消">取消</string>
+
 
     <string name="app_name">妖火网</string>
     <string formatted="false" name="book_list">/bbs/book_list.aspx</string>

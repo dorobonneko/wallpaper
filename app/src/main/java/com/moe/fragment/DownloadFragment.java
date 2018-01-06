@@ -148,6 +148,16 @@ DownloadQuery.Listener<DownloadItem>
 		menu.getItem(0).setIntent(new Intent(getActivity(),PreferenceActivity.class).setAction("download")).setIcon(VectorDrawableCompat.create(getResources(),R.drawable.settings,getActivity().getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 	}
 
+	@Override
+	public void onHiddenChanged(boolean hidden)
+	{
+		if(!hidden){
+			query.doQuery(loading_sql);
+			query.doQuery(success_sql);
+			
+		}
+	}
+
 	
 	@Override
 	public void done(QuerySql<DownloadItem> qs, List<DownloadItem> t)

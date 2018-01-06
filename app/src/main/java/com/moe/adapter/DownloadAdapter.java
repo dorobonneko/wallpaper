@@ -14,6 +14,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import com.moe.utils.NumberUtils;
+import com.moe.widget.DownloadProgressBar;
 public class DownloadAdapter extends RecyclerView.Adapter
 {
 	private List<DownloadItem> selected;
@@ -46,9 +47,9 @@ public class DownloadAdapter extends RecyclerView.Adapter
 				vh.size.setText(NumberUtils.getSize(di.getCurrent())+"/"+NumberUtils.getSize(di.getTotal()));
 				}catch(Exception e){}
 				if(selected.contains(di))
-					vh.bg.setBackgroundColor(p1.itemView.getResources().getColor(R.color.divider));
+					vh.progress.setBackgroundColor(p1.itemView.getResources().getColor(R.color.divider));
 				else
-					vh.bg.setBackgroundDrawable(null);
+					vh.progress.setBackgroundDrawable(null);
 				break;
 			case 1:
 				((ViewHolder2)p1).title.setText(di.getTitle());
@@ -76,15 +77,13 @@ public class DownloadAdapter extends RecyclerView.Adapter
 	
 	public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener,View.OnClickListener{
 		private TextView title,size;
-		private ProgressBar progress;
+		private DownloadProgressBar progress;
 		private ImageView state;
-		private View bg;
 		public ViewHolder(View v){
 			super(v);
-			bg=v.findViewById(R.id.background);
 			size=(TextView)v.findViewById(android.R.id.summary);
 			title=(TextView)v.findViewById(android.R.id.title);
-			progress=(ProgressBar)v.findViewById(R.id.download_item_view_progress);
+			progress=(DownloadProgressBar)v.findViewById(R.id.progressBar);
 			state=(ImageView)v.findViewById(R.id.download_item_view_state);
 			progress.setMax(100);
 			v.setOnLongClickListener(this);
