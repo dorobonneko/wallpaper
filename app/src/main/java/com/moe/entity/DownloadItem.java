@@ -17,6 +17,7 @@ public class DownloadItem extends DownloadObject
 	private String type;
 	private long time;
 	private String cookie;
+	protected long speed;
 	public DownloadItem(){}
 	public DownloadItem(Parcel p)
 	{
@@ -31,6 +32,17 @@ public class DownloadItem extends DownloadObject
 		time = p.readLong();
 		current=p.readLong();
 		cookie=p.readString();
+		speed=p.readLong();
+	}
+
+	public void setSpeed(long speed)
+	{
+		this.speed = speed;
+	}
+
+	public long getSpeed()
+	{
+		return speed;
 	}
 
 	public void setCookie(String cookie)
@@ -168,6 +180,7 @@ public class DownloadItem extends DownloadObject
 		p1.writeLong(time);
 		p1.writeLong(current);
 		p1.writeString(cookie);
+		p1.writeLong(speed);
 	}
 	public static Parcelable.Creator<DownloadItem> CREATOR=new Parcelable.Creator<DownloadItem>(){
 

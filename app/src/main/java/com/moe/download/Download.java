@@ -127,7 +127,7 @@ public class Download extends Thread
 						os.write(buffer,0,len);
 						dItem.setCurrent(dItem.getCurrent()+len);
 						dItem.update();
-					}
+						}
 					os.flush();
 					break;
 				case 416:

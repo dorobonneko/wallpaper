@@ -22,6 +22,7 @@ class ClassUtils
 		}
 	}
 	public static boolean isAccept(Field field){
+		if(!Modifier.isProtected(field.getModifiers()))
 		switch(field.getType().getSimpleName()){
 			case "String":
 			case "int":

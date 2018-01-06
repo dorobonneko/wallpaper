@@ -44,12 +44,15 @@ public class DownloadAdapter extends RecyclerView.Adapter
 					vh.state.setImageResource(R.drawable.play);
 				try{
 				vh.progress.setProgress((int)(((double)di.getCurrent())/di.getTotal()*vh.progress.getMax()));
-				vh.size.setText(NumberUtils.getSize(di.getCurrent())+"/"+NumberUtils.getSize(di.getTotal()));
+				long change=di.getCurrent()-(vh.getOldSize()==0?di.getCurrent():vh.getOldSize());
+				if(!di.isLoading())change=0;
+				vh.size.setText(NumberUtils.getSize(di.getCurrent())+"/"+NumberUtils.getSize(di.getTotal())+" | "+NumberUtils.getSize(change)+"/S"+(change==0?"":(" | 剩余"+NumberUtils.getTime((long)((di.getTotal()-di.getCurrent())/((double)change)*1000)))));
 				}catch(Exception e){}
 				if(selected.contains(di))
 					vh.progress.setBackgroundColor(p1.itemView.getResources().getColor(R.color.divider));
 				else
 					vh.progress.setBackgroundDrawable(null);
+					vh.setOldSize(di.getCurrent());
 				break;
 			case 1:
 				((ViewHolder2)p1).title.setText(di.getTitle());
@@ -79,6 +82,7 @@ public class DownloadAdapter extends RecyclerView.Adapter
 		private TextView title,size;
 		private DownloadProgressBar progress;
 		private ImageView state;
+		private long oldSize;
 		public ViewHolder(View v){
 			super(v);
 			size=(TextView)v.findViewById(android.R.id.summary);
@@ -88,6 +92,16 @@ public class DownloadAdapter extends RecyclerView.Adapter
 			progress.setMax(100);
 			v.setOnLongClickListener(this);
 			v.setOnClickListener(this);
+		}
+
+		public void setOldSize(long oldSize)
+		{
+			this.oldSize = oldSize;
+		}
+
+		public long getOldSize()
+		{
+			return oldSize;
 		}
 
 		@Override
