@@ -102,12 +102,12 @@ public class UserUtils
 			ui.setUid(id);
 
 			ui.setState(doc.getElementsByAttributeValue("alt", "ONLINE").size());
-			Matcher matcher=Pattern.compile("(?s)个人资料(.*?)【.*?【昵称】：(.*?)\\s【妖晶】：([\\d-]*)\\s【经验】：(\\d*)\\s【等级】：(\\d*).*?【头衔】：(.*?)\\s.*?【性别】：(.)\\s【年龄】：(\\d*).*?【积时】：(.*?)\\s【注册时间】：(.*?)\\s【.*?【身高】：(.*?)\\s【体重】：(.*?)\\s【星座】：(.*?)\\s", Pattern.DOTALL).matcher(doc.text());
+			Matcher matcher=Pattern.compile("(?s).*个人资料(.*?)\\s【.*?【昵称】：(.*?)\\s【妖晶】：([\\d-]*)\\s【经验】：(\\d*)\\s【等级】：(\\d*).*?【头衔】：(.*?)\\s.*?【性别】：(.)\\s【年龄】：(\\d*).*?【积时】：(.*?)\\s【注册时间】：(.*?)\\s【.*?【身高】：(.*?)\\s【体重】：(.*?)\\s【星座】：(.*?)\\s", Pattern.DOTALL).matcher(doc.text());
 			if (matcher.find())
 			{
 				try
 				{
-					ui.setSign(matcher.group(1).substring(6));
+					ui.setSign(matcher.group(1).substring(1));
 				}
 				catch (Exception e)
 				{}
