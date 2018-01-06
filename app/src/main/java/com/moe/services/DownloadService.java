@@ -16,6 +16,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
+import java.util.TimerTask;
+import java.util.Timer;
 
 public class DownloadService extends Service
 {
@@ -29,6 +31,7 @@ public class DownloadService extends Service
 	private PendingIntent download_activity;
 	private OkHttpClient ohc;
 	private SharedPreferences setting;
+	private Timer timer;
 	public static SSLSocketFactory getSSLSocketFactory()
 	{
 		if (ssf==null)
@@ -91,21 +94,15 @@ public class DownloadService extends Service
 		check();
 	}
 
-	private Handler handler=new Handler(){
+	private class Alarm extends TimerTask
+	{
 
 		@Override
-		public void handleMessage(Message msg)
+		public void run()
 		{
-			switch (msg.what)
-			{
-				case 0:
-					sendBroadcast(new Intent(ACTION_REFRESH).putParcelableArrayListExtra("data",loading));
-					sendEmptyMessageDelayed(0,1000);
-					break;
-			}
+			sendBroadcast(new Intent(ACTION_REFRESH).putParcelableArrayListExtra("data",loading));
 		}
-
-	};
+	}
 
 	@Override
 	public void onCreate()
@@ -118,13 +115,15 @@ public class DownloadService extends Service
 		download_activity = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
 		registerReceiver(refresh=new NotifcationRefresh(),new IntentFilter(ACTION_REFRESH));
 		setting = getSharedPreferences("setting",0);
-		handler.sendEmptyMessageDelayed(0,1000);
+		//handler.sendEmptyMessageDelayed(0,1000);
+		timer=new Timer();
+		timer.schedule(new Alarm(),0,1000);
 	}
 
 	@Override
 	public void onDestroy()
 	{
-		handler.removeMessages(0);
+		timer.cancel();
 		if (refresh!=null)unregisterReceiver(refresh);
 		super.onDestroy();
 	}
