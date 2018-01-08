@@ -27,7 +27,9 @@ public class ProgressDrawable extends Drawable implements Application.ActivityLi
 	private int state=-1;
 	private Paint paint;
 	private float progress;
+	private Context context;
 	public ProgressDrawable(Context context){
+		this.context=context;
 		if(context instanceof Activity)
 		((Application)context.getApplicationContext()).registerActivityLifecycleCallbacks(this);
 		renderAnime();
@@ -150,24 +152,25 @@ public class ProgressDrawable extends Drawable implements Application.ActivityLi
 	@Override
 	public void onActivityStarted(Activity p1)
 	{
+		if(context==p1)
 		anime.start();
 	}
 
 	@Override
 	public void onActivityResumed(Activity p1)
-	{
+	{if(context==p1)
 		anime.resume();
 	}
 
 	@Override
 	public void onActivityPaused(Activity p1)
-	{
+	{if(context==p1)
 		anime.pause();
 	}
 
 	@Override
 	public void onActivityStopped(Activity p1)
-	{
+	{if(context==p1)
 		anime.end();
 	}
 
@@ -180,8 +183,11 @@ public class ProgressDrawable extends Drawable implements Application.ActivityLi
 	@Override
 	public void onActivityDestroyed(Activity p1)
 	{
+		if(context==p1){
+			context=null;
+			setCallback(null);
 		((Application)p1.getApplicationContext()).unregisterActivityLifecycleCallbacks(this);
-		
+		}
 	}
 	
 	public static class State{

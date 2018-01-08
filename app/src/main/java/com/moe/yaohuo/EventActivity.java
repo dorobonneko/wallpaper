@@ -24,11 +24,6 @@ import android.text.Html;
 
 public class EventActivity extends BaseActivity
 {
-	private boolean isAnime;
-	private float oldx,oldy,X;
-	private int mode;
-	private View view,background;
-	private long time;
 	private TextView title;
 	private ImageGetter ig;
 	@Override
@@ -36,9 +31,8 @@ public class EventActivity extends BaseActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_list_view);
-		view=findViewById(R.id.coordinatorlayout);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 		getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-		background=getWindow().getDecorView();
 		Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		try

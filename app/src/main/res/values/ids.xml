@@ -2,4 +2,5 @@
 	<resources>
 		<item type="id" name="callback"></item>
 		<item type="id" name="state"/>
+		<item type="id" name="type"/>
 	</resources>

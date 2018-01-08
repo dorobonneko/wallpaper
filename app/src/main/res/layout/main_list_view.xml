@@ -11,13 +11,11 @@
 	android:fitsSystemWindows="true"
 	android:id="@+id/coordinatorlayout"
 	android:background="?android:attr/windowBackground">
-
-	<android.support.design.widget.AppBarLayout
+<android.support.design.widget.AppBarLayout
 		android:id="@+id/appbarlayout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		app:elevation="0dp">
-
+		>
 		<com.moe.widget.Toolbar
 			app:theme="@style/toolbar"
 			android:id="@+id/toolbar"
@@ -26,8 +24,7 @@
 			/>
 
 	</android.support.design.widget.AppBarLayout>
-
-	<FrameLayout
+<FrameLayout
 		android:id="@+id/main_index"
 		app:layout_behavior="@string/appbar_scrolling_view_behavior"
 		android:layout_width="match_parent"

@@ -18,6 +18,14 @@
 			android:targetPackage="com.moe.yaohuo"
 			android:targetClass="com.moe.yaohuo.PreferenceActivity"/>
 	</Preference>
+	<Preference
+		android:title="主题"
+		android:summary="改变应用配色">
+		<intent
+			android:action="theme"
+			android:targetPackage="com.moe.yaohuo"
+			android:targetClass="com.moe.yaohuo.PreferenceActivity"/>
+	</Preference>
 	<com.moe.preference.ReplyBugPreference
 		android:title="反馈"
 		android:summary="欢迎提交建议"/>

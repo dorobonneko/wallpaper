@@ -15,11 +15,11 @@ public class BaseActivity extends AppCompatActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		if(Build.VERSION.SDK_INT>18){
-			getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS|WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-		}
-		super.onCreate(savedInstanceState);
+			//getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS|WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION|WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,0);
 			}
-
+			getWindow().setStatusBarColor(getColor(R.color.primary));
+		super.onCreate(savedInstanceState);
+		}
 	
 	
 	@Override

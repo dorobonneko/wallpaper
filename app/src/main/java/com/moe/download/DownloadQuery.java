@@ -105,6 +105,7 @@ public class DownloadQuery<T extends DownloadObject> implements Handler.Callback
 							try
 							{
 								Field field=FieldUtils.getField(class_,name);
+								if(field==null)continue;
 								field.setAccessible(true);
 								switch (field.getType().getSimpleName())
 								{

@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import java.util.List;
 import com.moe.fragment.preference.AdvancePreference;
 import com.moe.fragment.preference.AboutPreference;
+import com.moe.fragment.preference.ThemePreference;
 
 public class PreferenceActivity extends EventActivity
 {
@@ -25,6 +26,11 @@ public class PreferenceActivity extends EventActivity
 			case "about":
 				getSupportFragmentManager().beginTransaction().add(R.id.main_index,new AboutPreference(),"cache").commit();
 				getSupportActionBar().setTitle("关于");
+				break;
+			case "theme":
+				getSupportFragmentManager().beginTransaction().add(R.id.main_index,new ThemePreference(),"cache").commit();
+				getSupportActionBar().setTitle("主题");
+				
 				break;
 		}
 		else
