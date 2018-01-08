@@ -81,9 +81,11 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 	private PopupWindow emoji_show;
 	private JSONArray ubb_json;
 	private AlertDialog ubb_add;
+	private Activity activity;
 	public EmojiDialog(Activity activity)
 	{
 		super(activity);
+		this.activity=activity;
 	}
 
 	@Override
@@ -211,7 +213,7 @@ public class EmojiDialog extends AlertDialog implements TabLayout.OnTabSelectedL
 				dismiss();
 				break;
 			case R.id.file_add:
-				((Activity)getContext()).startActivityForResult(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"),9731);
+				activity.startActivityForResult(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"),9731);
 				break;
 			case R.id.insert:
 				StringBuffer sb=new StringBuffer(text.getText().subSequence(text.getSelectionStart(),text.getSelectionEnd()));
