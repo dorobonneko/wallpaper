@@ -7,7 +7,6 @@ import com.tencent.bugly.crashreport.CrashReport;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import com.moe.download.*;
-import com.avos.avoscloud.AVOSCloud;
 import android.content.res.Resources.Theme;
 import android.content.res.Resources;
 import android.util.AttributeSet;
@@ -39,7 +38,7 @@ public class Application extends Application implements Thread.UncaughtException
 	{
 		super.onCreate();
 		ThemeManager.getInstance().init(this);
-		AVOSCloud.initialize(this,"qfengymRPe5vYAFDu74h2CtQ-gzGzoHsz","QenSliDeF7Sj21iOo0pM1IK7");
+		//AVOSCloud.initialize(this,"qfengymRPe5vYAFDu74h2CtQ-gzGzoHsz","QenSliDeF7Sj21iOo0pM1IK7");
 		DownloadDatabase.init(this);
 		CrashReport.UserStrategy cu=new CrashReport.UserStrategy(this);
 		cu.setAppChannel("moe");

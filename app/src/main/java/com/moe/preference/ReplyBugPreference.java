@@ -5,10 +5,7 @@ import com.moe.yaohuo.R;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.widget.EditText;
-import com.avos.avoscloud.AVObject;
 import com.moe.utils.PreferenceUtils;
-import com.avos.avoscloud.SaveCallback;
-import com.avos.avoscloud.AVException;
 import android.widget.Toast;
 import android.view.ViewGroup;
 import android.util.TypedValue;
@@ -16,7 +13,6 @@ import android.widget.FrameLayout;
 
 public class ReplyBugPreference extends Preference implements DialogInterface.OnClickListener
 {
-	private Callback call;
 	private EditText bug;
 	private AlertDialog alert;
 	public ReplyBugPreference(android.content.Context context, android.util.AttributeSet attrs, int defStyleAttr, int defStyleRes) {
@@ -51,19 +47,6 @@ public class ReplyBugPreference extends Preference implements DialogInterface.On
 	@Override
 	public void onClick(DialogInterface p1, int p2)
 	{
-		AVObject av=new AVObject("bug");
-		av.add("uid",PreferenceUtils.getUid(getContext()));
-		av.add("bug",bug.getText().toString());
-		av.saveInBackground(call==null?call=new Callback():call);
-	}
-	private class Callback extends SaveCallback{
-	@Override
-	public void done(AVException p1)
-	{
-		if(p1==null)
-		Toast.makeText(getContext(),"提交成功",Toast.LENGTH_SHORT).show();
-			else
-		Toast.makeText(getContext(),p1.getMessage(),Toast.LENGTH_SHORT).show();
-	}
-	}
+		}
+	
 }

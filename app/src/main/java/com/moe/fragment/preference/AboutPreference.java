@@ -4,13 +4,6 @@ import com.moe.yaohuo.R;
 import android.support.v7.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.support.v7.preference.Preference;
-import com.avos.avoscloud.AVQuery;
-import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.FindCallback;
-import java.util.List;
-import com.avos.avoscloud.AVException;
-import android.widget.Toast;
-import com.avos.avoscloud.GetCallback;
 import android.content.DialogInterface;
 import com.moe.entity.DownloadItem;
 import android.os.Environment;
@@ -43,7 +36,7 @@ public class AboutPreference extends PreferenceFragment implements Preference.On
 	@Override
 	public boolean onPreferenceClick(Preference p1)
 	{
-		AVQuery<AVObject> aq=new AVQuery<AVObject>("message");
+		/*AVQuery<AVObject> aq=new AVQuery<AVObject>("message");
 		switch(p1.getKey()){
 			case "setting_update":
 				aq.setClassName("update");
@@ -150,7 +143,7 @@ public class AboutPreference extends PreferenceFragment implements Preference.On
 						}
 					});
 				break;
-		}
+		}*/
 		return false;
 	}
 

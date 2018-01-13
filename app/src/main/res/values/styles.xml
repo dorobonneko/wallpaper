@@ -92,6 +92,10 @@
 		<item name="colorAccent">@color/icons</item>
 		<item name="android:textCursorDrawable">@drawable/edittext_cursor</item>
 		</style>
+	<style name="WhiteIcons" parent="AppTheme">
+		<item name="colorControlNormal">@color/icons</item>
+		
+	</style>
 	<!--<style name="EditText" parent="AppTheme">
 		<item name="android:textCursorDrawable">?android:attr/colorControlHighlight</item>
 		<item name="android:textSelectHandle">?android:attr/colorControlHighlight</item>

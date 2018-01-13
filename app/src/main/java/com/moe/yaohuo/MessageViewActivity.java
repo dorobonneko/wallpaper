@@ -195,11 +195,7 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		menu.add(0,0,0,"删除");
-		menu.getItem(0).setIcon(VectorDrawableCompat.create(getResources(),R.drawable.delete,getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		menu.add(0,1,1,"回复");
-		menu.getItem(1).setIcon(VectorDrawableCompat.create(getResources(),R.drawable.reply,getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		
+		getMenuInflater().inflate(R.menu.message_view,menu);
 		return true;
 	}
 
@@ -207,7 +203,7 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		switch(item.getItemId()){
-			case 0:
+			case R.id.delete:
 				new AlertDialog.Builder(this).setTitle("确认删除？").setMessage("与该用户的所有会话").setNegativeButton("手滑了", null).setPositiveButton("删除", new DialogInterface.OnClickListener(){
 
 						@Override
@@ -242,7 +238,7 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 						}
 					}).show();
 				break;
-			case 1:
+			case R.id.reply:
 				startActivityForResult(new Intent(this,SendMessageActivity.class).putExtra("uid",uid),452);
 				break;
 		}

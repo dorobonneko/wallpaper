@@ -102,7 +102,7 @@ public class UserUtils
 			ui.setUid(id);
 
 			ui.setState(doc.getElementsByAttributeValue("alt", "ONLINE").size());
-			Matcher matcher=Pattern.compile("(?s).*个人资料(.*?)\\s【.*?【昵称】：(.*?)\\s【妖晶】：([\\d-]*)\\s【经验】：(\\d*)\\s【等级】：(\\d*).*?【头衔】：(.*?)\\s.*?【性别】：(.)\\s【年龄】：(\\d*).*?【积时】：(.*?)\\s【注册时间】：(.*?)\\s【.*?【身高】：(.*?)\\s【体重】：(.*?)\\s【星座】：(.*?)\\s", Pattern.DOTALL).matcher(doc.text());
+			Matcher matcher=Pattern.compile("(?s).*个人资料(.*?)\\s【.*?【昵称】：(.*?)\\s【妖晶】：([\\d-]*)\\s【经验】：([\\d-]*)\\s【等级】：(\\d*).*?【头衔】：(.*?)\\s.*?【性别】：(.)\\s【年龄】：(\\d*).*?【积时】：(.*?)\\s【注册时间】：(.*?)\\s【.*?【身高】：(.*?)\\s【体重】：(.*?)\\s【星座】：(.*?)\\s", Pattern.DOTALL).matcher(doc.text());
 			if (matcher.find())
 			{
 				try
@@ -112,12 +112,14 @@ public class UserUtils
 				catch (Exception e)
 				{}
 				ui.setName(matcher.group(2));
-				ui.setExper(Long.parseLong(matcher.group(4)));
+				String exper=matcher.group(4);
+				boolean f=exper.startsWith("-");
+				ui.setExper((f?-1:1)*Long.parseLong(f?exper.substring(1):exper));
 				String money=matcher.group(3);
-				boolean f=money.startsWith("-");
-				ui.setMoney(Long.parseLong(f ?money.substring(1): money));
-				if (f)
-					ui.setMoney(-ui.getMoney());
+				f=money.startsWith("-");
+				ui.setMoney((f?-1:1)*Long.parseLong(f ?money.substring(1): money));
+				/*if (f)
+					ui.setMoney(-ui.getMoney());*/
 				try
 				{
 					ui.setLevel(Integer.parseInt(matcher.group(5)));

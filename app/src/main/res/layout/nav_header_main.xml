@@ -7,27 +7,48 @@
 	android:background="#fff">
 
 	<com.moe.widget.BigLogoView
-		app:direction="ltr"
-		android:id="@+id/logo"
+		app:direction="none"
+		android:id="@+id/logo_background"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:scaleType="centerCrop"
-		app:srcCompat="@drawable/logo_background"
+		app:srcCompat="@drawable/image_logo_background"
 		android:layout_centerInParent="true"/>
-
+<RelativeLayout
+	android:layout_alignParentBottom="true"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:paddingStart="16dp"
+	android:paddingBottom="16dp">
+	<com.moe.widget.CircleImageView
+		android:layout_width="56dp"
+		android:layout_height="56dp"
+		android:id="@+id/logo"
+		android:scaleType="centerCrop"
+		android:layout_marginBottom="16dp"/>
 	<TextView
-		android:id="@+id/nav_header_main_info"
+		android:layout_below="@id/logo"
+		android:id="@+id/name"
 		android:textColor="?attr/colorAccent"
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
 		android:text="未登录"
-		android:layout_alignParentBottom="true"
-		android:layout_marginBottom="25dp"
-		android:layout_marginStart="25dp"
 		android:textSize="?attr/sizeTitle"
 		android:shadowColor="#000"
-		android:shadowRadius="1.0"/>
-
+		android:shadowRadius="1.0"
+		/>
+	<TextView
+		android:textSize="?attr/sizeSummary"
+		android:layout_below="@id/name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:minLines="1"
+		android:singleLine="true"
+		android:textColor="#bbbbbb"
+		android:shadowColor="#fff"
+		android:shadowRadius="1.0"
+		android:id="@+id/uid"/>
+</RelativeLayout>
 	<ImageView
 		android:visibility="invisible"
 		android:id="@+id/message"

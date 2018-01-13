@@ -49,6 +49,6 @@ dependencies {
 	compile 'com.tencent.bugly:nativecrashreport:+'
 	compile 'com.squareup.okhttp3:okhttp:+'
 	//compile 'cn.bmob.android:bmob-sdk:3.5.0'
-	compile ('cn.leancloud.android:avoscloud-sdk:+')
+	//compile ('cn.leancloud.android:avoscloud-sdk:+')
 	compile fileTree(dir: 'libs', include: ['*.jar'])
 }

@@ -60,12 +60,6 @@ import android.support.graphics.drawable.VectorDrawableCompat;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import android.content.res.TypedArray;
-import com.avos.avoscloud.AVQuery;
-import com.avos.avoscloud.AVObject;
-import android.content.pm.PackageManager;
-import com.avos.avoscloud.AVException;
-import java.util.List;
-import com.avos.avoscloud.FindCallback;
 import com.moe.entity.DownloadItem;
 import com.moe.services.DownloadService;
 import android.os.Environment;
@@ -88,7 +82,7 @@ SharedPreferences.OnSharedPreferenceChangeListener
 	private int id;
 	private ImageView logo;
 	private SharedPreferences moe;
-	private TextView username;
+	private TextView username,uid;
 	private Network network;
 	private TextView msg;
 
@@ -138,9 +132,9 @@ SharedPreferences.OnSharedPreferenceChangeListener
 		msg.setClipToOutline(true);*/
 		findViewById(R.id.edit).setOnClickListener(this);
 		nmv.getHeaderView(0).findViewById(R.id.message).setOnClickListener(this);
-		username=(TextView)nmv.getHeaderView(0).findViewById(R.id.nav_header_main_info);
-		username.setOnClickListener(this);
-		
+		username=(TextView)nmv.getHeaderView(0).findViewById(R.id.name);
+		logo.setOnClickListener(this);
+		uid=(TextView) nmv.getHeaderView(0).findViewById(R.id.uid);
 		if (savedInstanceState != null)
 		{
 			ui=savedInstanceState.getParcelable("ui");
@@ -161,8 +155,8 @@ SharedPreferences.OnSharedPreferenceChangeListener
 		findViewById(R.id.dragView).setEnabled(false);
 		//CrashReport.testJavaCrash();
 		loadInfo();
-		if(moe.getBoolean("auot_update",false))
-		checkUpdate();
+		/*if(moe.getBoolean("auot_update",false))
+		checkUpdate();升级通道已关闭*/
     }
 
 	@Override
@@ -217,12 +211,14 @@ SharedPreferences.OnSharedPreferenceChangeListener
 					MainActivity.this.msg.setVisibility(View.INVISIBLE);
 					if(ui==null){
 						username.setText(moe.getString("name","未登录"));
+						uid.setText(PreferenceUtils.getUid(getApplicationContext())+"");
 						//logo.setImageResource(R.drawable.yaohuo);
 					}else{
 						username.setText(ui.getName());
+						uid.setText(ui.getUid()+"");
 						//ImageCache.load(ui.getLogo(),logo);
-						try{
-							if(logo.getTag(R.id.state)==null||!(Boolean)logo.getTag(R.id.state))
+						//try{
+							//if(logo.getTag(R.id.state)==null||!(Boolean)logo.getTag(R.id.state))
 								Glide.with(MainActivity.this).load(ui.getLogo()).listener(new RequestListener<String,GlideDrawable>(){
 
 										@Override
@@ -239,7 +235,7 @@ SharedPreferences.OnSharedPreferenceChangeListener
 											return false;
 										}
 									}).error(VectorDrawableCompat.create(getResources(), R.drawable.logo_background, getTheme())).diskCacheStrategy(DiskCacheStrategy.ALL).into(logo);
-							}catch(Exception e){}
+							//}catch(Exception e){}
 						moe.edit().putString("name",ui.getName()).commit();
 						/*if(ui.getMsg()>0){
 							MainActivity.this.msg.setVisibility(View.VISIBLE);
@@ -371,7 +367,7 @@ SharedPreferences.OnSharedPreferenceChangeListener
 	{
 		switch (p1.getId())
 		{
-			case R.id.nav_header_main_info:
+			case R.id.logo:
 				if(!PreferenceUtils.isLogin(this))
 				startActivityForResult(new Intent(this, LoginActivity.class),233);
 				else
@@ -484,6 +480,7 @@ SharedPreferences.OnSharedPreferenceChangeListener
 		}.start();
 		else{
 		username.setText("未登录");
+		uid.setText(null);
 		logo.setImageDrawable(VectorDrawableCompat.create(getResources(),R.drawable.logo_background,getTheme()));
 		}
 		
@@ -554,7 +551,7 @@ SharedPreferences.OnSharedPreferenceChangeListener
 		moe.unregisterOnSharedPreferenceChangeListener(this);
 		super.onDestroy();
 	}
-private void checkUpdate(){
+/**private void checkUpdate(){
 	AVQuery<AVObject> aq=new AVQuery<>();
 	aq.setClassName("update");
 	aq.orderByDescending("version_int");
@@ -610,6 +607,6 @@ private void checkUpdate(){
 			}
 		});
 }
-	
+	*/
 	
 }

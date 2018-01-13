@@ -58,7 +58,8 @@
 			app:elevation="2dp"
 			app:fabSize="normal"
 			app:pressedTranslationZ="12dp"
-			app:rippleColor="?attr/colorControlHighlight"/>
+			app:rippleColor="?attr/colorControlHighlight"
+			android:theme="@style/WhiteIcons"/>
 	</LinearLayout>
 
 </FrameLayout>

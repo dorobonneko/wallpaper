@@ -15,11 +15,6 @@ import android.content.pm.PackageManager.*;
 import android.widget.*;
 import android.support.v7.app.*;
 import java.util.*;
-import com.avos.avoscloud.AVQuery;
-import com.avos.avoscloud.GetCallback;
-import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.FindCallback;
 public class SettingPreference extends PreferenceFragment
 {
 	
