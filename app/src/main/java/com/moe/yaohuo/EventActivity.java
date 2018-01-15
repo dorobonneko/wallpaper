@@ -34,16 +34,21 @@ public class EventActivity extends BaseActivity
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 		getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
 		Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
 		try
 		{
 			Field title=android.support.v7.widget.Toolbar.class.getDeclaredField("mTitleTextView");
 			title.setAccessible(true);
-			this.title=(TextView) title.get(findViewById(R.id.toolbar));
-			this.title.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+			this.title = (TextView) title.get(toolbar);
 		}
-		catch (Exception e)
+		catch (NoSuchFieldException e)
 		{}
+		catch (IllegalAccessException e)
+		{}
+		catch (SecurityException e)
+		{}
+		catch (IllegalArgumentException e)
+		{}
+		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 	/*@Override

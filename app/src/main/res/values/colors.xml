@@ -6,6 +6,6 @@
   <color name="primary_text">#212121</color>
   <color name="secondary_text">#727272</color>
   <color name="icons">#FFFFFF</color>
-  <color name="divider">#B6B6B6</color>
-	<color name="window_background">#dddddd</color>
+  <color name="divider">#dddddd</color>
+	<color name="window_background">#eeeeee</color>
 </resources>

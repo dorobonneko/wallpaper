@@ -3,7 +3,7 @@
 	android:layout_height="wrap_content"
 	android:orientation="vertical"
 	android:gravity="center_horizontal"
-	android:background="#fff">
+	>
 
 	<include
 		layout="@layout/bbs_item"/>
@@ -70,7 +70,6 @@
 		android:paddingStart="16dp"
 		android:paddingEnd="16dp"
 		android:textSize="?attr/sizeSummary"
-		android:background="#fff"
 		android:gravity="start"
 		android:textColor="?android:attr/textColorPrimary"
 		android:layout_width="match_parent"
@@ -92,7 +91,6 @@
 		android:id="@+id/radiolist"/>
 	<TextView
 		android:visibility="gone"
-		android:background="#fff"
 		android:layout_marginTop="8dp"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -100,6 +98,10 @@
 		android:textColor="#f00"
 		android:textSize="?attr/sizeTitle"
 		android:gravity="center_horizontal"/>
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:background="?android:attr/listDivider"/>
 	<LinearLayout
 		android:layout_marginTop="8dp"
 		android:layout_marginBottom="8dp"

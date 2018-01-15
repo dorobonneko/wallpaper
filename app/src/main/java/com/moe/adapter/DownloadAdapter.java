@@ -49,7 +49,7 @@ public class DownloadAdapter extends RecyclerView.Adapter
 				vh.size.setText(NumberUtils.getSize(di.getCurrent())+"/"+NumberUtils.getSize(di.getTotal())+" | "+NumberUtils.getSize(change)+"/S"+(change==0?"":(" | 剩余"+NumberUtils.getTime((long)((di.getTotal()-di.getCurrent())/((double)change)*1000)))));
 				}catch(Exception e){}
 				if(selected.contains(di))
-					vh.progress.setBackgroundColor(p1.itemView.getResources().getColor(R.color.divider));
+					vh.progress.setBackgroundColor(p1.itemView.getResources().getColor(R.color.primary_light));
 				else
 					vh.progress.setBackgroundDrawable(null);
 					vh.setOldSize(di.getCurrent());
@@ -58,7 +58,7 @@ public class DownloadAdapter extends RecyclerView.Adapter
 				((ViewHolder2)p1).title.setText(di.getTitle());
 				((ViewHolder2)p1).size.setText(NumberUtils.getSize(di.getTotal()<1?new File(di.getDir()).length():di.getTotal()));
 				if(selected.contains(di))
-					((ViewHolder2)p1).bg.setBackgroundColor(p1.itemView.getResources().getColor(R.color.divider));
+					((ViewHolder2)p1).bg.setBackgroundColor(p1.itemView.getResources().getColor(R.color.primary_light));
 				else
 					((ViewHolder2)p1).bg.setBackgroundDrawable(null);
 				break;

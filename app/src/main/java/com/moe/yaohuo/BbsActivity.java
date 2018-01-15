@@ -93,6 +93,7 @@ SwipeRefreshLayout.OnRefreshListener
 
 		LayoutInflater.from(this).inflate(R.layout.list_view,(ViewGroup)findViewById(R.id.main_index),true);
 		RecyclerView list_view=(RecyclerView) findViewById(R.id.list);
+		list_view.setBackgroundColor(0xffffffff);
 		list_view.setItemAnimator(null);
 		list_view.addItemDecoration(new Divider(8,8,8,8,getResources().getDisplayMetrics()));
 		list_view.setLayoutManager(new LinearLayoutManager(this));
@@ -177,7 +178,7 @@ SwipeRefreshLayout.OnRefreshListener
 						.cookie(PreferenceUtils.getCookieName(getApplicationContext()),PreferenceUtils.getCookie(getApplicationContext()))
 						.get();
 					//if (bbs.getTitle() == null)
-					bbs.setTitle(doc.title());
+					bbs.setTitle(doc.title().substring(0,doc.title().substring(0,doc.title().length()-4).lastIndexOf("_")));
 					Matcher matcher=Pattern.compile("论坛>(.*?)>帖子").matcher(doc.getElementsByClass("title").get(0).text());
 					if (matcher.find())
 						bbs.setBbs(matcher.group(1));

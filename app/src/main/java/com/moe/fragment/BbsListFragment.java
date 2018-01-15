@@ -282,6 +282,10 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 					case 0:
 						refresh.setRefreshing(false);
 						loadMore.setState(LoadMoreView.State.ERROR);
+						if(isFirst){
+							la.notifyItemRangeRemoved(0,list.size());
+							list.clear();
+						}
 						break;
 					case 1:
 						int size=0;
@@ -289,6 +293,10 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 						if (msg.obj==null)
 						{
 							loadMore.setState(LoadMoreView.State.ERROR);
+							if(isFirst){
+								la.notifyItemRangeRemoved(0,list.size());
+								list.clear();
+							}
 							//Toast.makeText(getActivity(), "访问失败", Toast.LENGTH_SHORT).show();
 						}
 						else
