@@ -7,7 +7,7 @@ import java.util.List;
 import android.view.LayoutInflater;
 import com.moe.yaohuo.R;
 import android.widget.TextView;
-import com.moe.internal.TextViewClickMode;
+import com.moe.internal.TextViewTouch;
 import com.moe.utils.UserUtils;
 import com.moe.entity.UserItem;
 import android.widget.ImageView;
@@ -130,7 +130,7 @@ public class LeaveMessageAdapter extends RecyclerView.Adapter<LeaveMessageAdapte
 			name = (TextView) v.findViewById(R.id.title);
 			content = (TextView) v.findViewById(R.id.content);
 			summary = (TextView) v.findViewById(R.id.summary);
-			new TextViewClickMode(content);
+			content.setOnTouchListener(new TextViewTouch(content));
 			logo = (ImageView) v.findViewById(R.id.icon);
 			logo.setOnClickListener(this);
 		}

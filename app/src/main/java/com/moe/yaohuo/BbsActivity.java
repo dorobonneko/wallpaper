@@ -21,7 +21,7 @@ import com.moe.adapter.FloorAdapter;
 import com.moe.adapter.VotedAdapter;
 import com.moe.app.ReportDialog;
 import com.moe.internal.ImageGetter;
-import com.moe.internal.TextViewClickMode;
+import com.moe.internal.TextViewTouch;
 import com.moe.view.Divider;
 import com.moe.widget.ProgressBar;
 import java.io.IOException;
@@ -117,8 +117,7 @@ SwipeRefreshLayout.OnRefreshListener
 		reply.setVisibility(View.VISIBLE);
 		reply.setImageResource(R.drawable.reply);
 		reply.setOnClickListener(this);
-		TextViewClickMode tvcm=new TextViewClickMode(tv_content);
-		tv_content.setFocusable(false);
+		tv_content.setOnTouchListener(new TextViewTouch(tv_content));
 		close = (TextView)header.findViewById(R.id.close);
 		//new TextViewClickMode(tv_content_summary);
 		//tv_content.setTextIsSelectable(false);

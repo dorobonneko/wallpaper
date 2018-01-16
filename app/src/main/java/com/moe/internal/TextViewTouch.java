@@ -1,37 +1,34 @@
 package com.moe.internal;
-import android.text.style.ClickableSpan;
-import android.widget.TextView;
-import android.view.View;
-import android.view.MotionEvent;
+import android.text.style.*;
+import android.view.*;
+import com.moe.yaohuo.*;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.text.Layout;
 import android.text.Spannable;
-import android.text.style.URLSpan;
-import com.moe.entity.ListItem;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import android.content.Intent;
-import com.moe.yaohuo.BbsActivity;
-import com.moe.entity.BbsItem;
-import com.moe.yaohuo.ListActivity;
-import com.moe.yaohuo.WebViewActivity;
-import com.moe.utils.UrlUtils;
-import android.net.Uri;
-import android.text.style.ImageSpan;
-import android.text.style.CharacterStyle;
+import android.util.TypedValue;
+import android.widget.TextView;
 import android.widget.Toast;
-import com.moe.yaohuo.ViewImageActivity;
-import android.text.Selection;
-import com.moe.yaohuo.UserSpaceActivity;
+import com.moe.entity.BbsItem;
+import com.moe.entity.ListItem;
+import com.moe.utils.UrlUtils;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import android.graphics.Rect;
 
-public class TextViewClickMode implements TextView.OnTouchListener
+public class TextViewTouch implements TextView.OnTouchListener,View.OnLongClickListener
 {
+	private AlertDialog popup_copy;
 	private CharacterStyle[] link;
-	private TextView widget;
-	public TextViewClickMode(TextView tv){
-		tv.setOnTouchListener(this);
-		tv.setTextIsSelectable(true);
+	private TextView widget,message;
+	//private Rect src=new Rect(),dst=new Rect();已使用新的判断方法
+	public TextViewTouch(TextView tv){
 		this.widget=tv;
-	}
+		}
 	@Override
 	public boolean onTouch(View p1, MotionEvent event)
 	{
@@ -55,9 +52,17 @@ public class TextViewClickMode implements TextView.OnTouchListener
 					return true;
 					}else return false;
 				//break;*/
+				//widget.getLocalVisibleRect(src);
+				handler.sendEmptyMessageDelayed(0,300);
+				break;
+			case event.ACTION_MOVE:
+				if(handler.hasMessages(0))handler.removeMessages(0);
+				break;
 			case event.ACTION_CANCEL:
+				handler.removeMessages(0);
 				break;
 			case event.ACTION_UP:
+				handler.removeMessages(0);
 				if(link!=null&&link.length>0){
 					int i=0;
 					boolean flag=false;
@@ -81,13 +86,14 @@ public class TextViewClickMode implements TextView.OnTouchListener
 				break;
 		}
 		//if(link==null)return true;
-		if(link.length>0){
+		/*if(link.length>0){
 			return true;
-		}else return false;
-		//return true;
+		}else return false;*/
+		return true;
 
 	}
 	private void onClick(CharacterStyle span){
+		if(popup_copy!=null&&popup_copy.isShowing())return;
 		if (span instanceof URLSpan)
 		{
 			URLSpan us=(URLSpan)span;
@@ -132,4 +138,35 @@ public class TextViewClickMode implements TextView.OnTouchListener
 	public abstract interface OnClickListener{
 		void onClick(CharacterStyle span);
 	}
+	private Handler handler=new Handler(){
+
+		@Override
+		public void handleMessage(Message msg)
+		{
+			//widget.getLocalVisibleRect(dst);
+			//if(src.equals(dst))
+			onLongClick(widget);
+		}
+		
+	};
+	@Override
+	public boolean onLongClick(View p1)
+	{
+		if(popup_copy==null){
+			message=(TextView) LayoutInflater.from(p1.getContext()).inflate(R.layout.textview,null);
+			message.setFocusable(true);
+			message.setFocusableInTouchMode(true);
+			message.setClickable(true);
+			message.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
+			message.setTextIsSelectable(true);
+			int padding=(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,16,p1.getResources().getDisplayMetrics());
+			message.setPadding(padding,padding,padding,padding);
+			popup_copy=new AlertDialog.Builder(p1.getContext()).setView(message).setCancelable(true).create();
+			}
+		message.setText(widget.getText().toString());
+		popup_copy.show();
+		return true;
+	}
+
+	
 }

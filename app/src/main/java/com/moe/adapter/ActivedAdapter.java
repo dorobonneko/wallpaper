@@ -9,7 +9,7 @@ import android.support.v7.widget.CardView;
 import android.content.res.TypedArray;
 import android.support.design.widget.TabLayout;
 import com.moe.yaohuo.R;
-import com.moe.internal.TextViewClickMode;
+import com.moe.internal.TextViewTouch;
 import android.util.TypedValue;
 import android.support.v4.view.ViewCompat;
 
@@ -32,7 +32,7 @@ public class ActivedAdapter extends RecyclerView.Adapter<ActivedAdapter.ViewHold
 		ta.recycle();
 		ViewCompat.setElevation(cv,0);
 		tv.setTextSize(TypedValue.COMPLEX_UNIT_PX,tv.getResources().getDimension(R.dimen.title));
-		new TextViewClickMode(tv);
+		tv.setOnTouchListener(new TextViewTouch(tv));
 		return new ViewHolder(cv);
 	}
 

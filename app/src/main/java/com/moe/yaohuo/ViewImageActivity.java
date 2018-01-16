@@ -73,7 +73,7 @@ public class ViewImageActivity extends AppCompatActivity
 				if(ev.getRawX()==x&&ev.getRawY()==y&&ev.getPointerCount()==1){
 					count++;
 					handler.removeMessages(0);
-					handler.sendEmptyMessageDelayed(0,600);
+					handler.sendEmptyMessageDelayed(0,450);
 					}
 				break;
 		}

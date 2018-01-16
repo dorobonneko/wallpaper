@@ -23,7 +23,7 @@ import com.moe.yaohuo.WebViewActivity;
 import android.view.MotionEvent;
 import android.text.Layout;
 import android.text.Spannable;
-import com.moe.internal.TextViewClickMode;
+import com.moe.internal.TextViewTouch;
 import com.moe.yaohuo.UserSpaceActivity;
 import android.widget.PopupWindow;
 import android.graphics.drawable.BitmapDrawable;
@@ -199,7 +199,7 @@ public class FloorAdapter extends RecyclerView.Adapter
 			/**MovementMethod mm=new MovementMethod();
 			mm.setOnClickListener(this);
 			content.setMovementMethod(mm);*/
-			new TextViewClickMode(content);
+			content.setOnTouchListener(new TextViewTouch(content));
 			//content.setFocusable(false);
 			logo.setOnClickListener(this);
 			more.setOnClickListener(this);
