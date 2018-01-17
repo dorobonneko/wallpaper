@@ -83,8 +83,8 @@ DownloadQuery.Listener<DownloadItem>
 		list.get(1).setNestedScrollingEnabled(false);
 		list.get(0).addItemDecoration(new Divider(getResources().getDimensionPixelSize(R.dimen.list_padding)));
 		list.get(1).addItemDecoration(new Divider(getResources().getDimensionPixelSize(R.dimen.list_padding)));
-		
 		((DefaultItemAnimator)list.get(0).getItemAnimator()).setSupportsChangeAnimations(false);
+		((DefaultItemAnimator)list.get(1).getItemAnimator()).setSupportsChangeAnimations(false);
 		//list.get(1).setItemAnimator(null);
 		return inflater.inflate(R.layout.download_view, container, false);
 	}

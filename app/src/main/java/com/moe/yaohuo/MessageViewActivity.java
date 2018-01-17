@@ -87,6 +87,7 @@ public class MessageViewActivity extends EventActivity implements SwipeRefreshLa
 			switch(msg.what){
 				case 0:
 					if(msg.obj!=null){
+						setResult(RESULT_FIRST_USER,new Intent().putExtra("id",id));
 						int size=list_data.size();
 						list_data.clear();
 						fa.notifyItemRangeRemoved(0,size);

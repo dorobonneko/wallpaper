@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
+import android.app.Activity;
 public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout.OnRefreshListener,ListAdapter.OnItemClickListener,AppBarLayout.OnOffsetChangedListener
 {
 	private ArrayList<ListItem> list;
@@ -35,7 +36,6 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 	private boolean canLoadMore=true;
 	private BbsItem bbs;
 	private LoadMoreView loadMore;
-	private MenuItem message;
 	private MessageDrawable msgIcon;
 	public void load(BbsItem bi)
 	{
@@ -421,22 +421,35 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
 	{
 		menu.add(0,0,0,"消息");
-		message = menu.getItem(0);
-		message.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+		menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
 
 				@Override
 				public boolean onMenuItemClick(MenuItem p1)
 				{
-					msgIcon.setMsgSize(0);
-					return false;
+					startActivityForResult(new Intent(getActivity(),MessageActivity.class),687);
+					return true;
 				}
-			}).setIntent(new Intent(getActivity(),MessageActivity.class)).setIcon(msgIcon).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+			}).setIcon(msgIcon).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		menu.add(0,1,1,"搜索");
 		menu.getItem(1).setIntent(new Intent(getActivity(),SearchActivity.class)).setIcon(VectorDrawableCompat.create(getResources(),R.drawable.magnify,getActivity().getTheme())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		/*menu.add(0,2,2,"测试");
 		 ProgressDrawable pd;
 		 menu.getItem(2).setIcon(pd=new ProgressDrawable(getContext())).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		 pd.setProgressState(ProgressDrawable.State.SUCCESS);*/
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		switch(requestCode){
+			case 687:
+				if(resultCode==Activity.RESULT_OK){
+					msgIcon.setMsgSize(msgIcon.getMsgSize()-1);
+					//message.getActionView().invalidate();
+					getActivity().supportInvalidateOptionsMenu();}
+				break;
+		}
+		super.onActivityResult(requestCode,resultCode,data);
 	}
 
 

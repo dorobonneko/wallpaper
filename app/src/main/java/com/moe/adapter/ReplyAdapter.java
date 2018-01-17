@@ -9,6 +9,7 @@ import com.moe.entity.ReplyItem;
 import com.moe.yaohuo.R;
 import android.text.Html;
 import com.moe.internal.ImageGetter;
+import com.moe.internal.TextViewTouch;
 public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>
 {
 	private List<ReplyItem> list;
@@ -42,6 +43,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>
 		public ViewHolder(View v){
 			super(v);
 			title=(TextView)v.findViewById(android.R.id.title);
+			title.setOnTouchListener(new TextViewTouch(title));
 			summary=(TextView)v.findViewById(android.R.id.summary);
 			v.setOnClickListener(this);
 		}

@@ -294,8 +294,8 @@ public class MessageActivity extends EventActivity implements SwipeRefreshLayout
 	@Override
 	public void onItemClick(RecyclerView.Adapter ra, RecyclerView.ViewHolder vh)
 	{
-		list.get(vh.getAdapterPosition()).setView(0);
-		ra.notifyItemChanged(vh.getAdapterPosition());
+		//list.get(vh.getAdapterPosition()).setView(0);
+		//ra.notifyItemChanged(vh.getAdapterPosition());
 		startActivityForResult(new Intent(this,MessageViewActivity.class).putExtra("id",list.get(vh.getAdapterPosition()).getId()),492);
 	}
 
@@ -308,6 +308,18 @@ public class MessageActivity extends EventActivity implements SwipeRefreshLayout
 				{
 					refresh.setRefreshing(true);
 					onRefresh();
+				}else if(resultCode==RESULT_FIRST_USER){
+					int id=data.getIntExtra("id",0);
+					MsgItem mi=new MsgItem();
+					mi.setId(id);
+					int index=list.indexOf(mi);
+					if(index!=-1){
+						if(list.get(index).getView()==1){
+							setResult(RESULT_OK);
+						list.get(index).setView(0);
+						ma.notifyItemChanged(index);
+					}
+					}
 				}
 				break;
 		}

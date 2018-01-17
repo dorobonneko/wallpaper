@@ -76,6 +76,16 @@ public class MsgItem implements Parcelable
 	}
 
 	@Override
+	public boolean equals(Object obj)
+	{
+		if(obj instanceof Integer)
+			return id==((Integer)obj).intValue();
+		else if(obj instanceof MsgItem)
+			return id==((MsgItem)obj).getId();
+		return super.equals(obj);
+	}
+	
+	@Override
 	public void writeToParcel(Parcel p1, int p2)
 	{
 		p1.writeInt(id);

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.PixelFormat;
 import android.util.TypedValue;
+import android.graphics.RectF;
 
 public class MessageDrawable extends Drawable implements Drawable.Callback
 {
@@ -15,13 +16,16 @@ public class MessageDrawable extends Drawable implements Drawable.Callback
 	private int msg;
 	private Paint paint;
 	public MessageDrawable(Context context){
-		TypedArray ta=context.obtainStyledAttributes(new int[]{android.support.v7.appcompat.R.attr.colorControlNormal});
+		//TypedArray ta=context.obtainStyledAttributes(new int[]{android.support.v7.appcompat.R.attr.colorControlNormal});
 		paint=new Paint();
-		paint.setColor(ta.getColor(0,0xffffffff));
-		paint.setTextAlign(Paint.Align.CENTER);
-		paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,14,context.getResources().getDisplayMetrics()));
-		paint.setStrokeWidth(1.75f);
-		ta.recycle();
+		//paint.setColor(0xffffffff);
+		//paint.setTextAlign(Paint.Align.CENTER);
+		paint.setAntiAlias(true);
+		paint.setDither(true);
+		paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,12,context.getResources().getDisplayMetrics()));
+		paint.setStrokeWidth(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,1,context.getResources().getDisplayMetrics()));
+		paint.setStyle(Paint.Style.STROKE);
+		//ta.recycle();
 	}
 	public void setMsgSize(int msg)
 	{
@@ -40,13 +44,23 @@ public class MessageDrawable extends Drawable implements Drawable.Callback
 	@Override
 	public void draw(Canvas p1)
 	{
+		paint.setColor(0xffffffff);
+		int width=p1.getWidth(),height=p1.getHeight();
+		RectF round=new RectF(-width*0.25f,-height*0.17f,width*0.25f,height*0.17f);
+		paint.setStyle(Paint.Style.STROKE);
+		p1.drawRoundRect(round,paint.getStrokeWidth()*2,paint.getStrokeWidth()*2,paint);
+		paint.setStyle(Paint.Style.FILL);
+		p1.drawLines(new float[]{round.left+paint.getStrokeWidth(),round.top+paint.getStrokeWidth(),0,0,0,0,round.right-paint.getStrokeWidth(),round.top+paint.getStrokeWidth()},paint);
 		if(msg!=0){
-			p1.drawCircle(getIntrinsicWidth()/2,getIntrinsicHeight()/2,p1.getWidth()/4,paint);
+			paint.setColor(0xffff0000);
+			p1.drawCircle(round.right,round.top,round.right/2,paint);
+			paint.setColor(0xffffffff);
+			p1.drawText(""+msg,round.right-paint.measureText(""+msg)/2,round.top-(paint.descent()+paint.ascent())/2,paint);
 		}
-		int color=paint.getColor();
+		/*int color=paint.getColor();
 		paint.setColor(0xffffffff);
 		p1.drawText(""+(msg==0?"消息":msg),getIntrinsicWidth()/2,(getIntrinsicHeight()-paint.ascent()-paint.descent())/2,paint);
-		paint.setColor(color);
+		paint.setColor(color);*/
 	}
 
 	@Override
