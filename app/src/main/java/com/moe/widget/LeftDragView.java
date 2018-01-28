@@ -35,9 +35,9 @@ public class LeftDragView extends FrameLayout
 	@Override
 	protected void onLayout(boolean changed, int left, int top, int right, int bottom)
 	{
-		// TODO: Implement this method
-		//super.onLayout(changed, left, top, right, bottom);
-		getChildAt(0).layout(left+this.left,top,right+this.left,bottom);
+		View v=getChildAt(0);
+		v.layout(v.getLeft(),v.getTop(),v.getLeft()+v.getMeasuredWidth(),v.getMeasuredHeight());
+		//getChildAt(0).layout(left+this.left,top,right+this.left,bottom);
 		//if(changed)ViewCompat.offsetLeftAndRight(getChildAt(0),this.left);
 	}
 
@@ -49,7 +49,7 @@ public class LeftDragView extends FrameLayout
 		LinearGradient lg=new LinearGradient(0,0,50,0,0x00000000,0xaa00000,LinearGradient.TileMode.REPEAT);
 		paint.setShader(lg);
 		if(bit==null){
-			bit=Bitmap.createBitmap(50,child.getHeight(),Bitmap.Config.ARGB_8888);
+			bit=Bitmap.createBitmap(50,canvas.getHeight(),Bitmap.Config.ARGB_8888);
 			Canvas c=new Canvas(bit);
 			Rect rect=new Rect();
 			rect.right=bit.getWidth();
@@ -115,7 +115,8 @@ public class LeftDragView extends FrameLayout
 		@Override
 		public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy)
 		{
-			super.onViewPositionChanged(changedView, left, top, dx, dy);
+			//super.onViewPositionChanged(changedView, left, top, dx, dy);
+			ViewCompat.offsetLeftAndRight(changedView,left-changedView.getLeft());
 			LeftDragView.this.left=left;
 			bgColor=(Color.argb((int)(((1-(double)left/changedView.getWidth()))*0xaa),0,0,0));
 			getChildAt(0).setAlpha((1-(float)left/changedView.getWidth()));

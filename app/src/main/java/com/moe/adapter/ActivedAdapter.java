@@ -32,7 +32,7 @@ public class ActivedAdapter extends RecyclerView.Adapter<ActivedAdapter.ViewHold
 		ta.recycle();
 		ViewCompat.setElevation(cv,0);
 		tv.setTextSize(TypedValue.COMPLEX_UNIT_PX,tv.getResources().getDimension(R.dimen.title));
-		tv.setOnTouchListener(new TextViewTouch(tv));
+		tv.setOnTouchListener(new TextViewTouch(tv.getContext()));
 		return new ViewHolder(cv);
 	}
 

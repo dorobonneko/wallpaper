@@ -446,12 +446,17 @@ public class BbsListFragment extends AnimeFragment implements SwipeRefreshLayout
 				if(resultCode==Activity.RESULT_OK){
 					msgIcon.setMsgSize(msgIcon.getMsgSize()-1);
 					//message.getActionView().invalidate();
-					getActivity().supportInvalidateOptionsMenu();}
+					/*handler.postDelayed(new Runnable(){
+
+							@Override
+							public void run()
+							{*/
+								getActivity().supportInvalidateOptionsMenu();
+				/*			}
+						},200);*/
+					}
 				break;
 		}
 		super.onActivityResult(requestCode,resultCode,data);
 	}
-
-
-
 }

@@ -199,7 +199,7 @@ public class FloorAdapter extends RecyclerView.Adapter
 			/**MovementMethod mm=new MovementMethod();
 			mm.setOnClickListener(this);
 			content.setMovementMethod(mm);*/
-			content.setOnTouchListener(new TextViewTouch(content));
+			content.setOnTouchListener(new TextViewTouch(content.getContext()));
 			//content.setFocusable(false);
 			logo.setOnClickListener(this);
 			more.setOnClickListener(this);

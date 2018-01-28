@@ -43,7 +43,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ViewHolder>
 		public ViewHolder(View v){
 			super(v);
 			title=(TextView)v.findViewById(android.R.id.title);
-			title.setOnTouchListener(new TextViewTouch(title));
+			title.setOnTouchListener(new TextViewTouch(title.getContext()));
 			summary=(TextView)v.findViewById(android.R.id.summary);
 			v.setOnClickListener(this);
 		}

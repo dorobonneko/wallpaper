@@ -20,10 +20,11 @@ public class MessageDrawable extends Drawable implements Drawable.Callback
 		paint=new Paint();
 		//paint.setColor(0xffffffff);
 		//paint.setTextAlign(Paint.Align.CENTER);
+		paint.setStrokeCap(Paint.Cap.ROUND);
 		paint.setAntiAlias(true);
 		paint.setDither(true);
 		paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,12,context.getResources().getDisplayMetrics()));
-		paint.setStrokeWidth(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,1,context.getResources().getDisplayMetrics()));
+		paint.setStrokeWidth(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,2,context.getResources().getDisplayMetrics())*0.75f);
 		paint.setStyle(Paint.Style.STROKE);
 		//ta.recycle();
 	}

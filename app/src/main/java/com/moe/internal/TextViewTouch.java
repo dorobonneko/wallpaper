@@ -19,21 +19,25 @@ import com.moe.utils.UrlUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import android.graphics.Rect;
+import android.content.Context;
+import java.util.Arrays;
 
 public class TextViewTouch implements TextView.OnTouchListener,View.OnLongClickListener
 {
 	private AlertDialog popup_copy;
 	private CharacterStyle[] link;
-	private TextView widget,message;
+	private TextView message;
 	//private Rect src=new Rect(),dst=new Rect();已使用新的判断方法
-	public TextViewTouch(TextView tv){
-		this.widget=tv;
+	private Context context;
+	public TextViewTouch(Context tv){
+		this.context=tv;
 		}
 	@Override
 	public boolean onTouch(View p1, MotionEvent event)
 	{
 		switch(event.getAction()){
 			case event.ACTION_DOWN:
+				TextView widget=(TextView) p1;
 				int x = (int) event.getX();
 				int y = (int) event.getY();
 
@@ -53,7 +57,7 @@ public class TextViewTouch implements TextView.OnTouchListener,View.OnLongClickL
 					}else return false;
 				//break;*/
 				//widget.getLocalVisibleRect(src);
-				handler.sendEmptyMessageDelayed(0,300);
+				handler.sendMessageDelayed(handler.obtainMessage(0,p1),300);
 				break;
 			case event.ACTION_MOVE:
 				if(handler.hasMessages(0))handler.removeMessages(0);
@@ -102,33 +106,33 @@ public class TextViewTouch implements TextView.OnTouchListener,View.OnLongClickL
 				ListItem bbs=new ListItem();
 				bbs.setId(Integer.parseInt(m.group(4)));
 				try{
-				widget.getContext().startActivity(new Intent(widget.getContext(), BbsActivity.class).putExtra("bbs", bbs));
+				context.startActivity(new Intent(context, BbsActivity.class).putExtra("bbs", bbs));
 				}catch(Exception e){
-					Toast.makeText(widget.getContext(),"打开失败",Toast.LENGTH_SHORT).show();
+					Toast.makeText(context,"打开失败",Toast.LENGTH_SHORT).show();
 				}
 			}else{
 				m=Pattern.compile("/bbs/list.aspx.*?classid=(\\d+)").matcher(us.getURL());
 				if(m.find()){
 					BbsItem bi=new BbsItem();
 					bi.setClassid(Integer.parseInt(m.group(1)));
-					widget.getContext().startActivity(new Intent(widget.getContext(),ListActivity.class).putExtra("bbs",bi));
+					context.startActivity(new Intent(context,ListActivity.class).putExtra("bbs",bi));
 				}
 				else{
 					m=Pattern.compile("/bbs/userinfo.aspx.*?touserid=([\\d]*)").matcher(us.getURL());
 					if(m.find()){
-						widget.getContext().startActivity(new Intent(widget.getContext(),UserSpaceActivity.class).putExtra("uid",Integer.parseInt(m.group(1))));
+						context.startActivity(new Intent(context,UserSpaceActivity.class).putExtra("uid",Integer.parseInt(m.group(1))));
 					}else{
-					String url=UrlUtils.getAbsUrl(widget.getContext(), us.getURL());
+					String url=UrlUtils.getAbsUrl(context, us.getURL());
 					if(url.startsWith("http"))
-					widget.getContext().startActivity(new Intent(widget.getContext(), WebViewActivity.class).setData(Uri.parse(url)));
+					context.startActivity(new Intent(context, WebViewActivity.class).setData(Uri.parse(url)));
 					else
-						try{widget.getContext().startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));}catch(Exception e){}
+						try{context.startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));}catch(Exception e){}
 						}
 				}
 			}
 		}else if(span instanceof ImageSpan){
 			ImageSpan img=(ImageSpan) span;
-			widget.getContext().startActivity(new Intent(widget.getContext(),ViewImageActivity.class).setData(Uri.parse(UrlUtils.getAbsUrl(widget.getContext(),img.getSource()))));
+			context.startActivity(new Intent(context,ViewImageActivity.class).setData(Uri.parse(UrlUtils.getAbsUrl(context,img.getSource()))));
 		}
 	}
 	public void setOnClickListener(OnClickListener l){
@@ -145,7 +149,7 @@ public class TextViewTouch implements TextView.OnTouchListener,View.OnLongClickL
 		{
 			//widget.getLocalVisibleRect(dst);
 			//if(src.equals(dst))
-			onLongClick(widget);
+			onLongClick((View)msg.obj);
 		}
 		
 	};
@@ -163,7 +167,7 @@ public class TextViewTouch implements TextView.OnTouchListener,View.OnLongClickL
 			message.setPadding(padding,padding,padding,padding);
 			popup_copy=new AlertDialog.Builder(p1.getContext()).setView(message).setCancelable(true).create();
 			}
-		message.setText(widget.getText().toString());
+		message.setText(((TextView)p1).getText().toString());
 		popup_copy.show();
 		return true;
 	}

@@ -117,7 +117,7 @@ SwipeRefreshLayout.OnRefreshListener
 		reply.setVisibility(View.VISIBLE);
 		reply.setImageResource(R.drawable.reply);
 		reply.setOnClickListener(this);
-		tv_content.setOnTouchListener(new TextViewTouch(tv_content));
+		tv_content.setOnTouchListener(new TextViewTouch(tv_content.getContext()));
 		close = (TextView)header.findViewById(R.id.close);
 		//new TextViewClickMode(tv_content_summary);
 		//tv_content.setTextIsSelectable(false);

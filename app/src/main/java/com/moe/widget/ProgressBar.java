@@ -17,7 +17,7 @@ public class ProgressBar extends View
 	public ProgressBar(Context context,AttributeSet attrs){
 		super(context,attrs);
 		setWillNotDraw(false);
-		TypedArray ta=context.obtainStyledAttributes(new int[]{android.support.v7.appcompat.R.attr.colorAccent,android.support.v7.appcompat.R.attr.colorPrimary});
+		TypedArray ta=context.obtainStyledAttributes(new int[]{android.support.v7.appcompat.R.attr.colorControlHighlight,android.support.v7.appcompat.R.attr.colorAccent});
 		bg=ta.getColor(0,0xff2d2d2d);
 		high=ta.getColor(1,0xffffffff);
 		ta.recycle();

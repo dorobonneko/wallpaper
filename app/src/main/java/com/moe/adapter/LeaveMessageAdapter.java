@@ -130,7 +130,7 @@ public class LeaveMessageAdapter extends RecyclerView.Adapter<LeaveMessageAdapte
 			name = (TextView) v.findViewById(R.id.title);
 			content = (TextView) v.findViewById(R.id.content);
 			summary = (TextView) v.findViewById(R.id.summary);
-			content.setOnTouchListener(new TextViewTouch(content));
+			content.setOnTouchListener(new TextViewTouch(content.getContext()));
 			logo = (ImageView) v.findViewById(R.id.icon);
 			logo.setOnClickListener(this);
 		}
