@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.moe.LiveVisualizer"
-    android:versionCode="5"
-    android:versionName="1.4" >
+    android:versionCode="6"
+    android:versionName="1.5" >
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -21,13 +21,13 @@
     <application
         android:name="com.moe.LiveVisualizer.app.Application"
         android:allowBackup="true"
-        android:icon="@drawable/icon"
+        android:icon="@drawable/ic_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <service
             android:name="com.moe.LiveVisualizer.LiveWallpaper"
             android:enabled="true"
-            android:icon="@drawable/icon"
+            android:icon="@drawable/ic_icon"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_WALLPAPER" >
             <intent-filter>
@@ -52,6 +52,7 @@
 
         <service
             android:name="com.moe.LiveVisualizer.NotifycationListener"
+            android:enabled="false"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" >
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />

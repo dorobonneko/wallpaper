@@ -14,14 +14,11 @@ import android.graphics.SweepGradient;
 public class CircleLineDraw extends ImageDraw
 {
 	private Paint paint;
-	private ImageDraw draw;
 	private int degress=0;
 	private Shader shader;
-	public static CircleLineDraw getInstance(ImageDraw draw,LiveWallpaper.MoeEngine engine){
-		return new CircleLineDraw(draw,engine);
-	}
-	private CircleLineDraw(ImageDraw draw,LiveWallpaper.MoeEngine engine){
-		super(engine);
+	
+	public CircleLineDraw(ImageDraw draw,LiveWallpaper.MoeEngine engine){
+		super(draw,engine);
 		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
 
 				@Override
@@ -30,7 +27,6 @@ public class CircleLineDraw extends ImageDraw
 					shader=null;
 				}
 			});
-		this.draw=draw;
 		paint=new Paint();
 		paint.setStrokeCap(Paint.Cap.ROUND);
 		//paint.setStrokeWidth(2);
@@ -40,11 +36,7 @@ public class CircleLineDraw extends ImageDraw
 		
 	}
 
-	@Override
-	protected byte[] getBuffer()
-	{
-		return draw.getBuffer();
-	}
+	
 
 	@Override
 	public void onDraw(Canvas canvas, int color_mode)

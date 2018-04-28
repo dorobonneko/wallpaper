@@ -18,6 +18,7 @@ import android.support.v7.graphics.Palette;
 import android.media.session.PlaybackState;
 import android.os.Build;
 import android.os.Bundle;
+import com.tencent.bugly.Bugly;
 
 public class LiveWallpaper extends WallpaperService implements Palette.PaletteAsyncListener,Thread.UncaughtExceptionHandler
 {
@@ -57,26 +58,43 @@ public class LiveWallpaper extends WallpaperService implements Palette.PaletteAs
 															 onMetadataUpdate(metadata);
 														 }
 														 public void onSessionDestroyed()
-														 {}
+														 {
+															 return;
+														 }
 
 														 public void onSessionEvent(java.lang.String event, android.os.Bundle extras)
-														 {}
+														 {
+															 return;
+														 }
 
 														 public void onPlaybackStateChanged(android.media.session.PlaybackState state)
-														 {}
+														 {
+															 //if(state.getState()==state.STATE_BUFFERING&&LiveWallpaper.this.control.getMetadata()!=null)
+																// onMetadataChanged(LiveWallpaper.this.control.getMetadata());
+																 
+															 return;
+														 }
 
 														 
 														 public void onQueueChanged(java.util.List<android.media.session.MediaSession.QueueItem> queue)
-														 {}
+														 {
+															 return;
+														 }
 
 														 public void onQueueTitleChanged(java.lang.CharSequence title)
-														 {}
+														 {
+															 return;
+														 }
 
 														 public void onExtrasChanged(android.os.Bundle extras)
-														 {}
+														 {
+															 return;
+														 }
 
 														 public void onAudioInfoChanged(android.media.session.MediaController.PlaybackInfo info)
-														 {}
+														 {
+															 return;
+														 }
 
 													 });
 							if ( control.getMetadata() != null )
@@ -91,6 +109,7 @@ public class LiveWallpaper extends WallpaperService implements Palette.PaletteAs
 	public void onCreate()
 	{
 		super.onCreate();
+		Bugly.init(getApplicationContext(),"39c93f2bb3",false);
 		display = ((WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 		moe = getSharedPreferences("moe", 0);
 		colorList = new ColorList();
@@ -108,12 +127,13 @@ public class LiveWallpaper extends WallpaperService implements Palette.PaletteAs
 		filter.addAction("artwork");
 		filter.addAction("circle_changed");
 		registerReceiver(changed = new WallpaperChanged(), filter);
-		init();
+		//init();
 	}
 
 	@Override
 	public void onGenerated(Palette p1)
 	{
+		if(p1==null)return;
 		List<Palette.Swatch> list=p1.getSwatches();
 		if ( list.size() > 0 && engine != null )
 			engine.setColor(list.get(list.size() / 2).getRgb());

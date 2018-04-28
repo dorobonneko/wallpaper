@@ -11,8 +11,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
 	
-    <application android:theme="@style/AppTheme" android:label="@string/app_name" android:icon="@drawable/icon" android:name="com.moe.LiveVisualizer.app.Application" android:allowBackup="true">
-        <service android:label="@string/app_name" android:icon="@drawable/icon" android:name="com.moe.LiveVisualizer.LiveWallpaper" android:permission="android.permission.BIND_WALLPAPER" android:enabled="true">
+    <application android:theme="@style/AppTheme" android:label="@string/app_name" android:icon="@drawable/ic_icon" android:name="com.moe.LiveVisualizer.app.Application" android:allowBackup="true">
+        <service android:label="@string/app_name" android:icon="@drawable/ic_icon" android:name="com.moe.LiveVisualizer.LiveWallpaper" android:permission="android.permission.BIND_WALLPAPER" android:enabled="true">
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
             </intent-filter>
@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.moe.LiveVisualizer.ColorListActivity" />
-        <service android:name="com.moe.LiveVisualizer.NotifycationListener" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+        <service android:name="com.moe.LiveVisualizer.NotifycationListener" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" android:enabled="false">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>

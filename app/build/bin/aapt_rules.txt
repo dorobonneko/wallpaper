@@ -13,10 +13,10 @@
 # view AndroidManifest.xml #generated:21
 -keep class com.moe.LiveVisualizer.app.Application { <init>(...); }
 
-# view res/xml/setting.xml #generated:36
-# view res/xml/setting.xml #generated:43
-# view res/xml/setting.xml #generated:48
-# view res/xml/setting.xml #generated:54
+# view res/xml/setting.xml #generated:37
+# view res/xml/setting.xml #generated:44
+# view res/xml/setting.xml #generated:49
+# view res/xml/setting.xml #generated:55
 -keep class com.moe.LiveVisualizer.preference.SeekBarPreference { <init>(...); }
 
 # view res/layout/color_picker.xml #generated:1

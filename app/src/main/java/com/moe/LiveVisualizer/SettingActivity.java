@@ -30,13 +30,13 @@ public class SettingActivity extends Activity
 	}
 	private void init()
 	{
-		if ( ActivityCompat.checkSelfPermission(this, "android.permission.RECORD_AUDIO") == PackageManager.PERMISSION_GRANTED )
+		if ( ActivityCompat.checkSelfPermission(this, "android.permission.RECORD_AUDIO") == PackageManager.PERMISSION_GRANTED &&ActivityCompat.checkSelfPermission(this,"android.permission.READ_PHONE_STATE")==PackageManager.PERMISSION_GRANTED)
 		{
-			if ( Build.VERSION.SDK_INT > 18 && !notificationListenerEnable() )
+			/*if ( Build.VERSION.SDK_INT > 18 && !notificationListenerEnable() )
 			{
 				gotoNotificationAccessSetting();
 				return;
-			}
+			}*/
 			WallpaperInfo info=WallpaperManager.getInstance(this).getWallpaperInfo();
 			if ( info == null || !getPackageName().equals(((WallpaperManager)getSystemService(WALLPAPER_SERVICE)).getWallpaperInfo().getPackageName()) )
 			{
@@ -88,7 +88,7 @@ public class SettingActivity extends Activity
 		}
 		else
 		{
-			ActivityCompat.requestPermissions(this, new String[]{"android.permission.RECORD_AUDIO"}, 432);
+			ActivityCompat.requestPermissions(this, new String[]{"android.permission.RECORD_AUDIO","android.permission.READ_PHONE_STATE"}, 432);
 		}
 	}
 
@@ -99,14 +99,14 @@ public class SettingActivity extends Activity
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		if ( requestCode == 432 )
 		{
-			if ( grantResults[0] == PackageManager.PERMISSION_GRANTED )
-			{
-				init();
-			}
+			boolean flag=true;
+			for(int grant:grantResults)
+			if(grant==PackageManager.PERMISSION_DENIED)
+				flag=false;
+			if(flag)
+			init();
 			else
-			{
-				finish();
-			}
+			finish();
 		}
 	}
 

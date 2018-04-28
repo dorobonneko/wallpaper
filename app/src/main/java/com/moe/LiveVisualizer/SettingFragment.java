@@ -26,7 +26,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 		getPreferenceManager().setSharedPreferencesName("moe");
 		addPreferencesFromResource(R.xml.setting);
 		findPreference("background").setOnPreferenceClickListener(this);
-		findPreference("artwork").setEnabled(Build.VERSION.SDK_INT>18);
+		//findPreference("artwork").setEnabled(Build.VERSION.SDK_INT>18);
 		findPreference("color_mode").setOnPreferenceChangeListener(this);
 		findPreference("circle_image").setOnPreferenceClickListener(this);
 	}

@@ -4,13 +4,14 @@
 			<item>色带</item>
 			<item>间隔取色</item>
 			<item>随机颜色</item>
-			<item>随专辑变色</item>
+			<!--
+			<item>随专辑变色</item>-->
 			</string-array>
 		<string-array name="visualizer_mode">
 			<item>柱形图</item>
 			<item>折线图</item>
 			<item>圆形射线图</item>
-			<!--<item>圆形波浪图</item>-->
+			<item>弹弹圈</item>
 			<!--<item>波浪图</item>-->
 		</string-array>
 		<string-array name="color_mode_v">

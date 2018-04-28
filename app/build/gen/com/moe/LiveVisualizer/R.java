@@ -9,10 +9,12 @@ package com.moe.LiveVisualizer;
 
 public final class R {
     public static final class array {
+        /** 
+			<item>随专辑变色</item>
+         */
         public static final int color_mode=0x7f050000;
         public static final int color_mode_v=0x7f050002;
-        /** <item>圆形波浪图</item>
-<item>波浪图</item>
+        /** <item>波浪图</item>
          */
         public static final int visualizer_mode=0x7f050001;
         public static final int visualizer_mode_v=0x7f050003;
@@ -25,8 +27,9 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int unit=0x7f010000;
     }
     public static final class drawable {
-        public static final int icon=0x7f020000;
-        public static final int plus=0x7f020001;
+        public static final int ic_icon=0x7f020000;
+        public static final int icon=0x7f020001;
+        public static final int plus=0x7f020002;
     }
     public static final class id {
         public static final int seekbar=0x7f080001;

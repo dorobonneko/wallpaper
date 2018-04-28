@@ -38,7 +38,7 @@ public class Application extends android.app.Application implements Thread.Uncau
 	public void onCreate()
 	{
 		super.onCreate();
-		Bugly.init(this,"39c93f2bb3",true);
+		Bugly.init(this,"39c93f2bb3",false);
 		//Thread.currentThread().setUncaughtExceptionHandler(this);
 	}
 	

@@ -8,7 +8,8 @@
    <SwitchPreference
 	   android:title="使用专辑封面作背景"
 	   android:summary="将强制覆盖自定义背景(不推荐开启)"
-	   android:key="artwork"/>
+	   android:key="artwork"
+	   android:enabled="false"/>
    <Preference
 	   android:title="色彩组"
 	   android:key="color_range">

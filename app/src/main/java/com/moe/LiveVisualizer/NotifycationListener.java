@@ -31,7 +31,7 @@ private RemoteController controller;
 		// TODO: Implement this method
 		super.onNotificationPosted(sbn);
 		try{
-			if(controller==null&&Build.VERSION.SDK_INT>18&&Build.VERSION.SDK_INT<21&&(moe.getString("color_mode","0").equals("3")||moe.getBoolean("artwork",false))){
+			if(controller==null&&Build.VERSION.SDK_INT>18&&(moe.getString("color_mode","0").equals("3")||moe.getBoolean("artwork",false))){
 				controller=new RemoteController(this,this);
 				am=((AudioManager)getSystemService(AUDIO_SERVICE));
 				if(am.registerRemoteController(controller)){

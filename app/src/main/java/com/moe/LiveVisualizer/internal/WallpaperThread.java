@@ -84,7 +84,9 @@ public class WallpaperThread extends Thread
 									draw.draw(canvas);
 								//}catch(Exception e){}
 							}
+							try{
 							sh.unlockCanvasAndPost(canvas);
+							}catch(Exception E){}
 						}
 					}
 				}
