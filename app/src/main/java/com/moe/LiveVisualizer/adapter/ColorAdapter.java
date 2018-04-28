@@ -6,7 +6,6 @@ import com.moe.LiveVisualizer.utils.ColorList;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 import android.graphics.Color;
-import android.support.v4.graphics.ColorUtils;
 
 public class ColorAdapter extends BaseAdapter
 {

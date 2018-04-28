@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.View;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.v4.view.ViewCompat;
 import android.util.TypedValue;
 
 public class PopupLayout extends ViewGroup
@@ -19,7 +18,8 @@ public class PopupLayout extends ViewGroup
 		paint.setColor(0xffffffff);
 		paint.setShadowLayer(padding/2.0f,0,0,0xaa000000);
 		setWillNotDraw(false);
-		ViewCompat.setLayerType(this,View.LAYER_TYPE_SOFTWARE,null);
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB)
+		setLayerType(View.LAYER_TYPE_SOFTWARE,null);
 	}
 
 	@Override

@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.view.MenuItem;
 import android.content.ActivityNotFoundException;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.content.pm.PermissionInfo;
 import android.content.pm.PermissionGroupInfo;
 import android.content.pm.PackageManager;
@@ -30,7 +29,7 @@ public class SettingActivity extends Activity
 	}
 	private void init()
 	{
-		if ( ActivityCompat.checkSelfPermission(this, "android.permission.RECORD_AUDIO") == PackageManager.PERMISSION_GRANTED &&ActivityCompat.checkSelfPermission(this,"android.permission.READ_PHONE_STATE")==PackageManager.PERMISSION_GRANTED)
+		if (Build.VERSION.SDK_INT<23||(checkSelfPermission("android.permission.RECORD_AUDIO") == PackageManager.PERMISSION_GRANTED &&checkSelfPermission("android.permission.READ_PHONE_STATE")==PackageManager.PERMISSION_GRANTED))
 		{
 			/*if ( Build.VERSION.SDK_INT > 18 && !notificationListenerEnable() )
 			{
@@ -88,7 +87,7 @@ public class SettingActivity extends Activity
 		}
 		else
 		{
-			ActivityCompat.requestPermissions(this, new String[]{"android.permission.RECORD_AUDIO","android.permission.READ_PHONE_STATE"}, 432);
+			requestPermissions(new String[]{"android.permission.RECORD_AUDIO","android.permission.READ_PHONE_STATE"}, 432);
 		}
 	}
 

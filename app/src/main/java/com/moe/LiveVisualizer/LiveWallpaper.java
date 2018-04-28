@@ -14,13 +14,12 @@ import com.moe.LiveVisualizer.utils.ColorList;
 import android.media.session.MediaSessionManager;
 import android.media.session.MediaController;
 import android.media.MediaMetadata;
-import android.support.v7.graphics.Palette;
 import android.media.session.PlaybackState;
 import android.os.Build;
 import android.os.Bundle;
 import com.tencent.bugly.Bugly;
 
-public class LiveWallpaper extends WallpaperService implements Palette.PaletteAsyncListener,Thread.UncaughtExceptionHandler
+public class LiveWallpaper extends WallpaperService implements Thread.UncaughtExceptionHandler
 {
 	private Bitmap wallpaper,circle,bit;
 	private ColorList colorList;
@@ -130,7 +129,7 @@ public class LiveWallpaper extends WallpaperService implements Palette.PaletteAs
 		//init();
 	}
 
-	@Override
+	/*@Override
 	public void onGenerated(Palette p1)
 	{
 		if(p1==null)return;
@@ -139,7 +138,7 @@ public class LiveWallpaper extends WallpaperService implements Palette.PaletteAs
 			engine.setColor(list.get(list.size() / 2).getRgb());
 		//sendBroadcast(new Intent("artwork_color").putExtra("color",list.get(list.size()/2).getRgb()));
 
-	}
+	}*/
 
 
 	private void onMetadataUpdate(MediaMetadata metadate)
@@ -154,7 +153,7 @@ public class LiveWallpaper extends WallpaperService implements Palette.PaletteAs
 		{}
 		bit = buffer;
 		if ( moe.getBoolean("artwork", false) && engine != null )engine.setArtwork(bit);
-		Palette.generateAsync(bit, this);
+		//Palette.generateAsync(bit, this);
 
 		/*if(moe.getBoolean("artwork",false)){
 		 new Thread(){

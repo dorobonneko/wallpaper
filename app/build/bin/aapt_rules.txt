@@ -1,16 +1,16 @@
-# view AndroidManifest.xml #generated:51
+# view AndroidManifest.xml #generated:79
 -keep class com.moe.LiveVisualizer.ColorListActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:27
+# view AndroidManifest.xml #generated:43
 -keep class com.moe.LiveVisualizer.LiveWallpaper { <init>(...); }
 
-# view AndroidManifest.xml #generated:53
+# view AndroidManifest.xml #generated:82
 -keep class com.moe.LiveVisualizer.NotifycationListener { <init>(...); }
 
-# view AndroidManifest.xml #generated:42
+# view AndroidManifest.xml #generated:63
 -keep class com.moe.LiveVisualizer.SettingActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:21
+# view AndroidManifest.xml #generated:36
 -keep class com.moe.LiveVisualizer.app.Application { <init>(...); }
 
 # view res/xml/setting.xml #generated:37

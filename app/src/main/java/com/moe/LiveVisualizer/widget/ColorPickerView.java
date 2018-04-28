@@ -24,7 +24,6 @@ import android.graphics.Xfermode;
 import android.graphics.PointF;
 import android.view.GestureDetector;
 import java.util.HashMap;
-import android.support.v4.view.ViewCompat;
 
 public class ColorPickerView extends View{
 	private int betweenWidth;
@@ -64,7 +63,8 @@ public class ColorPickerView extends View{
 		mHueWidth=(int)betweenWidth;
 		setFocusable(true);
 		setFocusableInTouchMode(true);
-		ViewCompat.setLayerType(this,View.LAYER_TYPE_SOFTWARE, null);
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB)
+		setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 	}
 	private void initPaint(){
 		mHSVPaint=new Paint();

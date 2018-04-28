@@ -6,13 +6,12 @@ import java.io.*;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Build;
-import android.support.v7.graphics.Palette;
 import java.util.List;
 import android.service.notification.NotificationListenerService;
 import android.media.RemoteController;
 import android.service.notification.StatusBarNotification;
 
-public class NotifycationListener extends NotificationListenerService implements RemoteController.OnClientUpdateListener,Palette.PaletteAsyncListener
+public class NotifycationListener extends NotificationListenerService implements RemoteController.OnClientUpdateListener
 {
 	private SharedPreferences moe;
 private AudioManager am;
@@ -54,13 +53,13 @@ private RemoteController controller;
 		super.onDestroy();
 	}
 	
-	@Override
+	/*@Override
 	public void onGenerated(Palette p1)
 	{
 		List<Palette.Swatch> list=p1.getSwatches();
 		if(list.size()>0)
 		sendBroadcast(new Intent("artwork_color").putExtra("color",list.get(list.size()/2).getRgb()));
-	}
+	}*/
 
 
 	@Override
@@ -115,6 +114,6 @@ private Bitmap bit;
 			}
 			}.start();
 		}
-			try{Palette.generateAsync(p1.getBitmap(p1.BITMAP_KEY_ARTWORK,null),this);}catch(Exception e){}
+			//try{Palette.generateAsync(p1.getBitmap(p1.BITMAP_KEY_ARTWORK,null),this);}catch(Exception e){}
 	}
 } 

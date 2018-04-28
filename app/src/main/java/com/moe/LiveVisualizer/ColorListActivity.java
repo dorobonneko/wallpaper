@@ -3,7 +3,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.support.graphics.drawable.VectorDrawableCompat;
 import android.app.AlertDialog;
 import com.moe.LiveVisualizer.widget.ColorPickerView;
 import android.content.SharedPreferences;
@@ -60,9 +59,9 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		MenuItem item=menu.add("添加");
-		VectorDrawableCompat plus=VectorDrawableCompat.create(getResources(),R.drawable.plus,getTheme());
-		plus.setTint(0xffffffff);
-		item.setIcon(plus);
+		//VectorDrawableCompat plus=VectorDrawableCompat.create(getResources(),R.drawable.plus,getTheme());
+		//plus.setTint(0xffffffff);
+		//item.setIcon(plus);
 		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return true;
 	}
