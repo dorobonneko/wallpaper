@@ -396,7 +396,7 @@ public class LiveWallpaper extends WallpaperService implements Palette.PaletteAs
 				mVisualizer = new Visualizer(0);
 				mVisualizer.setEnabled(false);
 				mVisualizer.setCaptureSize(mVisualizer.getCaptureSizeRange()[1]);
-				mVisualizer.setDataCaptureListener(MoeEngine.this, mVisualizer.getMaxCaptureRate(), true, false);
+				mVisualizer.setDataCaptureListener(MoeEngine.this, mVisualizer.getMaxCaptureRate()/2, true, false);
 				mVisualizer.setEnabled(isVisible());
 			}
 			catch (Exception e)

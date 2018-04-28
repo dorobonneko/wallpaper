@@ -60,6 +60,7 @@ public class CircleLineDraw extends ImageDraw
 			canvas.drawBitmap(src,(canvas.getWidth()-tmp.getWidth())/2.0f,(canvas.getHeight()-tmp.getHeight())/2.0f,null);
 			src.recycle();
 		}
+		paint.setStyle(Paint.Style.FILL);
 		switch(getEngine().getColorList().size()){
 			case 0:
 				paint.setColor(0xff39c5bb);
@@ -75,7 +76,7 @@ public class CircleLineDraw extends ImageDraw
 					final Canvas tmpCanvas=new Canvas(src);
 					drawLines(getBuffer(), tmpCanvas,false);
 					paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-					if ( getEngine().getShader() == null||shader==null )
+					if (shader==null )
 						shader=new SweepGradient(canvas.getWidth()/2.0f, canvas.getHeight()/2.0f, getEngine().getColorList().toArray(),null);
 					paint.setShader(shader);
 					tmpCanvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint);
@@ -126,7 +127,7 @@ public class CircleLineDraw extends ImageDraw
 				paint.setColor(getEngine().getColorList().getRandom());
 			}
 			canvas.drawRect((canvas.getWidth()-borderWidth)/2.0f, y, (canvas.getWidth()-borderWidth)/2.0f + borderWidth,y + (Math.abs(buffer[i * step]) - 128) / 128.0f * borderHeight , paint);
-			canvas.rotate(degress,canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
+			canvas.rotate(degress_step,canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
 			degress+=degress_step;
 			if(degress>=360)break;
 		}

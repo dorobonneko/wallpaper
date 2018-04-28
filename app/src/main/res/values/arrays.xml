@@ -4,8 +4,7 @@
 			<item>色带</item>
 			<item>间隔取色</item>
 			<item>随机颜色</item>
-			<!--
-			<item>随专辑变色</item>-->
+			<!--<item>随专辑变色</item>-->
 			</string-array>
 		<string-array name="visualizer_mode">
 			<item>柱形图</item>

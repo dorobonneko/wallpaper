@@ -9,8 +9,7 @@ package com.moe.LiveVisualizer;
 
 public final class R {
     public static final class array {
-        /** 
-			<item>随专辑变色</item>
+        /** <item>随专辑变色</item>
          */
         public static final int color_mode=0x7f050000;
         public static final int color_mode_v=0x7f050002;

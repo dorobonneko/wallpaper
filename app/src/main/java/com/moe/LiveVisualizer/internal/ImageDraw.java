@@ -10,7 +10,7 @@ public abstract class ImageDraw
 	private LiveWallpaper.MoeEngine engine;
 	private byte[] buffer;
 	private ImageDraw draw,line,chart,circle,pop_circle;
-	final protected ImageDraw(LiveWallpaper.MoeEngine engine){
+	protected ImageDraw(LiveWallpaper.MoeEngine engine){
 		this.engine=engine;
 	}
 	ImageDraw(ImageDraw draw,LiveWallpaper.MoeEngine engine){
