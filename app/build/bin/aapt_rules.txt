@@ -1,0 +1,24 @@
+# view AndroidManifest.xml #generated:51
+-keep class com.moe.LiveVisualizer.ColorListActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:27
+-keep class com.moe.LiveVisualizer.LiveWallpaper { <init>(...); }
+
+# view AndroidManifest.xml #generated:53
+-keep class com.moe.LiveVisualizer.NotifycationListener { <init>(...); }
+
+# view AndroidManifest.xml #generated:42
+-keep class com.moe.LiveVisualizer.SettingActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:21
+-keep class com.moe.LiveVisualizer.app.Application { <init>(...); }
+
+# view res/xml/setting.xml #generated:36
+# view res/xml/setting.xml #generated:43
+# view res/xml/setting.xml #generated:48
+# view res/xml/setting.xml #generated:54
+-keep class com.moe.LiveVisualizer.preference.SeekBarPreference { <init>(...); }
+
+# view res/layout/color_picker.xml #generated:1
+-keep class com.moe.LiveVisualizer.widget.ColorPickerView { <init>(...); }
+

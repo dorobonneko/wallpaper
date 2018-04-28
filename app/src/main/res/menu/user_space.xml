@@ -1,7 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    
-    <item
-        android:id="@+id/leave_nessage"
-        android:title="留言"/>
-    
-</menu>

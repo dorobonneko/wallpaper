@@ -1,26 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="添加ubb">添加ubb</string>
-    <string name="清空">清空</string>
-    <string name="插入">插入</string>
-    <string name="上传图片">上传图片</string>
-    <string name="取消">取消</string>
 
+    <string name="app_name">壁纸频谱</string>
+    <string name="hello_world">Hello world!</string>
 
-    <string name="app_name">妖火网</string>
-    <string formatted="false" name="book_list">/bbs/book_list.aspx</string>
-	<string formatted="false" name="search_list">/search/book_list.aspx</string>
-	<string formatted="false" name="view">/bbs/view.aspx</string>
-	<string name="reply">/bbs/book_re.aspx</string>
-	<string name="reply_file">/bbs/book_re_addFile.aspx</string>
-	<string name="add">/bbs/book_view_add.aspx</string>
-	<string name="sendmoney">/bbs/book_view_sendmoney.aspx</string>
-	<string name="vote">/bbs/book_view_addvote.aspx</string>
-	<string name="addfile">/bbs/book_view_addfile.aspx</string>
-	<string name="log">/bbs/book_list_log.aspx</string>
-	<string name="leaveMessage">/bbs/userguessbook.aspx</string>
-	<string name="leaveMessage_pic">/bbs/userguessbook.aspx</string>
-	<string name="leaveMessage_re">/bbs/userguessbook_re.aspx</string>
-	<string name="leaveMessage_del" formatted="false">/bbs/userguessbook_del.aspx?action=godel&amp;reid=%d&amp;siteid=1000&amp;classid=0&amp;touserid=%d&amp;page=1&amp;ot=</string>
 </resources>
-

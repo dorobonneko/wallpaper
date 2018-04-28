@@ -1,23 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<declare-styleable name="textview">
-		<attr name="sizeTitle" format="reference|dimension"/>
-		<attr name="sizeSummary" format="reference|dimension"/>
-		<attr name="sizeTip" format="reference|dimension"/>
-		
-	</declare-styleable>
-	<declare-styleable name="logo_background">
-		<attr name="direction">
-			<enum name="ltr" value="0"/>
-			<enum name="rtl" value="1"/>
-			<enum name="none" value="-1"/>
-		</attr>
-		<attr name="height_slide" format="reference|fraction"/>
-	</declare-styleable>
-	<declare-styleable name="circle_imageview">
-		<attr name="useCircle" format="reference|boolean"/>
-	</declare-styleable>
-	<declare-styleable name="app_style">
-		<attr name="colorIcons" format="reference|color"/>
-	</declare-styleable>
+	<attr name="unit" format="string|reference"/>
 </resources>
+

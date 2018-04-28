@@ -1,84 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	package="com.moe.yaohuo" >
-    <application
-		android:theme="@style/FloatActivity"
-		android:name="com.moe.app.Application"
-        android:icon="@drawable/yaohuo"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-		android:largeHeap="true"
-		android:usesCleartextTraffic="true">
-        <activity
-			android:theme="@style/AppTheme"
-            android:name=".MainActivity"
-            android:label="@string/app_name" >
+<manifest package="com.moe.LiveVisualizer"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-feature android:name="android.softwate.live_wallpaper" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+		
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+	
+    <application android:theme="@style/AppTheme" android:label="@string/app_name" android:icon="@drawable/icon" android:name="com.moe.LiveVisualizer.app.Application" android:allowBackup="true">
+        <service android:label="@string/app_name" android:icon="@drawable/icon" android:name="com.moe.LiveVisualizer.LiveWallpaper" android:permission="android.permission.BIND_WALLPAPER" android:enabled="true">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <meta-data android:name="android.service.wallpaper" android:resource="@xml/livesetting" />
+        </service>
+        <activity android:name="com.moe.LiveVisualizer.SettingActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-		<activity
-			android:name=".LoginActivity"/>
-		<activity
-			android:name=".BbsActivity"/>
-		<activity
-			android:configChanges="orientation|keyboardHidden|screenSize"
-			android:name=".WebViewActivity"/>
-		<activity
-			android:theme="@style/AppTheme"
-			android:name=".ExceptionActivity"/>
-		<activity
-			android:name=".ListActivity"/>
-		<activity
-			android:name=".ReplyActivity"/>
-		<activity
-			android:name=".UserInfoActivity"/>
-		<activity
-			android:name=".UserSpaceActivity"/>
-		<activity
-			android:name=".MessageActivity"/>
-		<activity
-			android:configChanges="orientation|keyboardHidden|screenSize"
-			android:name=".AddBbsActivity"/>
-		<activity
-			android:name=".MessageViewActivity"/>
-		<activity
-			android:name=".SendMessageActivity"/>
-		<activity
-			android:name=".UserDataActivity"/>
-		<service
-			android:name="com.moe.services.DownloadService"
-			android:process=":moe"/>
-		<activity
-			android:name=".FriendActivity"/>
-		<activity
-			android:name=".MoneyActivity"/>
-		<activity
-			android:name=".SearchActivity"/>
-		<activity
-			android:name=".ModBbsActivity"/>
-		<activity
-			android:name=".FileManagerActivity"/>
-		<activity
-			android:name=".FileAddActivity"/>
-		<activity
-			android:name=".DirectoryActivity"/>
-		<activity
-			android:theme="@style/ViewImage"
-			android:name=".ViewImageActivity"/>
-		<activity
-			android:name=".LeaveMessageActivity"/>
-		<activity
-			android:name=".PreferenceActivity"/>
+        <activity android:name="com.moe.LiveVisualizer.ColorListActivity" />
+        <service android:name="com.moe.LiveVisualizer.NotifycationListener" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
     </application>
-
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-<uses-permission android:name="android.permission.READ_PHONE_STATE" />
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.READ_LOGS" />
+	
 </manifest>

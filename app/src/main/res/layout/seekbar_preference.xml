@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
+	android:background="?android:attr/selectableItemBackground"
+	android:minHeight="?android:attr/listPreferredItemHeight">
+
+	<LinearLayout
+		android:paddingLeft="16dp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:gravity="center_vertical">
+
+		<ImageView
+			android:id="@+android:id/icon"
+			android:layout_width="48dp"
+			android:layout_height="48dp"
+			android:scaleType="centerInside"/>
+
+		<RelativeLayout
+			android:paddingBottom="8dp"
+			android:paddingTop="8dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1">
+
+			<TextView
+				android:ellipsize="marquee"
+				android:singleLine="true"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+android:id/title"
+				android:fadingEdge="horizontal"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:textSize="16sp"/>
+
+			<TextView
+				android:maxLines="4"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+android:id/summary"
+				android:layout_below="@android:id/title"
+				android:layout_alignStart="@android:id/title"
+				android:textColor="?android:attr/textColorSecondary"
+				android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+		</RelativeLayout>
+
+		<TextView
+			android:paddingRight="16dp"
+			android:gravity="center_vertical"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:id="@+id/tips"
+			android:textColor="?android:attr/textColorSecondary"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+		
+	</LinearLayout>
+
+	<SeekBar
+		android:paddingLeft="16dp"
+		android:paddingRight="16dp"
+		android:id="@+id/seekbar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="8dp"/>
+
+</LinearLayout>
+
