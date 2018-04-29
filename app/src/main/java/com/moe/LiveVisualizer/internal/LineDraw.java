@@ -109,7 +109,8 @@ public class LineDraw extends ImageDraw
 				paint.setColor(getEngine().getColorList().getRandom());
 			}
 			}
-			canvas.drawRect(x, y + (Math.abs(buffer[i * step]) - 128) / 128.0f * borderHeight, x += borderWidth, y, paint);
+			int height=buffer[i*step];
+			canvas.drawRect(x, y - (-Math.abs(height)+ 128) / 128.0f * borderHeight, x += borderWidth, y, paint);
 			x+=spaceWidth;
 		}
 

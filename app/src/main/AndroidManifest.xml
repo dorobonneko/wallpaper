@@ -12,24 +12,33 @@
     <uses-permission android:name="android.permission.READ_LOGS" />
 	
     <application android:theme="@style/AppTheme" android:label="@string/app_name" android:icon="@drawable/ic_icon" android:name="com.moe.LiveVisualizer.app.Application" android:allowBackup="true">
-        <service android:label="@string/app_name" android:icon="@drawable/ic_icon" android:name="com.moe.LiveVisualizer.LiveWallpaper" android:permission="android.permission.BIND_WALLPAPER" android:enabled="true">
+        <service android:label="@string/app_name" android:icon="@drawable/ic_icon" android:name="com.moe.LiveVisualizer.LiveWallpaper" android:permission="android.permission.BIND_WALLPAPER" android:enabled="false">
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
             </intent-filter>
             <meta-data android:name="android.service.wallpaper" android:resource="@xml/livesetting" />
         </service>
-        <activity android:name="com.moe.LiveVisualizer.SettingActivity" android:exported="true">
+        <activity android:screenOrientation="portrait" android:name="com.moe.LiveVisualizer.SettingActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.moe.LiveVisualizer.ColorListActivity" />
+        <activity android:screenOrientation="portrait" android:name="com.moe.LiveVisualizer.ColorListActivity" />
         <service android:name="com.moe.LiveVisualizer.NotifycationListener" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" android:enabled="false">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+		<provider
+			android:name="android.support.v4.content.FileProvider"
+			android:authorities="com.moe.LiveVisualizer.provider"
+			android:exported="false"
+			android:grantUriPermissions="true">
+			<meta-data
+				android:name="android.support.FILE_PROVIDER_PATHS"
+				android:resource="@xml/provider_paths"/>
+		</provider>
     </application>
 	
 </manifest>

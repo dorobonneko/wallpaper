@@ -42,6 +42,10 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 		tips=(TextView)view.findViewById(R.id.tips);
 		tips.setText(seekbar.getProgress()+(unit!=null?unit.toString():""));
 	}
+	public void setMax(int max){
+		this.max=max;
+		notifyChanged();
+	}
 	@Override
 	public void onProgressChanged(SeekBar p1, int p2, boolean p3)
 	{

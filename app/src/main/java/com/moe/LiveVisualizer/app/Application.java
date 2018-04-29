@@ -3,6 +3,11 @@ import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import com.tencent.bugly.Bugly;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import android.content.res.Resources;
+import java.lang.reflect.InvocationHandler;
+import com.moe.LiveVisualizer.R;
 
 public class Application extends android.app.Application implements Thread.UncaughtExceptionHandler
 {
@@ -41,5 +46,4 @@ public class Application extends android.app.Application implements Thread.Uncau
 		Bugly.init(this,"39c93f2bb3",false);
 		//Thread.currentThread().setUncaughtExceptionHandler(this);
 	}
-	
 }

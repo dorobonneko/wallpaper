@@ -29,6 +29,7 @@ public class SettingActivity extends Activity
 	}
 	private void init()
 	{
+		ComponentName service=new ComponentName(this,LiveWallpaper.class);
 		if (Build.VERSION.SDK_INT<23||(checkSelfPermission("android.permission.RECORD_AUDIO") == PackageManager.PERMISSION_GRANTED &&checkSelfPermission("android.permission.READ_PHONE_STATE")==PackageManager.PERMISSION_GRANTED))
 		{
 			/*if ( Build.VERSION.SDK_INT > 18 && !notificationListenerEnable() )
@@ -36,6 +37,9 @@ public class SettingActivity extends Activity
 				gotoNotificationAccessSetting();
 				return;
 			}*/
+			if(getPackageManager().getComponentEnabledSetting(service)!=PackageManager.COMPONENT_ENABLED_STATE_ENABLED){
+				getPackageManager().setComponentEnabledSetting(service,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,PackageManager.DONT_KILL_APP);
+			}
 			WallpaperInfo info=WallpaperManager.getInstance(this).getWallpaperInfo();
 			if ( info == null || !getPackageName().equals(((WallpaperManager)getSystemService(WALLPAPER_SERVICE)).getWallpaperInfo().getPackageName()) )
 			{
@@ -87,6 +91,9 @@ public class SettingActivity extends Activity
 		}
 		else
 		{
+			if(getPackageManager().getComponentEnabledSetting(service)!=PackageManager.COMPONENT_ENABLED_STATE_DISABLED){
+				getPackageManager().setComponentEnabledSetting(service,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
+			}
 			requestPermissions(new String[]{"android.permission.RECORD_AUDIO","android.permission.READ_PHONE_STATE"}, 432);
 		}
 	}

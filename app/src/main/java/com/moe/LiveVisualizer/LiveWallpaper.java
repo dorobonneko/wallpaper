@@ -18,6 +18,7 @@ import android.media.session.PlaybackState;
 import android.os.Build;
 import android.os.Bundle;
 import com.tencent.bugly.Bugly;
+import android.util.DisplayMetrics;
 
 public class LiveWallpaper extends WallpaperService implements Thread.UncaughtExceptionHandler
 {
@@ -26,7 +27,7 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 	private WallpaperChanged changed;
 	private SharedPreferences moe;
 	private MoeEngine engine;
-	private Display display;
+	private DisplayMetrics display;
 	@Override
 	public WallpaperService.Engine onCreateEngine()
 	{
@@ -109,7 +110,8 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 	{
 		super.onCreate();
 		Bugly.init(getApplicationContext(),"39c93f2bb3",false);
-		display = ((WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+		display =new DisplayMetrics();
+		( (WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getRealMetrics(display);
 		moe = getSharedPreferences("moe", 0);
 		colorList = new ColorList();
 		new Thread("init_thread"){
@@ -194,7 +196,7 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 			if ( buffer != null )
 			{
 				Matrix matrix = new Matrix();
-				matrix.setScale(((float)display.getWidth() / 3) / buffer.getWidth(), ((float)display.getWidth() / 3) / buffer.getHeight());
+				matrix.setScale(((float)display.widthPixels / 3) / buffer.getWidth(), ((float)display.widthPixels / 3) / buffer.getHeight());
 				this.circle = Bitmap.createBitmap(buffer, 0, 0, buffer.getWidth(), buffer.getHeight(), matrix, true);
 				if ( this.circle != buffer )
 					buffer.recycle();
@@ -212,12 +214,11 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		File wallpaper=new File(getExternalCacheDir(), "wallpaper");
 		if ( wallpaper.exists() && wallpaper.isFile() )
 		{
-			final Display display=((WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 			final Bitmap buffer = BitmapFactory.decodeFile(wallpaper.getAbsolutePath());
 			if ( buffer != null )
 			{
 				Matrix matrix = new Matrix();
-				matrix.setScale(((float)display.getWidth()) / buffer.getWidth(), ((float)display.getHeight()) / buffer.getHeight());
+				matrix.setScale(((float)display.widthPixels) / buffer.getWidth(), ((float)display.heightPixels) / buffer.getHeight());
 				this.wallpaper = Bitmap.createBitmap(buffer, 0, 0, buffer.getWidth(), buffer.getHeight(), matrix, true);
 				if ( this.wallpaper != buffer )
 					buffer.recycle();
@@ -390,18 +391,26 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		}
 		private void init()
 		{
+			new Thread(){
+				public void run(){
 			try
 			{
+				synchronized(MoeEngine.this){
+				if(mVisualizer!=null)return;
 				mVisualizer = new Visualizer(0);
 				mVisualizer.setEnabled(false);
 				mVisualizer.setCaptureSize(mVisualizer.getCaptureSizeRange()[1]);
 				mVisualizer.setDataCaptureListener(MoeEngine.this, mVisualizer.getMaxCaptureRate()/2, true, false);
 				mVisualizer.setEnabled(isVisible());
+				}
 			}
 			catch (Exception e)
 			{
 				Toast.makeText(getApplicationContext(), "没有录音权限", Toast.LENGTH_SHORT).show();
 			}
+			}
+			
+			}.start();
 		}
 		public SharedPreferences getSharedPreferences()
 		{
