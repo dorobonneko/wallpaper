@@ -22,12 +22,12 @@ import com.bumptech.glide.gifdecoder.GifDecoder;
 public class WallpaperThread extends Thread
 {
 
-	private LiveWallpaper.MoeEngine engine;
+	private LiveWallpaper.WallpaperEngine engine;
 	//private Handler handler;
 	private ImageDraw imageDraw;
 	private long oldTime;
 	private byte[] buffer;
-	public WallpaperThread(LiveWallpaper.MoeEngine engine)
+	public WallpaperThread(LiveWallpaper.WallpaperEngine engine)
 	{
 
 		this.engine = engine;

@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import java.lang.reflect.Field;
 import android.widget.ProgressBar;
 import java.lang.ref.WeakReference;
+import java.lang.ref.SoftReference;
 
 public class SettingFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,Preference.OnPreferenceChangeListener
 {
@@ -26,7 +27,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 	private ProgressDialog gif_dialog=null;
 	private ListPreference color_mode,visualizer_mode;
 	private DisplayMetrics display;
-	private WeakReference<Uri> weak;
+	private SoftReference<Uri> weak;
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
@@ -85,6 +86,8 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 								public void onClick(DialogInterface p1, int p2)
 								{
 									wallpaper.delete();
+									final File gif=new File(getActivity().getExternalCacheDir(), "gif");
+									if ( gif.exists() )gif.delete();
 									getActivity().sendBroadcast(new Intent("wallpaper_changed"));
 
 								}
@@ -163,7 +166,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 			switch ( requestCode )
 			{
 				case WALLPAPER:
-					weak=new WeakReference<Uri>(data.getData());
+					weak=new SoftReference<Uri>(data.getData());
 					if ( gif_dialog == null )
 					{
 						gif_dialog = new ProgressDialog(getActivity());
@@ -197,7 +200,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 													fos.write(buffer, 0, len);
 												fos.flush();
 											}
-											catch (IOException e)
+											catch (Exception e)
 											{}
 											finally
 											{
@@ -276,7 +279,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 													fos.write(buffer, 0, len);
 												fos.flush();
 											}
-											catch (IOException e)
+											catch (Exception e)
 											{}
 											finally
 											{

@@ -14,7 +14,7 @@ public class PopCircleDraw extends ImageDraw
 	private Paint paint;
 	//private float[] points;
 	private AnimeThread anime;
-	public PopCircleDraw(ImageDraw draw,LiveWallpaper.MoeEngine engine){
+	public PopCircleDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		super(draw,engine);
 		paint=new Paint();
 		paint.setStrokeWidth(3);
@@ -81,13 +81,14 @@ public class PopCircleDraw extends ImageDraw
 		//if(points==null||points.length!=size)
 		//	points=new float[size];
 		spaceWidth = (canvas.getWidth()-size*borderWidth) / ((float)size-1);
-		float x=borderWidth/2.0f;//起始像素
+		float radius=borderWidth/2.0f;
+		float x=radius;//起始像素
 		float y=canvas.getHeight() - getEngine().getSharedPreferences().getInt("height", 10) / 100.0f * canvas.getHeight();
 		int step=buffer.length / size;
 		int colorStep=0;
 		int mode=Integer.parseInt(getEngine().getSharedPreferences().getString("color_mode", "0"));
-		if ( mode == 3 )
-			paint.setColor(getEngine().getColor());
+		//if ( mode == 3 )
+		//	paint.setColor(getEngine().getColor());
 			canvas.drawLine(0,y,canvas.getWidth(),y,paint);
 		for ( int i=0;i < size;i ++ )
 		{
@@ -104,11 +105,11 @@ public class PopCircleDraw extends ImageDraw
 				}
 			}
 			//if(points[i]==0)points[i]=y-borderWidth/2.0f;
-			float currentP=y+(Math.abs(buffer[i*step])-128)*borderHeight/128.0f-borderWidth/2.0f;
+			float currentP=y-buffer[i*step]/128.0f*borderHeight-radius;
 			//float offset=currentP-points[i];
 			//float offsetY=offset>0?(Math.abs(offset)>5?5:offset):(Math.abs(offset)<-3?-3:offset);
 			//points[i]+=offsetY;
-			canvas.drawCircle(x,currentP,borderWidth/2.0f,paint);
+			canvas.drawCircle(x,currentP,radius,paint);
 			x+=(spaceWidth+borderWidth);
 		}
 	}

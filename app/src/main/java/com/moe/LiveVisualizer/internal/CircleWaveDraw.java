@@ -8,17 +8,10 @@ public class CircleWaveDraw extends ImageDraw
 	private static CircleWaveDraw line;
 	private Paint paint;
 	private ImageDraw draw;
-	private float[] tmpData;
-	public static CircleWaveDraw getInstance(ImageDraw draw,LiveWallpaper.MoeEngine engine){
-		if(line==null){
-			synchronized(LineDraw.class){
-				if(line==null)line=new CircleWaveDraw(draw,engine);
-			}
-		}
-		return line;
-	}
-	private CircleWaveDraw(ImageDraw draw,LiveWallpaper.MoeEngine engine){
-		super(engine);
+	//private float[] tmpData;
+	
+	private CircleWaveDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
+		super(draw,engine);
 		this.draw=draw;
 		paint=new Paint();
 		paint.setStrokeCap(Paint.Cap.ROUND);

@@ -10,6 +10,8 @@ import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.graphics.RadialGradient;
 import android.graphics.SweepGradient;
+import android.graphics.Point;
+import android.graphics.PointF;
 
 public class CircleLineDraw extends ImageDraw
 {
@@ -17,7 +19,7 @@ public class CircleLineDraw extends ImageDraw
 	private int degress=0;
 	private Shader shader;
 	
-	public CircleLineDraw(ImageDraw draw,LiveWallpaper.MoeEngine engine){
+	public CircleLineDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		super(draw,engine);
 		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
 
@@ -93,27 +95,33 @@ public class CircleLineDraw extends ImageDraw
 	}
 
 	private void drawLines(byte[] buffer,Canvas canvas,boolean useMode){
-		double length=canvas.getWidth()/3*Math.PI;
+		final double length=canvas.getWidth()/3*Math.PI;
 
-		int borderWidth=getEngine().getSharedPreferences().getInt("borderWidth", 30);
-		int spaceWidth=getEngine().getSharedPreferences().getInt("spaceWidth", 20);
-		int borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getEngine().getSharedPreferences().getInt("borderHeight", 30), getEngine().getContext().getResources().getDisplayMetrics());
+		final int borderWidth=getEngine().getSharedPreferences().getInt("borderWidth", 30);
+		final float spaceWidth=getEngine().getSharedPreferences().getInt("spaceWidth", 20);
+		float borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getEngine().getSharedPreferences().getInt("borderHeight", 30), getEngine().getContext().getResources().getDisplayMetrics());
 		int size=0;
 		try{
-			size=(int)(length - spaceWidth) / (borderWidth + spaceWidth);
+			size=(int)((length/2.0f - spaceWidth) / (borderWidth + spaceWidth));
 		}catch(Exception e){}
 		if(size==0)return;
 		size=size>buffer.length?buffer.length:size;
-		int step=buffer.length / size;
+		//spaceWidth=(float)(length/2.0f/borderWidth/size);
+		final int step=buffer.length / size;
 		int colorStep=0;
-		float degress_step=360.0f/size;
-		float degress=0;
-		int y=(canvas.getHeight()-canvas.getWidth()/3)/2;
-		int mode=Integer.parseInt(getEngine().getSharedPreferences().getString("color_mode", "0"));
-		if(mode==3)
-			paint.setColor(getEngine().getColor());
+		float degress_step=180.0f/size;
+		//float degress=0;
+		final int y=(canvas.getHeight()-canvas.getWidth()/3)/2;
+		final int mode=Integer.parseInt(getEngine().getSharedPreferences().getString("color_mode", "0"));
+		//if(mode==3)
+		//	paint.setColor(getEngine().getColor());
 		canvas.save();
-			for ( int i=0;i < size;i ++ )
+		final PointF center=new PointF();
+		center.x=canvas.getWidth()/2.0f;
+		center.y=canvas.getHeight()/2.0f;
+		canvas.rotate(degress_step/2.0f,center.x,center.y);
+		float offsetX=(canvas.getWidth()-borderWidth)/2.0f;
+		for ( int i=0;i < size;i ++ )
 		{
 			if(useMode)
 			if ( mode == 1 )
@@ -126,10 +134,20 @@ public class CircleLineDraw extends ImageDraw
 			{
 				paint.setColor(getEngine().getColorList().getRandom());
 			}
-			canvas.drawRect((canvas.getWidth()-borderWidth)/2.0f, y, (canvas.getWidth()-borderWidth)/2.0f + borderWidth,y + (Math.abs(buffer[i * step]) - 128) / 128.0f * borderHeight , paint);
-			canvas.rotate(degress_step,canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
-			degress+=degress_step;
-			if(degress>=360)break;
+			canvas.drawRect(offsetX, y, offsetX + borderWidth,y - (float) (buffer[i * step]/128d* borderHeight) , paint);
+			canvas.rotate(degress_step,center.x,center.y);
+			//degress+=degress_step;
+			if(i==size-1){
+				if(degress_step>0){
+					canvas.restore();
+					canvas.save();
+				degress_step=-degress_step;
+				canvas.rotate(degress_step/2.0f,center.x,center.y);
+				i=0;
+			}else{
+				break;
+			}
+			}
 		}
 		canvas.restore();
 	}

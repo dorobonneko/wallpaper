@@ -7,19 +7,17 @@ import android.graphics.Bitmap;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.PorterDuff;
 import android.graphics.LinearGradient;
+import android.util.TypedValue;
 
 public class LineChartDraw extends ImageDraw
 {
 	private Paint paint;
 	private ImageDraw draw;
 	private float[] tmpData;
-	public static LineChartDraw getInstance(ImageDraw draw, LiveWallpaper.MoeEngine engine)
+	
+	public LineChartDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine)
 	{
-		return new LineChartDraw(draw, engine);
-	}
-	private LineChartDraw(ImageDraw draw, LiveWallpaper.MoeEngine engine)
-	{
-		super(engine);
+		super(draw,engine);
 		this.draw = draw;
 		paint = new Paint();
 		paint.setStrokeCap(Paint.Cap.ROUND);
@@ -78,7 +76,7 @@ public class LineChartDraw extends ImageDraw
 						spaceLineChart(getBuffer(), canvas, color_mode);
 						break;
 					case 3://album_color
-						paint.setColor(getEngine().getColor());
+						//paint.setColor(getEngine().getColor());
 						lineChart(getBuffer(), canvas);
 						break;
 				}
@@ -90,49 +88,54 @@ public class LineChartDraw extends ImageDraw
 
 	private void lineChart(byte[] a, Canvas canvas)
 	{
+		float borderHeight=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,getEngine().getSharedPreferences().getInt("borderHeight",0),getEngine().getContext().getResources().getDisplayMetrics());
 		if ( tmpData == null || tmpData.length != 4 * a.length )
 		{
 			tmpData = new float[4 * a.length];
 		}
 		float step=((float)canvas.getWidth() / a.length);
 		float offsetX=0;
+		float offsetY=canvas.getHeight()/2.0f;
 		for ( int i=0;i < a.length - 2;i++ )
 		{
 			if ( i == 0 )
 			{
 				tmpData[4 * i] = offsetX;
-				tmpData[1 + 4 * i] = canvas.getHeight() / 2 + (byte)(128 + a[i]) * (canvas.getWidth() / 4.0f) / 128;
+				tmpData[1 + 4 * i] =  offsetY - a[1 + i]/128.0f*borderHeight;
 			}
 			else
 			{
 				System.arraycopy(tmpData, 4 * i - 2, tmpData, 4 * i, 2);
 			}
 			tmpData[2 + 4 * i] = offsetX += step;
-			tmpData[3 + 4 * i] = canvas.getHeight() / 2 + (byte)(128 + a[1 + i]) * (canvas.getWidth() / 4.0f) / 128;
+			tmpData[3 + 4 * i] = offsetY - a[1 + i]/128.0f*borderHeight;
 
 		}
 		canvas.drawLines(tmpData, paint);
 
 	}
+	//单独画线
 	private void spaceLineChart(byte[] data, Canvas canvas, int color_mode)
 	{
+		float borderHeight=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,getEngine().getSharedPreferences().getInt("borderHeight",0),getEngine().getContext().getResources().getDisplayMetrics());
 		float step=((float)canvas.getWidth() / data.length);
 		float offsetX=0;
 		float[] tmpData=new float[4];
 		int color=0;
+		float offsetY=canvas.getHeight()/2.0f;
 		for ( int i=0;i < data.length - 2;i++ )
 		{
 			if ( i == 0 )
 			{
 				tmpData[0] = offsetX;
-				tmpData[1] = canvas.getHeight() / 2 + (byte)(128 + data[i]) * (canvas.getWidth() / 4.0f) / 128;
+				tmpData[1] = offsetY - data[1 + i]/128.0f*borderHeight ;
 			}
 			else
 			{
 				System.arraycopy(tmpData, 2, tmpData, 0, 2);
 			}
 			tmpData[2] = offsetX += step;
-			tmpData[3] = canvas.getHeight() / 2 + (byte)(128 + data[1 + i]) * (canvas.getWidth() / 4.0f) / 128;
+			tmpData[3] = offsetY - data[1 + i]/128.0f*borderHeight;
 			if ( color_mode == 1 )
 			{
 				paint.setColor(getEngine().getColorList().get(color));

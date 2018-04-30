@@ -7,17 +7,17 @@ import com.moe.LiveVisualizer.LiveWallpaper;
 
 public abstract class ImageDraw
 {
-	private LiveWallpaper.MoeEngine engine;
+	private LiveWallpaper.WallpaperEngine engine;
 	private byte[] buffer;
 	private ImageDraw draw,line,chart,circle,pop_circle;
-	protected ImageDraw(LiveWallpaper.MoeEngine engine){
+	protected ImageDraw(LiveWallpaper.WallpaperEngine engine){
 		this.engine=engine;
 	}
-	ImageDraw(ImageDraw draw,LiveWallpaper.MoeEngine engine){
+	ImageDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		this.draw=draw;
 		this.engine=engine;
 	}
-	protected LiveWallpaper.MoeEngine getEngine(){
+	protected LiveWallpaper.WallpaperEngine getEngine(){
 		return engine;
 	}
 	protected byte[] getBuffer(){
@@ -28,9 +28,9 @@ public abstract class ImageDraw
 		this.buffer=buffer;
 		switch(engine.getSharedPreferences().getString("visualizer_mode","0")){
 			case "0"://柱形图
-			return line==null?line=LineDraw.getInstance(this,engine):line;
+			return line==null?line=new LineDraw(this,engine):line;
 			case "1"://折线图
-				return chart==null?chart=LineChartDraw.getInstance(this,engine):chart;
+				return chart==null?chart=new LineChartDraw(this,engine):chart;
 			case "2"://圆形射线
 				return circle==null?circle=new CircleLineDraw(this,engine):circle;
 			case "3"://弹弹圈

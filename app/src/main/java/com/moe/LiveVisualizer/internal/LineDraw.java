@@ -14,14 +14,10 @@ public class LineDraw extends ImageDraw
 {
 	private Paint paint;
 	private ImageDraw draw;
-	public static LineDraw getInstance(ImageDraw draw, LiveWallpaper.MoeEngine engine)
+	
+	public LineDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine)
 	{
-		return new LineDraw(draw, engine);
-		
-	}
-	private LineDraw(ImageDraw draw, LiveWallpaper.MoeEngine engine)
-	{
-		super(engine);
+		super(draw,engine);
 		this.draw = draw;
 		paint = new Paint();
 	}
@@ -93,8 +89,8 @@ public class LineDraw extends ImageDraw
 		int step=buffer.length / size;
 		int colorStep=0;
 		int mode=Integer.parseInt(getEngine().getSharedPreferences().getString("color_mode", "0"));
-		if ( mode == 3 )
-			paint.setColor(getEngine().getColor());
+		//if ( mode == 3 )
+			//paint.setColor(getEngine().getColor());
 		for ( int i=0;i < size;i ++ )
 		{
 			if(useMode){
@@ -110,7 +106,9 @@ public class LineDraw extends ImageDraw
 			}
 			}
 			int height=buffer[i*step];
-			canvas.drawRect(x, y - (-Math.abs(height)+ 128) / 128.0f * borderHeight, x += borderWidth, y, paint);
+			canvas.drawRect(x, y - (height)/ 128.0f * borderHeight, x += borderWidth, y, paint);
+			canvas.drawRect(x-=borderWidth, y+ (height)/ 128.0f * borderHeight, x += borderWidth, y, paint);
+			
 			x+=spaceWidth;
 		}
 

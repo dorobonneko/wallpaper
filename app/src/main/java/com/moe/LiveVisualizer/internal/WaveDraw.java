@@ -10,16 +10,9 @@ public class WaveDraw extends ImageDraw
 	private Paint paint;
 	private ImageDraw draw;
 	private float[] tmpData;
-	public static WaveDraw getInstance(ImageDraw draw,LiveWallpaper.MoeEngine engine){
-		if(line==null){
-			synchronized(LineDraw.class){
-				if(line==null)line=new WaveDraw(draw,engine);
-			}
-		}
-		return line;
-	}
-	private WaveDraw(ImageDraw draw,LiveWallpaper.MoeEngine engine){
-		super(engine);
+	
+	private WaveDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
+		super(draw,engine);
 		this.draw=draw;
 		paint=new Paint();
 		paint.setStrokeCap(Paint.Cap.ROUND);

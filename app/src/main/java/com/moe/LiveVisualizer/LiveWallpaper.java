@@ -7,44 +7,61 @@ import java.io.*;
 import java.util.*;
 
 import android.media.audiofx.Visualizer;
-import android.os.RemoteException;
 import android.service.wallpaper.WallpaperService;
-import android.widget.Toast;
-import com.moe.LiveVisualizer.utils.ColorList;
-import android.media.session.MediaSessionManager;
-import android.media.session.MediaController;
-import android.media.MediaMetadata;
-import android.media.session.PlaybackState;
-import android.os.Build;
-import android.os.Bundle;
-import com.tencent.bugly.Bugly;
 import android.util.DisplayMetrics;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.ViewTarget;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.BaseTarget;
-import com.bumptech.glide.request.target.SizeReadyCallback;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.gifdecoder.GifDecoder;
-import android.graphics.Bitmap.Config;
-import com.bumptech.glide.load.resource.gif.GifBitmapProvider;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
+import com.moe.LiveVisualizer.utils.ColorList;
+import com.tencent.bugly.Bugly;
 
-public class LiveWallpaper extends WallpaperService implements Thread.UncaughtExceptionHandler
+public class LiveWallpaper extends WallpaperService
 {
 	private Bitmap wallpaper,circle,bit;
 	private ColorList colorList;
 	private WallpaperChanged changed;
 	private SharedPreferences moe;
-	private MoeEngine engine;
+	private WallpaperEngine engine;
 	private DisplayMetrics display;
 	private boolean gif;
 	private GifDecoder gifDecode;
+
+	
+	public SharedPreferences getSharedPreferences()
+	{
+		// TODO: Implement this method
+		return moe;
+	}
+
+	
+	public Bitmap getWallpaperBitmap(){
+		return wallpaper;
+	}
+	public Bitmap getCenterCircleImage()
+	{
+		// TODO: Implement this method
+		return circle;
+	}
+
+	public boolean isGif()
+	{
+		// TODO: Implement this method
+		return gif;
+	}
+
+	public GifDecoder getGifDecode()
+	{
+		// TODO: Implement this method
+		return gifDecode;
+	}
+
+	public ColorList getColorList()
+	{
+		// TODO: Implement this method
+		return colorList;
+	}
 	@Override
 	public WallpaperService.Engine onCreateEngine()
 	{
-		return engine = new MoeEngine();
+		return engine = new WallpaperEngine(this);
 
 	}
 	/*private MediaController control;
@@ -143,7 +160,7 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		registerReceiver(changed = new WallpaperChanged(), filter);
 		//init();
 	}
-
+	
 	/*@Override
 	 public void onGenerated(Palette p1)
 	 {
@@ -219,10 +236,15 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 	}
 	private synchronized void loadWallpaper()
 	{
+		gif=false;
 		if ( this.wallpaper != null )
 		{
 			this.wallpaper.recycle();
 			wallpaper = null;
+		}
+		if(gifDecode!=null){
+			this.gifDecode.clear();
+			this.gifDecode=null;
 		}
 		File wallpaper=new File(getExternalCacheDir(), "wallpaper");
 		File gif=new File(getExternalCacheDir(), "gif");
@@ -361,12 +383,12 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 							loadColor();
 							break;
 						case "artwork_color":
-							if ( engine != null )
-								engine.setColor(p2.getIntExtra("color", 0xff39c5bb));
+							//if ( engine != null )
+							//	engine.setColor(p2.getIntExtra("color", 0xff39c5bb));
 							break;
 						case "artwork":
-							if ( engine != null )
-								engine.setArtwork(BitmapFactory.decodeFile(new File(getExternalCacheDir(), "artwork").getAbsolutePath()));
+						//	if ( engine != null )
+						//		engine.setArtwork(BitmapFactory.decodeFile(new File(getExternalCacheDir(), "artwork").getAbsolutePath()));
 							break;
 						case "circle_changed":
 							loadCircle();
@@ -379,16 +401,22 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 
 
 	}
-	public class MoeEngine extends Engine implements Visualizer.OnDataCaptureListener
+	
+	public class WallpaperEngine extends WallpaperService.Engine implements Visualizer.OnDataCaptureListener
 	{
-		private Visualizer mVisualizer;
+		//private Visualizer mVisualizer;
 		private WallpaperThread refresh=null;
-		private int artwork_color=0xff39c5bb;
-		private Bitmap artwork;
+		//private int artwork_color=0xff39c5bb;
+		//private Bitmap artwork;
 		private Shader shader;
 		private List<OnColorSizeChangedListener> sizeListener=new ArrayList<>();
+		private VisualizerThread mVisualizer;
+		private LiveWallpaper live;
+		public WallpaperEngine(LiveWallpaper live){
+			this.live=live;
+		}
 
-		
+
 		public void registerColorSizeChangedListener(OnColorSizeChangedListener l)
 		{
 			sizeListener.add(l);
@@ -399,7 +427,7 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		}
 		public Bitmap getCircleImage()
 		{
-			return circle;
+			return live.getCenterCircleImage();
 		}
 		public Shader getShader()
 		{
@@ -407,47 +435,47 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 			return shader;
 		}
 
-		public void setArtwork(Bitmap artwork)
-		{
+		/*public void setArtwork(Bitmap artwork)
+		 {
 
-			if ( this.artwork != null && !this.artwork.isRecycled() )
-				this.artwork.recycle();
+		 if ( this.artwork != null && !this.artwork.isRecycled() )
+		 this.artwork.recycle();
 
-			this.artwork = artwork;
-		}
+		 this.artwork = artwork;
+		 }
 
-		public Bitmap getArtwork()
-		{
-			return artwork;
-		}
+		 public Bitmap getArtwork()
+		 {
+		 return artwork;
+		 }
 
-		public void setColor(int intExtra)
-		{
-			this.artwork_color = intExtra;
-		}
+		 public void setColor(int intExtra)
+		 {
+		 this.artwork_color = intExtra;
+		 }
 
 
-		public int getColor()
-		{
-			return artwork_color;
-		}
+		 public int getColor()
+		 {
+		 return artwork_color;
+		 }*/
 		public ColorList getColorList()
 		{
-			return colorList;
+			return live.getColorList();
 		}
 		public Context getContext()
 		{
-			return LiveWallpaper.this;
+			return live;
 		}
 		public Bitmap getWallpaper()
 		{
-			return wallpaper;
+			return live.getWallpaperBitmap();
 		}
 		public boolean isGif(){
-			return gif;
+			return live.isGif();
 		}
 		public GifDecoder getMovie(){
-			return gifDecode;
+			return live.getGifDecode();
 		}
 		public void notifyColorChanged()
 		{
@@ -465,45 +493,20 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 			refresh.setDaemon(true);
 			refresh.start();
 			notifyColorChanged();
-			init();
+			mVisualizer=new VisualizerThread(this);
+			mVisualizer.setName("visualizerThread");
+			mVisualizer.setDaemon(true);
+			mVisualizer.start();
 		}
-		private void init()
-		{
-			new Thread(){
-				public void run()
-				{
-					try
-					{
-						synchronized ( MoeEngine.this )
-						{
-							if ( mVisualizer != null )return;
-							mVisualizer = new Visualizer(0);
-							mVisualizer.setEnabled(false);
-							mVisualizer.setCaptureSize(mVisualizer.getCaptureSizeRange()[1]);
-							mVisualizer.setDataCaptureListener(MoeEngine.this, mVisualizer.getMaxCaptureRate(), true, false);
-							mVisualizer.setEnabled(isVisible());
-						}
-					}
-					catch (Exception e)
-					{
-						Toast.makeText(getApplicationContext(), "没有录音权限", Toast.LENGTH_SHORT).show();
-					}
-				}
 
-			}.start();
-		}
 		public SharedPreferences getSharedPreferences()
 		{
-			return moe;
+			return live.getSharedPreferences();
 		}
 		@Override
 		public void onVisibilityChanged(boolean visible)
 		{
-
-			if ( mVisualizer != null )
-				mVisualizer.setEnabled(visible);
-			else if ( visible )
-				init();
+			mVisualizer.check();
 			super.onVisibilityChanged(visible);
 		}
 
@@ -517,9 +520,20 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		}
 
 		@Override
-		public void onFftDataCapture(Visualizer p1, byte[] p2, int p3)
+		public void onFftDataCapture(Visualizer p1, byte[] fft, int p3)
 		{
-			onWaveFormDataCapture(p1, p2, p3);
+			byte[] model = new byte[fft.length / 2];    
+			model[0] =(byte)(fft[0]&0x7f);  
+			
+			for (int i = 2, j = 1; j < model.length;)    
+			{    
+				model[j] = (byte)( (int)Math.hypot(fft[i], fft[i + 1])&0x7f);    
+				i += 2;    
+				j++;    
+			}
+			
+			if(refresh!=null)
+				refresh.onUpdate(model);
 		}
 
 		@Override
@@ -531,34 +545,5 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 			if ( refresh != null )refresh.close();
 		}
 
-
-	} 
-	@Override
-	public void uncaughtException(Thread p1, Throwable p2)
-	{
-		FileOutputStream fos=null;
-		try
-		{
-			fos = new FileOutputStream(getExternalCacheDir().getAbsolutePath() + "/log", true);
-			fos.write((p2.getMessage() + "\n").getBytes());
-			for ( StackTraceElement element:p2.getStackTrace() )
-			{
-				fos.write((element.toString() + "\n").getBytes());
-			}
-			fos.write("\n\n".getBytes());
-			fos.flush();
-		}
-		catch (Exception e)
-		{}
-		finally
-		{
-			try
-			{
-				if ( fos != null )fos.close();
-			}
-			catch (IOException e)
-			{}
-			android.os.Process.killProcess(android.os.Process.myPid());
-		}
 	}
 }
