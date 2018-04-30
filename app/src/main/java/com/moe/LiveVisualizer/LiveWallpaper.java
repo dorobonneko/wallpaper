@@ -19,6 +19,17 @@ import android.os.Build;
 import android.os.Bundle;
 import com.tencent.bugly.Bugly;
 import android.util.DisplayMetrics;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.ViewTarget;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BaseTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.gifdecoder.GifDecoder;
+import android.graphics.Bitmap.Config;
+import com.bumptech.glide.load.resource.gif.GifBitmapProvider;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
 
 public class LiveWallpaper extends WallpaperService implements Thread.UncaughtExceptionHandler
 {
@@ -28,90 +39,92 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 	private SharedPreferences moe;
 	private MoeEngine engine;
 	private DisplayMetrics display;
+	private boolean gif;
+	private GifDecoder gifDecode;
 	@Override
 	public WallpaperService.Engine onCreateEngine()
 	{
 		return engine = new MoeEngine();
 
 	}
-	private MediaController control;
-	private MediaController.Callback callback;
-	private void init()
-	{
-		if ( Build.VERSION.SDK_INT > 20 )
-		{
-			MediaSessionManager m=(MediaSessionManager) getSystemService(MEDIA_SESSION_SERVICE);
-			m.addOnActiveSessionsChangedListener(new MediaSessionManager.OnActiveSessionsChangedListener(){
+	/*private MediaController control;
+	 private MediaController.Callback callback;
+	 /*private void init()
+	 {
+	 if ( Build.VERSION.SDK_INT > 20 )
+	 {
+	 MediaSessionManager m=(MediaSessionManager) getSystemService(MEDIA_SESSION_SERVICE);
+	 m.addOnActiveSessionsChangedListener(new MediaSessionManager.OnActiveSessionsChangedListener(){
 
-					@Override
-					public void onActiveSessionsChanged(final List<MediaController> p1)
-					{
-						if ( control != null && callback != null )
-							control.unregisterCallback(callback);
-						if ( p1 != null && p1.size() > 0 )
-						{
-							control = p1.get(0);
-							control.registerCallback(callback = new MediaController.Callback(){
-														 @Override
-														 public void onMetadataChanged(MediaMetadata metadata)
-														 {
-															 onMetadataUpdate(metadata);
-														 }
-														 public void onSessionDestroyed()
-														 {
-															 return;
-														 }
+	 @Override
+	 public void onActiveSessionsChanged(final List<MediaController> p1)
+	 {
+	 if ( control != null && callback != null )
+	 control.unregisterCallback(callback);
+	 if ( p1 != null && p1.size() > 0 )
+	 {
+	 control = p1.get(0);
+	 control.registerCallback(callback = new MediaController.Callback(){
+	 @Override
+	 public void onMetadataChanged(MediaMetadata metadata)
+	 {
+	 onMetadataUpdate(metadata);
+	 }
+	 public void onSessionDestroyed()
+	 {
+	 return;
+	 }
 
-														 public void onSessionEvent(java.lang.String event, android.os.Bundle extras)
-														 {
-															 return;
-														 }
+	 public void onSessionEvent(java.lang.String event, android.os.Bundle extras)
+	 {
+	 return;
+	 }
 
-														 public void onPlaybackStateChanged(android.media.session.PlaybackState state)
-														 {
-															 //if(state.getState()==state.STATE_BUFFERING&&LiveWallpaper.this.control.getMetadata()!=null)
-																// onMetadataChanged(LiveWallpaper.this.control.getMetadata());
-																 
-															 return;
-														 }
+	 public void onPlaybackStateChanged(android.media.session.PlaybackState state)
+	 {
+	 //if(state.getState()==state.STATE_BUFFERING&&LiveWallpaper.this.control.getMetadata()!=null)
+	 // onMetadataChanged(LiveWallpaper.this.control.getMetadata());
 
-														 
-														 public void onQueueChanged(java.util.List<android.media.session.MediaSession.QueueItem> queue)
-														 {
-															 return;
-														 }
+	 return;
+	 }
 
-														 public void onQueueTitleChanged(java.lang.CharSequence title)
-														 {
-															 return;
-														 }
 
-														 public void onExtrasChanged(android.os.Bundle extras)
-														 {
-															 return;
-														 }
+	 public void onQueueChanged(java.util.List<android.media.session.MediaSession.QueueItem> queue)
+	 {
+	 return;
+	 }
 
-														 public void onAudioInfoChanged(android.media.session.MediaController.PlaybackInfo info)
-														 {
-															 return;
-														 }
+	 public void onQueueTitleChanged(java.lang.CharSequence title)
+	 {
+	 return;
+	 }
 
-													 });
-							if ( control.getMetadata() != null )
-								onMetadataUpdate(control.getMetadata());
-						}
-					}
-				}, new ComponentName(this, NotifycationListener.class));
-		}
-	}
+	 public void onExtrasChanged(android.os.Bundle extras)
+	 {
+	 return;
+	 }
 
+	 public void onAudioInfoChanged(android.media.session.MediaController.PlaybackInfo info)
+	 {
+	 return;
+	 }
+
+	 });
+	 if ( control.getMetadata() != null )
+	 onMetadataUpdate(control.getMetadata());
+	 }
+	 }
+	 }, new ComponentName(this, NotifycationListener.class));
+	 }
+	 }
+	 */
 	@Override
 	public void onCreate()
 	{
 		super.onCreate();
-		Bugly.init(getApplicationContext(),"39c93f2bb3",false);
-		display =new DisplayMetrics();
-		( (WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getRealMetrics(display);
+		Bugly.init(getApplicationContext(), "39c93f2bb3", false);
+		display = new DisplayMetrics();
+		((WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getRealMetrics(display);
 		moe = getSharedPreferences("moe", 0);
 		colorList = new ColorList();
 		new Thread("init_thread"){
@@ -132,55 +145,55 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 	}
 
 	/*@Override
-	public void onGenerated(Palette p1)
-	{
-		if(p1==null)return;
-		List<Palette.Swatch> list=p1.getSwatches();
-		if ( list.size() > 0 && engine != null )
-			engine.setColor(list.get(list.size() / 2).getRgb());
-		//sendBroadcast(new Intent("artwork_color").putExtra("color",list.get(list.size()/2).getRgb()));
+	 public void onGenerated(Palette p1)
+	 {
+	 if(p1==null)return;
+	 List<Palette.Swatch> list=p1.getSwatches();
+	 if ( list.size() > 0 && engine != null )
+	 engine.setColor(list.get(list.size() / 2).getRgb());
+	 //sendBroadcast(new Intent("artwork_color").putExtra("color",list.get(list.size()/2).getRgb()));
 
-	}*/
+	 }
 
 
-	private void onMetadataUpdate(MediaMetadata metadate)
-	{
-		Bitmap buffer=metadate.getBitmap(metadate.METADATA_KEY_ALBUM_ART);
-		if ( buffer == null || buffer.equals(bit) )return;
-		try
-		{
-			if ( bit != null )bit.recycle();
-		}
-		catch (Exception e)
-		{}
-		bit = buffer;
-		if ( moe.getBoolean("artwork", false) && engine != null )engine.setArtwork(bit);
-		//Palette.generateAsync(bit, this);
+	 private void onMetadataUpdate(MediaMetadata metadate)
+	 {
+	 Bitmap buffer=metadate.getBitmap(metadate.METADATA_KEY_ALBUM_ART);
+	 if ( buffer == null || buffer.equals(bit) )return;
+	 try
+	 {
+	 if ( bit != null )bit.recycle();
+	 }
+	 catch (Exception e)
+	 {}
+	 bit = buffer;
+	 if ( moe.getBoolean("artwork", false) && engine != null )engine.setArtwork(bit);
+	 //Palette.generateAsync(bit, this);
 
-		/*if(moe.getBoolean("artwork",false)){
-		 new Thread(){
-		 public void run(){
-		 FileOutputStream fos = null;
-		 try
-		 {
-		 fos=new FileOutputStream(new File(getExternalCacheDir(), "artwork"));
-		 bit.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-		 sendBroadcast(new Intent("artwork"));
+	 /*if(moe.getBoolean("artwork",false)){
+	 new Thread(){
+	 public void run(){
+	 FileOutputStream fos = null;
+	 try
+	 {
+	 fos=new FileOutputStream(new File(getExternalCacheDir(), "artwork"));
+	 bit.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+	 sendBroadcast(new Intent("artwork"));
 
-		 }
-		 catch (FileNotFoundException e)
-		 {}finally{
-		 try
-		 {
-		 if ( fos != null )fos.close();
-		 }
-		 catch (IOException e)
-		 {}
-		 }
-		 }
-		 }.start();
-		 }*/
-	}
+	 }
+	 catch (FileNotFoundException e)
+	 {}finally{
+	 try
+	 {
+	 if ( fos != null )fos.close();
+	 }
+	 catch (IOException e)
+	 {}
+	 }
+	 }
+	 }.start();
+	 }
+	 }*/
 	private synchronized void loadCircle()
 	{
 		if ( this.circle != null )
@@ -212,18 +225,77 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 			wallpaper = null;
 		}
 		File wallpaper=new File(getExternalCacheDir(), "wallpaper");
+		File gif=new File(getExternalCacheDir(), "gif");
+
 		if ( wallpaper.exists() && wallpaper.isFile() )
 		{
-			final Bitmap buffer = BitmapFactory.decodeFile(wallpaper.getAbsolutePath());
-			if ( buffer != null )
+			if ( gif.exists() )
 			{
-				Matrix matrix = new Matrix();
-				matrix.setScale(((float)display.widthPixels) / buffer.getWidth(), ((float)display.heightPixels) / buffer.getHeight());
-				this.wallpaper = Bitmap.createBitmap(buffer, 0, 0, buffer.getWidth(), buffer.getHeight(), matrix, true);
-				if ( this.wallpaper != buffer )
-					buffer.recycle();
-			}
+				this.gif=true;
+				if(gifDecode!=null)gifDecode.clear();
+				try{
+					GifDecoder decode=new GifDecoder(new GifDecoder.BitmapProvider(){
 
+							@Override
+							public Bitmap obtain(int p1, int p2, Bitmap.Config p3)
+							{
+								// TODO: Implement this method
+								return Bitmap.createBitmap(p1,p2,p3);
+							}
+
+							@Override
+							public void release(Bitmap p1)
+							{
+								p1.recycle();
+							}
+						});
+					ByteArrayOutputStream baos = null;
+					FileInputStream fis = null;
+					try{
+						fis=new FileInputStream(wallpaper);
+						baos=new ByteArrayOutputStream();
+						int len=0;
+						byte[] buffer=new byte[512];
+						while((len=fis.read(buffer))!=-1)
+							baos.write(buffer,0,len);
+							baos.flush();
+							decode.read(baos.toByteArray());
+						}catch(Exception e){}
+						finally{
+							try
+							{
+								if ( baos != null )baos.close();
+							}
+							catch (IOException e)
+							{}
+							try
+							{
+								if ( fis != null )fis.close();
+							}
+							catch (IOException e)
+							{}
+						}
+					decode.advance();
+					gifDecode=decode;
+					}catch(Exception e){}
+			}
+			else
+			{
+				decodeBitmap(wallpaper);
+			}
+		}
+	}
+	private void decodeBitmap(File file)
+	{
+		gif=false;
+		final Bitmap buffer = BitmapFactory.decodeFile(file.getAbsolutePath());
+		if ( buffer != null )
+		{
+			Matrix matrix = new Matrix();
+			matrix.setScale(((float)display.widthPixels) / buffer.getWidth(), ((float)display.heightPixels) / buffer.getHeight());
+			this.wallpaper = Bitmap.createBitmap(buffer, 0, 0, buffer.getWidth(), buffer.getHeight(), matrix, true);
+			if ( this.wallpaper != buffer )
+				buffer.recycle();
 		}
 	}
 	private synchronized void loadColor()
@@ -315,6 +387,8 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		private Bitmap artwork;
 		private Shader shader;
 		private List<OnColorSizeChangedListener> sizeListener=new ArrayList<>();
+
+		
 		public void registerColorSizeChangedListener(OnColorSizeChangedListener l)
 		{
 			sizeListener.add(l);
@@ -369,8 +443,12 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		{
 			return wallpaper;
 		}
-
-
+		public boolean isGif(){
+			return gif;
+		}
+		public GifDecoder getMovie(){
+			return gifDecode;
+		}
 		public void notifyColorChanged()
 		{
 			shader = null;
@@ -392,24 +470,26 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		private void init()
 		{
 			new Thread(){
-				public void run(){
-			try
-			{
-				synchronized(MoeEngine.this){
-				if(mVisualizer!=null)return;
-				mVisualizer = new Visualizer(0);
-				mVisualizer.setEnabled(false);
-				mVisualizer.setCaptureSize(mVisualizer.getCaptureSizeRange()[1]);
-				mVisualizer.setDataCaptureListener(MoeEngine.this, mVisualizer.getMaxCaptureRate()/2, true, false);
-				mVisualizer.setEnabled(isVisible());
+				public void run()
+				{
+					try
+					{
+						synchronized ( MoeEngine.this )
+						{
+							if ( mVisualizer != null )return;
+							mVisualizer = new Visualizer(0);
+							mVisualizer.setEnabled(false);
+							mVisualizer.setCaptureSize(mVisualizer.getCaptureSizeRange()[1]);
+							mVisualizer.setDataCaptureListener(MoeEngine.this, mVisualizer.getMaxCaptureRate(), true, false);
+							mVisualizer.setEnabled(isVisible());
+						}
+					}
+					catch (Exception e)
+					{
+						Toast.makeText(getApplicationContext(), "没有录音权限", Toast.LENGTH_SHORT).show();
+					}
 				}
-			}
-			catch (Exception e)
-			{
-				Toast.makeText(getApplicationContext(), "没有录音权限", Toast.LENGTH_SHORT).show();
-			}
-			}
-			
+
 			}.start();
 		}
 		public SharedPreferences getSharedPreferences()

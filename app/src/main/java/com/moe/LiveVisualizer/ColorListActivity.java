@@ -73,12 +73,17 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 				finish();
 				return true;
 			case 0:
-				if(colorPicker==null){
+				/*if(colorPicker==null){
 					ColorPickerView view=new ColorPickerView(this);
 					view.setOnColorCheckedListener(this);
 					colorPicker=new AlertDialog.Builder(this).setView(view).create();
 				}
-				colorPicker.show();
+				colorPicker.show();*/
+				ColorDialog cd=(ColorDialog) getFragmentManager().findFragmentByTag("color");
+				if(cd==null){cd=new ColorDialog();
+				cd.setOnColorCheckedListener(this);}
+				if(cd.isAdded())getFragmentManager().beginTransaction().show(cd).commit();
+				else cd.show(getFragmentManager(),"color");
 				break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -90,7 +95,9 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 		colorList.add(color);
 		((ColorAdapter)listview.getAdapter()).notifyDataSetChanged();
 		notifyColorFileChanged();
-		colorPicker.dismiss();
+		//colorPicker.dismiss();
+		ColorDialog cd=(ColorDialog) getFragmentManager().findFragmentByTag("color");
+		if(cd!=null)cd.dismiss();
 		}
 
 	@Override
@@ -119,7 +126,7 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 	}
 
 
-	private Handler handler=new Handler(){
+	/*private Handler handler=new Handler(){
 
 		@Override
 		public void handleMessage(Message msg)
@@ -130,7 +137,7 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 			}
 		}
 		
-	};
+	};*/
 	private void notifyColorFileChanged(){
 		synchronized(fileLock){
 			File colorFile=new File(getExternalCacheDir(),"color");

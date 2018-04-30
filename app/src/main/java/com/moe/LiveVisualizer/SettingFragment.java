@@ -11,17 +11,22 @@ import android.support.v4.content.FileProvider;
 import android.util.DisplayMetrics;
 import com.moe.LiveVisualizer.preference.SeekBarPreference;
 import android.view.WindowManager;
+import java.lang.reflect.Field;
+import android.widget.ProgressBar;
+import java.lang.ref.WeakReference;
 
 public class SettingFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,Preference.OnPreferenceChangeListener
 {
 	private final static int WALLPAPER=0X02;
 	private final static int CIRCLE=0x03;
 	private final static int CROP=0x04;
+	private final static int DISMISS=0x05;
 	private AlertDialog delete;
 	private AlertDialog circle_delete;
-	private AlertDialog gif_dialog=null;
+	private ProgressDialog gif_dialog=null;
 	private ListPreference color_mode,visualizer_mode;
 	private DisplayMetrics display;
+	private WeakReference<Uri> weak;
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
@@ -158,13 +163,22 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 			switch ( requestCode )
 			{
 				case WALLPAPER:
+					weak=new WeakReference<Uri>(data.getData());
 					if ( gif_dialog == null )
 					{
-						gif_dialog = new AlertDialog.Builder(getActivity()).setMessage("如何处理图片").setPositiveButton("裁剪", new DialogInterface.OnClickListener(){
+						gif_dialog = new ProgressDialog(getActivity());
+						gif_dialog.setMessage("如何处理图片");
+						gif_dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+						gif_dialog.setButton(ProgressDialog.BUTTON1,"裁剪", new DialogInterface.OnClickListener(){
 
 								@Override
 								public void onClick(DialogInterface p1, int p2)
 								{
+									try{
+										Field progressBar=gif_dialog.getClass().getDeclaredField("mProgress");
+										progressBar.setAccessible(true);
+										((ProgressBar)progressBar.get(gif_dialog)).setVisibility(ProgressBar.VISIBLE);
+									}catch(Exception e){}
 									new Thread(){
 										public void run()
 										{
@@ -176,8 +190,8 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 											try
 											{
 												fos = new FileOutputStream(tmp);
-												is = getActivity().getContentResolver().openInputStream(data.getData());
-												byte[] buffer=new byte[512];
+												is = getActivity().getContentResolver().openInputStream(weak.get());
+												byte[] buffer=new byte[16*1024];
 												int len;
 												while ( (len = is.read(buffer)) != -1 )
 													fos.write(buffer, 0, len);
@@ -225,15 +239,21 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 											}
 											catch (Exception e)
 											{}
-
+											handler.obtainMessage(DISMISS).sendToTarget();
 										}
 									}.start();
 								}
-							}).setNegativeButton("GIF", new DialogInterface.OnClickListener(){
+							});
+							gif_dialog.setButton(ProgressDialog.BUTTON2,"GIF", new DialogInterface.OnClickListener(){
 
 								@Override
 								public void onClick(DialogInterface p1, int p2)
 								{
+									try{
+									Field progressBar=gif_dialog.getClass().getDeclaredField("mProgress");
+									progressBar.setAccessible(true);
+									((ProgressBar)progressBar.get(gif_dialog)).setVisibility(ProgressBar.VISIBLE);
+									}catch(Exception e){}
 									new Thread(){
 										public void run(){
 											final File tmp=new File(getActivity().getExternalCacheDir(), "wallpaper");
@@ -249,8 +269,8 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 											try
 											{
 												fos = new FileOutputStream(tmp);
-												is = getActivity().getContentResolver().openInputStream(data.getData());
-												byte[] buffer=new byte[512];
+												is = getActivity().getContentResolver().openInputStream(weak.get());
+												byte[] buffer=new byte[16*1024];
 												int len;
 												while ( (len = is.read(buffer)) != -1 )
 													fos.write(buffer, 0, len);
@@ -274,12 +294,26 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 												{}
 											}
 											getActivity().sendBroadcast(new Intent("wallpaper_changed"));
+											handler.obtainMessage(DISMISS).sendToTarget();
 										}
 									}.start();
 								}
-							}).setNeutralButton("取消", null).create();
+							});
+							gif_dialog.setButton(ProgressDialog.BUTTON3,"取消",handler.obtainMessage(DISMISS));
+							gif_dialog.setCanceledOnTouchOutside(false);
 					}
 					gif_dialog.show();
+					try
+					{
+						Field progressBar=gif_dialog.getClass().getDeclaredField("mProgress");
+						progressBar.setAccessible(true);
+						((ProgressBar)progressBar.get(gif_dialog)).setVisibility(ProgressBar.GONE);
+						Field show=Dialog.class.getDeclaredField("mShowing");
+						show.setAccessible(true);
+						show.setBoolean(gif_dialog,false);
+					}
+					catch (Exception e)
+					{}
 					/*if(data.getData()==null)
 					 getActivity().sendBroadcast(new Intent("wallpaper_changed"));
 					 else{
@@ -361,5 +395,24 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 			}
 	}
 
+	private Handler handler=new Handler(){
 
+		@Override
+		public void handleMessage(Message msg)
+		{
+			switch(msg.what){
+				case DISMISS:
+					if(gif_dialog!=null){
+						try{
+							Field show=Dialog.class.getDeclaredField("mShowing");
+							show.setAccessible(true);
+							show.setBoolean(gif_dialog,true);
+						}catch(Exception e){}
+						gif_dialog.dismiss();
+					}
+					break;
+			}
+		}
+	
+};
 }

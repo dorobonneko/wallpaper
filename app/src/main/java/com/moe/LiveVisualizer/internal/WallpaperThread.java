@@ -15,13 +15,18 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.PorterDuff;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
+import android.graphics.Movie;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.gifdecoder.GifDecoder;
 
 public class WallpaperThread extends Thread
 {
 
 	private LiveWallpaper.MoeEngine engine;
-	private Handler handler;
+	//private Handler handler;
 	private ImageDraw imageDraw;
+	private long oldTime;
+	private byte[] buffer;
 	public WallpaperThread(LiveWallpaper.MoeEngine engine)
 	{
 
@@ -36,69 +41,104 @@ public class WallpaperThread extends Thread
 
 	public void onUpdate(byte[] p2)
 	{
-		if ( engine.isVisible() && handler != null )
-		{
-			handler.removeMessages(0);
-			handler.sendMessageDelayed(handler.obtainMessage(0, p2), 33);
-		}
+		this.buffer = p2;
+		/*if ( engine.isVisible() && handler != null )
+		 {
+		 handler.removeMessages(0);
+		 handler.sendMessageDelayed(handler.obtainMessage(0, p2), 26);
+		 }*/
 	}
-
 
 	@Override
 	public void run()
 	{
 
-		Looper.prepare();
-		handler = new Handler(){
-			public void handleMessage(Message msg)
+		/*	Looper.prepare();
+		 handler = new Handler(){
+		 public void handleMessage(Message msg)
+		 {*/
+		while ( imageDraw != null )
+		{
+			long delay=0;
+			SurfaceHolder sh=engine.getSurfaceHolder();
+			if ( sh != null && engine.isVisible() )
 			{
-				SurfaceHolder sh=engine.getSurfaceHolder();
-				if ( sh != null )
+				synchronized ( sh )
 				{
-					synchronized ( sh )
+					final Canvas canvas=sh.lockCanvas();
+					if ( canvas != null )
 					{
-						final Canvas canvas=sh.lockCanvas();
-						if ( canvas != null )
+						/*if ( engine.getSharedPreferences().getBoolean("artwork", false) && engine.getArtwork() != null )
+						 {
+						 Bitmap buffer=engine.getArtwork();
+						 Matrix matrix=new Matrix();
+						 float scale=Math.max(((float)canvas.getWidth() / buffer.getWidth()), ((float)canvas.getHeight() / buffer.getHeight()));
+						 matrix.setScale(scale, scale);
+						 float offsetX=(buffer.getWidth() * scale - canvas.getWidth()) / 2;
+						 float offsetY=(buffer.getHeight() * scale - canvas.getHeight()) / 2;
+						 matrix.postTranslate(-offsetX, -offsetY);
+						 canvas.drawBitmap(engine.getArtwork(), matrix, null);
+						 }
+						 else*/
+						if ( engine.isGif() && engine.getMovie() != null )
 						{
-							if ( engine.getSharedPreferences().getBoolean("artwork", false) && engine.getArtwork() != null )
+							canvas.drawColor(0xff000000);
+							final GifDecoder movie=engine.getMovie();
+							movie.advance();
+							Bitmap bit=movie.getNextFrame();
+							if ( bit == null )
+							{movie.resetFrameIndex();
+								bit = movie.getNextFrame();}
+							if ( bit != null )
 							{
-								Bitmap buffer=engine.getArtwork();
 								Matrix matrix=new Matrix();
-								float scale=Math.max(((float)canvas.getWidth() / buffer.getWidth()), ((float)canvas.getHeight() / buffer.getHeight()));
+								float scale=Math.min(canvas.getWidth() / (float)bit.getWidth(), canvas.getHeight() / (float)bit.getHeight());
 								matrix.setScale(scale, scale);
-								float offsetX=(buffer.getWidth() * scale - canvas.getWidth()) / 2;
-								float offsetY=(buffer.getHeight() * scale - canvas.getHeight()) / 2;
-								matrix.postTranslate(-offsetX, -offsetY);
-								canvas.drawBitmap(engine.getArtwork(), matrix, null);
+								matrix.postTranslate((canvas.getWidth() - bit.getWidth() * scale) / 2.0f, (canvas.getHeight() - bit.getHeight() * scale) / 2.0f);
+								canvas.drawBitmap(bit, matrix, null);
+								bit.recycle();
+								delay=movie.getDelay(movie.getCurrentFrameIndex());
 							}
-							else
-							if ( engine.getWallpaper() != null )
-								canvas.drawBitmap(engine.getWallpaper(), 0, 0, null);
-							else
-								canvas.drawColor(0xff000000);
-							if ( imageDraw != null )
-							{
-								ImageDraw draw=imageDraw.lockData((byte[])msg.obj);
-								if ( draw != null )
-								//try{
-									draw.draw(canvas);
-								//}catch(Exception e){}
-							}
-							try{
-							sh.unlockCanvasAndPost(canvas);
-							}catch(Exception E){}
 						}
+						else if ( engine.getWallpaper() != null )
+							canvas.drawBitmap(engine.getWallpaper(), 0, 0, null);
+						else
+							canvas.drawColor(0xff000000);
+						if ( imageDraw != null )
+						{
+							ImageDraw draw=imageDraw.lockData(buffer);
+							if ( draw != null )
+							//try{
+								draw.draw(canvas);
+							//}catch(Exception e){}
+						}
+						try
+						{
+							sh.unlockCanvasAndPost(canvas);
+						}
+						catch (Exception E)
+						{}
 					}
 				}
-
 			}
-		};
-		Looper.loop();
+			long blank=(System.nanoTime() - oldTime)/1000000;
+			try
+			{
+				long space=delay==0?33:delay;
+				sleep(blank > space?0: (space - blank));
+				oldTime = System.nanoTime();
+				
+			}
+			catch (InterruptedException e)
+			{}
 
+		}
+
+		/*		}
+		 };
+		 Looper.loop();
+		 */
 
 	}
-	/*
 
-
-	 */
 }

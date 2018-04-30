@@ -24,6 +24,7 @@ import android.graphics.Xfermode;
 import android.graphics.PointF;
 import android.view.GestureDetector;
 import java.util.HashMap;
+import android.icu.math.MathContext;
 
 public class ColorPickerView extends View{
 	private int betweenWidth;
@@ -59,7 +60,7 @@ public class ColorPickerView extends View{
 		circlePoint=new PointF();
 		mCircleRect=new RectF();
 		betweenWidth=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,16,getResources().getDisplayMetrics());
-		minSize=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,100,getResources().getDisplayMetrics());
+		//minSize=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,100,getResources().getDisplayMetrics());
 		mHueWidth=(int)betweenWidth;
 		setFocusable(true);
 		setFocusableInTouchMode(true);
@@ -89,12 +90,20 @@ public class ColorPickerView extends View{
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
 	{
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		int width=MeasureSpec.getSize(widthMeasureSpec);
 		int width_mode=MeasureSpec.getMode(width);
 		int height=MeasureSpec.getSize(heightMeasureSpec);
 		int height_mode=MeasureSpec.getMode(heightMeasureSpec);
-		switch(width_mode){
+		minSize=Math.min(width,height);
+		if(width>height){
+			//width=(int)(minSize*0.95f);
+			width=height;
+		}else{
+			height=width;
+		}
+		super.onMeasure(width, height);
+		
+		/*switch(width_mode){
 			case MeasureSpec.UNSPECIFIED:
 				break;
 			case MeasureSpec.AT_MOST:
@@ -111,7 +120,7 @@ public class ColorPickerView extends View{
 				break;
 			case MeasureSpec.EXACTLY:
 				break;
-		}
+		}*/
 		setMeasuredDimension(width,height);
 		mHueRect.left=width-3*betweenWidth;
 		mHueRect.top=betweenWidth;
