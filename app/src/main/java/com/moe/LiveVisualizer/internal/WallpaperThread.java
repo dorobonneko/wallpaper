@@ -27,11 +27,21 @@ public class WallpaperThread extends Thread
 	private ImageDraw imageDraw;
 	private long oldTime;
 	private byte[] buffer;
+	private double[] fft;
+	private Paint paint=new Paint();
 	public WallpaperThread(LiveWallpaper.WallpaperEngine engine)
 	{
 
 		this.engine = engine;
 		imageDraw = ImageDrawCompat.getInstance(engine);
+		paint.setTextAlign(Paint.Align.CENTER);
+		paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,18,engine.getContext().getResources().getDisplayMetrics()));
+		paint.setColor(0xff000000);
+	}
+
+	public void updateFft(double[] fft)
+	{
+		this.fft=fft;
 	}
 
 	public void close()
@@ -80,9 +90,13 @@ public class WallpaperThread extends Thread
 						 canvas.drawBitmap(engine.getArtwork(), matrix, null);
 						 }
 						 else*/
-						if ( engine.isGif() && engine.getMovie() != null )
+						if(!engine.isReady()){
+							canvas.drawColor(0xff0096ff);
+							canvas.drawText((engine.getError()==null?"无法启动":engine.getError()),canvas.getWidth()/2,(canvas.getHeight()-paint.descent()-paint.ascent())/2.0f,paint);
+						}else if ( engine.isGif() && engine.getMovie() != null )
 						{
 							canvas.drawColor(0xff000000);
+							try{
 							final GifDecoder movie=engine.getMovie();
 							movie.advance();
 							Bitmap bit=movie.getNextFrame();
@@ -99,6 +113,10 @@ public class WallpaperThread extends Thread
 								bit.recycle();
 								delay=movie.getDelay(movie.getCurrentFrameIndex());
 							}
+							}catch(Exception e){
+								canvas.drawColor(0xff0096ff);
+								canvas.drawText("Gif出错",canvas.getWidth()/2,(canvas.getHeight()-paint.descent()-paint.ascent())/2.0f,paint);
+							}
 						}
 						else if ( engine.getWallpaper() != null )
 							canvas.drawBitmap(engine.getWallpaper(), 0, 0, null);
@@ -106,7 +124,7 @@ public class WallpaperThread extends Thread
 							canvas.drawColor(0xff000000);
 						if ( imageDraw != null )
 						{
-							ImageDraw draw=imageDraw.lockData(buffer);
+							ImageDraw draw=imageDraw.lockData(fft);
 							if ( draw != null )
 							//try{
 								draw.draw(canvas);

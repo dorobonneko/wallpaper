@@ -415,8 +415,12 @@ public class LiveWallpaper extends WallpaperService
 		public WallpaperEngine(LiveWallpaper live){
 			this.live=live;
 		}
-
-
+		public String getError(){
+			return mVisualizer.getMessage();
+		}
+		public boolean isReady(){
+			return mVisualizer.isInit();
+		}
 		public void registerColorSizeChangedListener(OnColorSizeChangedListener l)
 		{
 			sizeListener.add(l);
@@ -522,18 +526,18 @@ public class LiveWallpaper extends WallpaperService
 		@Override
 		public void onFftDataCapture(Visualizer p1, byte[] fft, int p3)
 		{
-			byte[] model = new byte[fft.length / 2];    
-			model[0] =(byte)(fft[0]&0x7f);  
+			double[] model = new double[fft.length/ 2-1];    
+			//model[0] =(byte)(fft[0]&0x7f);  
 			
-			for (int i = 2, j = 1; j < model.length;)    
+			for (int n = 1; n < model.length+1;n++)    
 			{    
-				model[j] = (byte)( (int)Math.hypot(fft[i], fft[i + 1])&0x7f);    
-				i += 2;    
-				j++;    
+				//第k个点频率 getSamplingRate() * k /(getCaptureSize()/2)  
+				int k=2*n;
+				model[n-1] = Math.hypot(fft[k]==-1?0:fft[k], fft[k + 1]==-1?0:fft[k+1]);   
 			}
-			
+			//model[model.length-1]=fft[1];
 			if(refresh!=null)
-				refresh.onUpdate(model);
+				refresh.updateFft(model);
 		}
 
 		@Override
@@ -543,6 +547,8 @@ public class LiveWallpaper extends WallpaperService
 			if ( mVisualizer != null )
 				mVisualizer.release();
 			if ( refresh != null )refresh.close();
+			if(sizeListener!=null)
+				sizeListener.clear();
 		}
 
 	}

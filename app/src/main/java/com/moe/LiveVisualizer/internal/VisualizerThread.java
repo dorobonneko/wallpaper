@@ -12,6 +12,7 @@ public class VisualizerThread extends Thread
 	private Visualizer mVisualizer;
 	private LiveWallpaper.WallpaperEngine engine;
 	private Object locked=new Object();
+	private String error_msg;
 	public VisualizerThread(LiveWallpaper.WallpaperEngine engine){
 		this.engine=engine;
 	}
@@ -34,21 +35,29 @@ public class VisualizerThread extends Thread
 							try{
 						mVisualizer = new Visualizer(0);
 						mVisualizer.setEnabled(false);
-						mVisualizer.setCaptureSize(mVisualizer.getCaptureSizeRange()[0]*2);
-						mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate(), false, true);
+						mVisualizer.setCaptureSize(mVisualizer.getCaptureSizeRange()[1]);
+						mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
 						mVisualizer.setEnabled(engine.isVisible());
 						}catch(Exception e){
-							new Handler(Looper.getMainLooper()).post(new Runnable(){
+							error_msg=e.getMessage();
+							/*new Handler(Looper.getMainLooper()).post(new Runnable(){
 								public void run(){
-									Toast.makeText(engine.getContext(),"",Toast.LENGTH_SHORT).show();
+									Toast.makeText(engine.getContext(),"没有录音权限",Toast.LENGTH_LONG).show();
 									}
-									});
+									});*/
 						}
 						}
 						break;
 					case 1:
-						if(mVisualizer!=null)
-						mVisualizer.setEnabled(engine.isVisible());
+						if(mVisualizer!=null){
+						if(mVisualizer.setEnabled(engine.isVisible())!=Visualizer.SUCCESS)
+							{
+								mVisualizer.release();
+								mVisualizer=null;
+								//msg.obj=0;
+								check();
+							}
+						}
 						break;
 					case 2:
 						if(mVisualizer!=null){
@@ -63,12 +72,30 @@ public class VisualizerThread extends Thread
 	}
 	public synchronized void check(){
 		if(handler!=null){
-		if(mVisualizer==null)
-			handler.obtainMessage(0).sendToTarget();
-			else
+		if(mVisualizer==null){
+			try{
+				mVisualizer = new Visualizer(0);
+				mVisualizer.setEnabled(false);
+				mVisualizer.setCaptureSize(mVisualizer.getCaptureSizeRange()[1]);
+				mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
+				handler.obtainMessage(1).sendToTarget();
+				//mVisualizer.setEnabled(engine.isVisible());
+			}catch(Exception e){
+				error_msg=e.getMessage();
+				/*new Handler(Looper.getMainLooper()).post(new Runnable(){
+				 public void run(){
+				 Toast.makeText(engine.getContext(),"没有录音权限",Toast.LENGTH_LONG).show();
+				 }
+				 });*/
+			}
+			//handler.obtainMessage(0).sendToTarget();
+			}else
 			handler.obtainMessage(1).sendToTarget();
 			}
 			
+	}
+	public String getMessage(){
+		return error_msg;
 	}
 	public boolean isInit(){
 		return mVisualizer!=null;

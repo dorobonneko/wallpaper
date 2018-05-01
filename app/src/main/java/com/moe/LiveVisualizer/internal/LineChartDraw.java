@@ -8,17 +8,15 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.PorterDuff;
 import android.graphics.LinearGradient;
 import android.util.TypedValue;
+import android.graphics.Shader;
 
 public class LineChartDraw extends ImageDraw
 {
 	private Paint paint;
-	private ImageDraw draw;
 	private float[] tmpData;
-	
 	public LineChartDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine)
 	{
 		super(draw,engine);
-		this.draw = draw;
 		paint = new Paint();
 		paint.setStrokeCap(Paint.Cap.ROUND);
 		paint.setStrokeWidth(2);
@@ -26,34 +24,33 @@ public class LineChartDraw extends ImageDraw
 		paint.setDither(true);
 	}
 
-	@Override
-	protected byte[] getBuffer()
-	{
-		return draw.getBuffer();
-	}
+	
 
 	@Override
 	public void onDraw(Canvas canvas, int color_mode)
 	{
+		if(color_mode==2){
+			spaceLineChart(getFft(),canvas,color_mode);
+		}else
 		switch ( getEngine().getColorList().size() )
 		{
 			case 0:
 				paint.setColor(0xff39c5bb);
-				lineChart(getBuffer(), canvas);
+				lineChart(getFft(), canvas);
 				break;
 			case 1:
 				paint.setColor(getEngine().getColorList().get(0));
-				lineChart(getBuffer(), canvas);
+				lineChart(getFft(), canvas);
 				break;
 			default:
 				switch ( color_mode )
 				{
 					case 0://色带
 
-						final Bitmap src=Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
+						/*final Bitmap src=Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
 						final Canvas tmpCanvas=new Canvas(src);
 
-						lineChart(getBuffer(), tmpCanvas);
+						lineChart(getFft(), tmpCanvas);
 						if ( getEngine().getColorList().size() > 1 )
 						{										
 							paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
@@ -67,17 +64,28 @@ public class LineChartDraw extends ImageDraw
 							canvas.drawBitmap(src, 0, 0, paint);
 							src.recycle();
 							//break;
-						}
+						}*/
+						if ( getEngine().getShader() == null )
+								getEngine().setShader(new LinearGradient(0, 0, canvas.getWidth(), 0, getEngine().getColorList().toArray(), null, LinearGradient.TileMode.CLAMP));
+							paint.setShader(getEngine().getShader());
+						lineChart(getFft(), canvas);
+						paint.setShader(null);
 						break;
 					case 1://间隔
-						spaceLineChart(getBuffer(), canvas, color_mode);
+						spaceLineChart(getFft(), canvas, color_mode);
 						break;
 					case 2://random
-						spaceLineChart(getBuffer(), canvas, color_mode);
+						spaceLineChart(getFft(), canvas, color_mode);
 						break;
-					case 3://album_color
-						//paint.setColor(getEngine().getColor());
-						lineChart(getBuffer(), canvas);
+					case 3:
+						Shader shader=getFade();
+						if(shader==null)
+							setFade(shader=new LinearGradient(0,0,0,canvas.getHeight(),getEngine().getColorList().toArray(),null,LinearGradient.TileMode.CLAMP));
+						paint.setShader(shader);
+					default:
+						lineChart(getFft(), canvas);
+						paint.setShader(null);
+
 						break;
 				}
 				break;
@@ -86,56 +94,60 @@ public class LineChartDraw extends ImageDraw
 
 	}
 
-	private void lineChart(byte[] a, Canvas canvas)
+	private void lineChart(double[] a, Canvas canvas)
 	{
 		float borderHeight=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,getEngine().getSharedPreferences().getInt("borderHeight",0),getEngine().getContext().getResources().getDisplayMetrics());
+		float offsetY=canvas.getHeight() - getEngine().getSharedPreferences().getInt("height", 10) / 100.0f * canvas.getHeight();
+		
 		if ( tmpData == null || tmpData.length != 4 * a.length )
 		{
 			tmpData = new float[4 * a.length];
 		}
-		float step=((float)canvas.getWidth() / a.length);
+		float step=((float)canvas.getWidth() / a.length*2);
 		float offsetX=0;
-		float offsetY=canvas.getHeight()/2.0f;
-		for ( int i=0;i < a.length - 2;i++ )
+		//float offsetY=canvas.getHeight()/2.0f; 
+		for ( int i=0;i < a.length/2;i++ )
 		{
 			if ( i == 0 )
 			{
 				tmpData[4 * i] = offsetX;
-				tmpData[1 + 4 * i] =  offsetY - a[1 + i]/128.0f*borderHeight;
+				tmpData[1 + 4 * i] =  offsetY - (float)(a[1 + i]/127.0*borderHeight);
 			}
 			else
 			{
 				System.arraycopy(tmpData, 4 * i - 2, tmpData, 4 * i, 2);
 			}
 			tmpData[2 + 4 * i] = offsetX += step;
-			tmpData[3 + 4 * i] = offsetY - a[1 + i]/128.0f*borderHeight;
+			tmpData[3 + 4 * i] = offsetY -(float)( a[1 + i]/127.0*borderHeight);
 
 		}
 		canvas.drawLines(tmpData, paint);
 
 	}
 	//单独画线
-	private void spaceLineChart(byte[] data, Canvas canvas, int color_mode)
+	private void spaceLineChart(double[] data, Canvas canvas, int color_mode)
 	{
 		float borderHeight=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,getEngine().getSharedPreferences().getInt("borderHeight",0),getEngine().getContext().getResources().getDisplayMetrics());
-		float step=((float)canvas.getWidth() / data.length);
+		float offsetY=canvas.getHeight() - getEngine().getSharedPreferences().getInt("height", 10) / 100.0f * canvas.getHeight();
+		
+		float step=((float)canvas.getWidth() / data.length*2);
 		float offsetX=0;
 		float[] tmpData=new float[4];
 		int color=0;
-		float offsetY=canvas.getHeight()/2.0f;
-		for ( int i=0;i < data.length - 2;i++ )
+		//float offsetY=canvas.getHeight()/2.0f;
+		for ( int i=0;i < data.length/2;i++ )
 		{
 			if ( i == 0 )
 			{
 				tmpData[0] = offsetX;
-				tmpData[1] = offsetY - data[1 + i]/128.0f*borderHeight ;
+				tmpData[1] = offsetY -(float)( data[1 + i]/127.0f*borderHeight) ;
 			}
 			else
 			{
 				System.arraycopy(tmpData, 2, tmpData, 0, 2);
 			}
 			tmpData[2] = offsetX += step;
-			tmpData[3] = offsetY - data[1 + i]/128.0f*borderHeight;
+			tmpData[3] = offsetY -(float)( data[1 + i]/127.0f*borderHeight);
 			if ( color_mode == 1 )
 			{
 				paint.setColor(getEngine().getColorList().get(color));
@@ -145,7 +157,7 @@ public class LineChartDraw extends ImageDraw
 			}
 			else if ( color_mode == 2 )
 			{
-				paint.setColor(getEngine().getColorList().get((int)(Math.random() * getEngine().getColorList().size())));
+				paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
 			}
 			canvas.drawLines(tmpData, paint);
 		}
