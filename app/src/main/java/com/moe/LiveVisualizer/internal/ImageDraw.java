@@ -5,60 +5,61 @@ import android.graphics.Canvas;
 import java.lang.ref.WeakReference;
 import com.moe.LiveVisualizer.LiveWallpaper;
 import android.graphics.Shader;
+import com.moe.LiveVisualizer.draw.PopCircleDraw;
+import com.moe.LiveVisualizer.draw.RadialDraw;
+import com.moe.LiveVisualizer.draw.LineChartDraw;
+import com.moe.LiveVisualizer.draw.CircleLineDraw;
+import com.moe.LiveVisualizer.inter.Draw;
 
-public abstract class ImageDraw implements OnColorSizeChangedListener
+public class ImageDraw implements OnColorSizeChangedListener
 {
 	private LiveWallpaper.WallpaperEngine engine;
-	private byte[] buffer;
 	private double[] fft;
-	private ImageDraw draw,line,chart,circle,pop_circle;
+	private Draw line,chart,circle,pop_circle;
 	private Shader shader;
-	protected ImageDraw(LiveWallpaper.WallpaperEngine engine){
+	private float downSpeed;
+	public ImageDraw(LiveWallpaper.WallpaperEngine engine){
 		this.engine=engine;
 		engine.registerColorSizeChangedListener(this);
 	}
-	ImageDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
-		this.draw=draw;
-		this.engine=engine;
+
+	public void setDownSpeed(int speed)
+	{
+		downSpeed=speed/100.0f;
+	}
+	public float getDownSpeed(){
+		return downSpeed;
 	}
 
 	@Override
 	public void onColorSizeChanged()
 	{
-		if(draw!=null)draw.setFade(null);
+		setFade(null);
 		shader=null;
 	}
-
-	
-	protected LiveWallpaper.WallpaperEngine getEngine(){
-		return engine;
-	}
-	protected double[] getFft(){
-		return draw==null?this.fft:draw.getFft();
+	public double[] getFft(){
+		return this.fft;
 	}
 	/*protected byte[] getBuffer(){
-		return draw==null?this.buffer:draw.getBuffer();
-	}*/
-	final public ImageDraw lockData(double[] fft){
+	 return draw==null?this.buffer:draw.getBuffer();
+	 }*/
+	final public Draw lockData(double[] fft){
 		if(fft==null)return null;
 		this.fft=fft;
 		return get();
 	}
-	final public ImageDraw lockData(byte[] buffer){
+	/*final public Draw lockData(byte[] buffer){
 		if(buffer==null)return null;
 		this.buffer=buffer;
 		return get();
-	}
+	}*/
 	final public void setFade(Shader shader){
-		if(draw!=null)
-			draw.setFade(shader);
-			else
 			this.shader=shader;
 	}
 	final public Shader getFade(){
-		return draw==null?shader:draw.getFade();
+		return shader;
 	}
-	private ImageDraw get(){
+	private Draw get(){
 		switch(engine.getSharedPreferences().getString("visualizer_mode","0")){
 			case "0"://柱形图
 				return line==null?line=new RadialDraw(this,engine):line;
@@ -73,8 +74,5 @@ public abstract class ImageDraw implements OnColorSizeChangedListener
 		}
 		return null;
 	}
-	public void draw(Canvas canvas){
-		onDraw(canvas,Integer.parseInt(getEngine().getSharedPreferences().getString("color_mode","0")));
-	}
-	public abstract void onDraw(Canvas canvas,int color_mode);
+	
 }

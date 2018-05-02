@@ -18,46 +18,65 @@ import android.graphics.Matrix;
 import android.graphics.Movie;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.gifdecoder.GifDecoder;
+import com.moe.LiveVisualizer.inter.Draw;
 
-public class WallpaperThread extends Thread
+public class WallpaperThread extends Thread implements SharedPreferences.OnSharedPreferenceChangeListener
 {
 
 	private LiveWallpaper.WallpaperEngine engine;
 	//private Handler handler;
 	private ImageDraw imageDraw;
 	private long oldTime;
-	private byte[] buffer;
-	private double[] fft;
+	private double[] buffer;
+	private byte[] fft;
 	private Paint paint=new Paint();
+	private int fpsDelay=33;
 	public WallpaperThread(LiveWallpaper.WallpaperEngine engine)
 	{
-
 		this.engine = engine;
-		imageDraw = ImageDrawCompat.getInstance(engine);
+		imageDraw = new ImageDraw(engine);
 		paint.setTextAlign(Paint.Align.CENTER);
 		paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,18,engine.getContext().getResources().getDisplayMetrics()));
 		paint.setColor(0xff000000);
+		engine.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+		onSharedPreferenceChanged(engine.getSharedPreferences(),"highfps");
+		onSharedPreferenceChanged(engine.getSharedPreferences(),"downspeed");
 	}
 
-	public void updateFft(double[] fft)
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences p1, String p2)
+	{
+		switch(p2){
+			case "highfps":
+				fpsDelay=p1.getBoolean(p2,false)?16:33;
+				break;
+			case "downspeed":
+				if(imageDraw!=null)imageDraw.setDownSpeed(p1.getInt("downspeed",50));
+				break;
+		}
+	}
+
+
+	/*public void updateFft(double[] fft)
 	{
 		this.fft=fft;
-	}
-
+	}*/
+	
 	public void close()
 	{
 		imageDraw = null;
+		engine.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
 	}
 
-	public void onUpdate(byte[] p2)
+	/*public void onUpdate(byte[] p2)
 	{
 		this.buffer = p2;
 		/*if ( engine.isVisible() && handler != null )
 		 {
 		 handler.removeMessages(0);
 		 handler.sendMessageDelayed(handler.obtainMessage(0, p2), 26);
-		 }*/
-	}
+		 }
+	}*/
 
 	@Override
 	public void run()
@@ -122,13 +141,26 @@ public class WallpaperThread extends Thread
 							canvas.drawBitmap(engine.getWallpaper(), 0, 0, null);
 						else
 							canvas.drawColor(0xff000000);
-						if ( imageDraw != null )
+						if ( imageDraw != null &&engine.getVisualizer()!=null)
 						{
-							ImageDraw draw=imageDraw.lockData(fft);
+							if(fft==null)
+								fft=new byte[engine.getVisualizer().getCaptureSize()];
+								try{
+							engine.getVisualizer().getFft(fft);
+							if(buffer==null)
+								buffer = new double[fft.length/ 2-1];    
+							//model[0] =(byte)(fft[0]&0x7f);  
+
+							for (int n = 1; n < buffer.length+1;n++)    
+							{    
+								//第k个点频率 getSamplingRate() * k /(getCaptureSize()/2)  
+								int k=2*n;
+								buffer[n-1] = Math.hypot(fft[k]==-1?0:fft[k], fft[k + 1]==-1?0:fft[k+1]);   
+							}
+							Draw draw=imageDraw.lockData(buffer);
 							if ( draw != null )
-							//try{
 								draw.draw(canvas);
-							//}catch(Exception e){}
+							}catch(Exception e){}
 						}
 						try
 						{
@@ -142,7 +174,7 @@ public class WallpaperThread extends Thread
 			long blank=(System.nanoTime() - oldTime)/1000000;
 			try
 			{
-				long space=delay==0?33:delay;
+				long space=delay==0?fpsDelay:delay;
 				sleep(blank > space?0: (space - blank));
 				oldTime = System.nanoTime();
 				

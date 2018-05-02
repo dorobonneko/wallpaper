@@ -1,4 +1,4 @@
-package com.moe.LiveVisualizer.internal;
+package com.moe.LiveVisualizer.draw;
 import android.graphics.Paint;
 import com.moe.LiveVisualizer.LiveWallpaper;
 import android.graphics.Canvas;
@@ -9,8 +9,9 @@ import android.graphics.PorterDuff;
 import android.graphics.LinearGradient;
 import android.util.TypedValue;
 import android.graphics.Shader;
+import com.moe.LiveVisualizer.internal.ImageDraw;
 
-public class LineChartDraw extends ImageDraw
+public class LineChartDraw extends Draw
 {
 	private Paint paint;
 	private float[] tmpData;

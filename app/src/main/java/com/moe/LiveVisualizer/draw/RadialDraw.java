@@ -1,4 +1,4 @@
-package com.moe.LiveVisualizer.internal;
+package com.moe.LiveVisualizer.draw;
 import android.graphics.Canvas;
 import android.content.SharedPreferences;
 import com.moe.LiveVisualizer.utils.ColorList;
@@ -10,8 +10,9 @@ import android.graphics.PorterDuff;
 import android.util.TypedValue;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
+import com.moe.LiveVisualizer.internal.ImageDraw;
 
-public class RadialDraw extends ImageDraw
+public class RadialDraw extends Draw
 {
 	private Paint paint;
 	private float[] points;
@@ -98,7 +99,7 @@ public class RadialDraw extends ImageDraw
 		spaceWidth = (canvas.getWidth()-size*borderWidth) / ((float)size-1);
 		float x=0;//起始像素
 		float y=canvas.getHeight() - getEngine().getSharedPreferences().getInt("height", 10) / 100.0f * canvas.getHeight();
-		int step=buffer.length / size;
+		//int step=buffer.length / size;
 		int colorStep=0;
 		int mode=Integer.parseInt(getEngine().getSharedPreferences().getString("color_mode", "0"));
 		//if ( mode == 3 )
@@ -121,7 +122,7 @@ public class RadialDraw extends ImageDraw
 			if(height>points[i])
 				points[i]=height;
 				else
-				height=points[i]-5;
+				height=points[i]-(points[i]-height)*getDownSpeed();
 				if(height<0)height=0;
 				points[i]=height;
 			canvas.drawRect(x, y - height, x += borderWidth, y, paint);

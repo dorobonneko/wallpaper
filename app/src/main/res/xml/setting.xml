@@ -7,11 +7,11 @@
 	   android:title="背景"
 	   android:key="background"
 	   />
-   <SwitchPreference
+   <!--<SwitchPreference
 	   android:title="使用专辑封面作背景"
 	   android:summary="将强制覆盖自定义背景(不推荐开启)"
 	   android:key="artwork"
-	   android:enabled="false"/>
+	   android:enabled="false"/>-->
    <Preference
 	   android:title="色彩组"
 	   android:key="color_range">
@@ -59,4 +59,14 @@
 		app:unit="px"
 		android:key="spaceWidth"
 		android:defaultValue="20"/>
+	<SwitchPreference
+		android:title="高帧率模式"
+		android:key="highfps"
+		/>
+	<com.moe.LiveVisualizer.preference.SeekBarPreference
+		android:title="动画速度"
+		android:summary="加速度"
+		app:unit="%"
+		android:key="downspeed"
+		android:defaultValue="50"/>
 </PreferenceScreen>

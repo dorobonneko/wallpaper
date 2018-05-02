@@ -271,7 +271,7 @@ public class LiveWallpaper extends WallpaperService
 								p1.recycle();
 							}
 						});
-					ByteArrayOutputStream baos = null;
+					/*ByteArrayOutputStream baos = null;
 					FileInputStream fis = null;
 					try{
 						fis=new FileInputStream(wallpaper);
@@ -297,7 +297,15 @@ public class LiveWallpaper extends WallpaperService
 							catch (IOException e)
 							{}
 						}
-					decode.advance();
+					decode.advance();*/
+					FileInputStream fis=null;
+					try{
+						fis=new FileInputStream(wallpaper);
+					decode.read(fis,(int)wallpaper.length());
+					}catch(Exception e){}finally
+					{
+						if(fis!=null)fis.close();
+					}
 					gifDecode=decode;
 					}catch(Exception e){}
 			}
@@ -488,6 +496,9 @@ public class LiveWallpaper extends WallpaperService
 				l.onColorSizeChanged();
 			//if ( refresh != null )refresh.notifyColorChanged();
 		}
+		public Visualizer getVisualizer(){
+			return mVisualizer!=null?mVisualizer.getVisualizer():null;
+		}
 		@Override
 		public void onCreate(SurfaceHolder surfaceHolder)
 		{
@@ -518,15 +529,15 @@ public class LiveWallpaper extends WallpaperService
 		@Override
 		public void onWaveFormDataCapture(Visualizer p1, byte[] p2, int p3)
 		{
-			if ( refresh != null )
+			/*if ( refresh != null )
 				refresh.onUpdate(p2);
-			//if ( handler != null && isVisible() )handler.obtainMessage(0, p2).sendToTarget();
+			//if ( handler != null && isVisible() )handler.obtainMessage(0, p2).sendToTarget();*/
 		}
 
 		@Override
 		public void onFftDataCapture(Visualizer p1, byte[] fft, int p3)
 		{
-			double[] model = new double[fft.length/ 2-1];    
+			/*double[] model = new double[fft.length/ 2-1];    
 			//model[0] =(byte)(fft[0]&0x7f);  
 			
 			for (int n = 1; n < model.length+1;n++)    
@@ -537,7 +548,7 @@ public class LiveWallpaper extends WallpaperService
 			}
 			//model[model.length-1]=fft[1];
 			if(refresh!=null)
-				refresh.updateFft(model);
+				refresh.updateFft(model);*/
 		}
 
 		@Override

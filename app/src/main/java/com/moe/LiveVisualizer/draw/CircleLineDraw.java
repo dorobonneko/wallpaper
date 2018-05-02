@@ -1,4 +1,4 @@
-package com.moe.LiveVisualizer.internal;
+package com.moe.LiveVisualizer.draw;
 import android.graphics.Paint;
 import com.moe.LiveVisualizer.LiveWallpaper;
 import android.graphics.Canvas;
@@ -12,8 +12,11 @@ import android.graphics.RadialGradient;
 import android.graphics.SweepGradient;
 import android.graphics.Point;
 import android.graphics.PointF;
+import com.moe.LiveVisualizer.internal.ImageDraw;
+import com.moe.LiveVisualizer.internal.OnColorSizeChangedListener;
+import android.graphics.RectF;
 
-public class CircleLineDraw extends ImageDraw
+public class CircleLineDraw extends Draw
 {
 	private Paint paint;
 	private int degress=0;
@@ -51,20 +54,30 @@ public class CircleLineDraw extends ImageDraw
 		}
 		else
 		{
+			final Bitmap circle=getEngine().getCircleImage();
 			paint.setStyle(Paint.Style.FILL);
-			final Bitmap src=Bitmap.createBitmap(canvas.getWidth() / 3, canvas.getWidth() / 3, Bitmap.Config.ARGB_8888);
-			Canvas tmp=new Canvas(src);
-			tmp.save();
-			tmp.drawCircle(tmp.getWidth() / 2.0f, tmp.getHeight() / 2.0f, canvas.getWidth() / 6.0f, paint);
-			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-			tmp.rotate(degress, tmp.getWidth() / 2.0f, tmp.getHeight() / 2.0f);
+			//final Bitmap src=Bitmap.createBitmap(canvas.getWidth() / 3, canvas.getWidth() / 3, Bitmap.Config.ARGB_8888);
+			//Canvas tmp=new Canvas(src);
+			final RectF bounds=new RectF();
+			bounds.left=canvas.getWidth()/3.0f;
+			bounds.top=(canvas.getHeight()-bounds.left)/2.0f;
+			//bounds.right=canvas.getWidth()-bounds.left;
+			//bounds.bottom=canvas.getHeight()-bounds.top;
+			final int layer=canvas.saveLayer(0,0,canvas.getWidth(),canvas.getHeight(),null,canvas.ALL_SAVE_FLAG);
+			//canvas.drawColor(0xffffffff);
+			final PointF point=new PointF();
+			point.x=canvas.getWidth()/2.0f;
+			point.y=canvas.getHeight()/2.0f;
+			canvas.rotate(degress,point.x,point.y);
 			degress++;
 			if ( degress >= 360 )degress = 0;
-			tmp.drawBitmap(getEngine().getCircleImage(), 0, 0, paint);
-			tmp.restore();
+			canvas.drawCircle(point.x,point.y, canvas.getWidth() / 6.0f, paint);
+			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+			canvas.drawBitmap(circle, bounds.left,bounds.top, paint);
 			paint.setXfermode(null);
-			canvas.drawBitmap(src, (canvas.getWidth() - tmp.getWidth()) / 2.0f, (canvas.getHeight() - tmp.getHeight()) / 2.0f, null);
-			src.recycle();
+			canvas.restoreToCount(layer);
+			//canvas.drawBitmap(src, (canvas.getWidth() - tmp.getWidth()) / 2.0f, (canvas.getHeight() - tmp.getHeight()) / 2.0f, null);
+			//src.recycle();
 		}
 		paint.setStyle(Paint.Style.FILL);
 		if(color_mode==2){
@@ -84,19 +97,21 @@ public class CircleLineDraw extends ImageDraw
 				switch( color_mode)
 				{
 					case 0:
-					final Bitmap src=Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
-					final Canvas tmpCanvas=new Canvas(src);
-					drawLines(getFft(), tmpCanvas, false,color_mode);
+					//final Bitmap src=Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
+					//final Canvas tmpCanvas=new Canvas(src);
+					final int layer=canvas.saveLayer(0,0,canvas.getWidth(),canvas.getHeight(),null,Canvas.ALL_SAVE_FLAG);
+					drawLines(getFft(), canvas, false,color_mode);
 					paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 					if ( shader == null )
 						shader = new SweepGradient(canvas.getWidth() / 2.0f, canvas.getHeight() / 2.0f, getEngine().getColorList().toArray(), null);
 					paint.setShader(shader);
-					tmpCanvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint);
+					canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint);
 					//canvas.drawBitmap(shader, 0, 0, paint);
 					paint.setShader(null);
 					paint.setXfermode(null);
-					canvas.drawBitmap(src, 0, 0, paint);
-					src.recycle();
+					canvas.restoreToCount(layer);
+					//canvas.drawBitmap(src, 0, 0, paint);
+					//src.recycle();
 						/*if ( shader == null )
 							shader = new SweepGradient(canvas.getWidth() / 2.0f, canvas.getHeight() / 2.0f, getEngine().getColorList().toArray(), null);
 						paint.setShader(shader);
@@ -168,7 +183,7 @@ public class CircleLineDraw extends ImageDraw
 			if(height>points[i])
 				points[i]=height;
 				else
-				height=points[i]-5;
+				height=points[i]-(points[i]-height)*getDownSpeed();
 			if(height<0)height=0;
 			points[i]=height;
 			canvas.drawRect(offsetX, y, offsetX + borderWidth, y - height, paint);

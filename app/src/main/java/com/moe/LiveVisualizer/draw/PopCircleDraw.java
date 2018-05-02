@@ -1,4 +1,4 @@
-package com.moe.LiveVisualizer.internal;
+package com.moe.LiveVisualizer.draw;
 import com.moe.LiveVisualizer.LiveWallpaper;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -9,8 +9,9 @@ import android.graphics.PorterDuff;
 import android.graphics.LinearGradient;
 import android.view.SurfaceHolder;
 import android.graphics.Shader;
+import com.moe.LiveVisualizer.internal.ImageDraw;
 
-public class PopCircleDraw extends ImageDraw
+public class PopCircleDraw extends Draw
 {
 	private Paint paint;
 	private float[] points;
@@ -132,7 +133,7 @@ public class PopCircleDraw extends ImageDraw
 			if(height>points[i])
 				points[i]=height;
 			else
-				height=points[i]-5;
+				height=points[i]-(points[i]-height)*getDownSpeed();
 			if(height<0)height=0;
 			points[i]=height;
 			
