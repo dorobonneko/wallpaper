@@ -31,6 +31,9 @@ import com.moe.LiveVisualizer.internal.ShadowDrawable;
 import android.view.ContextThemeWrapper;
 import com.moe.LiveVisualizer.widget.PopupLayout;
 import android.content.Intent;
+import android.widget.EditText;
+import android.content.DialogInterface;
+import android.graphics.Color;
 
 public class ColorListActivity extends Activity implements ColorPickerView.OnColorCheckedListener,ListView.OnItemClickListener,View.OnClickListener
 {
@@ -58,7 +61,9 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		MenuItem item=menu.add("添加");
+		MenuItem item=menu.add(0,0,0,"手动输入");
+		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		item=menu.add(1,1,1,"调色板");
 		//VectorDrawableCompat plus=VectorDrawableCompat.create(getResources(),R.drawable.plus,getTheme());
 		//plus.setTint(0xffffffff);
 		//item.setIcon(plus);
@@ -73,12 +78,25 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 				finish();
 				return true;
 			case 0:
-				/*if(colorPicker==null){
-					ColorPickerView view=new ColorPickerView(this);
-					view.setOnColorCheckedListener(this);
-					colorPicker=new AlertDialog.Builder(this).setView(view).create();
-				}
-				colorPicker.show();*/
+				if(colorPicker==null){
+				 final EditText view=new EditText(this);
+				// view.setOnColorCheckedListener(this);
+					colorPicker = new AlertDialog.Builder(this).setTitle("输入十六进制颜色").setView(view).setPositiveButton("取消", null).setNegativeButton("确定", new DialogInterface.OnClickListener(){
+
+							@Override
+							public void onClick(DialogInterface p1, int p2)
+							{
+								try{
+								colorList.add( Color.parseColor(view.getText().toString()));
+								((ColorAdapter)listview.getAdapter()).notifyDataSetChanged();
+								}catch(Exception e){}
+							}
+						}).create();
+				 }
+				 colorPicker.show();
+				break;
+			case 1:
+				
 				ColorDialog cd=(ColorDialog) getFragmentManager().findFragmentByTag("color");
 				if(cd==null){cd=new ColorDialog();
 				cd.setOnColorCheckedListener(this);}

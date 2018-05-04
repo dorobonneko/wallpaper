@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 import android.widget.ProgressBar;
 import java.lang.ref.WeakReference;
 import java.lang.ref.SoftReference;
+import android.widget.Toast;
 
 public class SettingFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,Preference.OnPreferenceChangeListener
 {
@@ -222,8 +223,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 													startActivityForResult(intent, CROP);
 												}
 												catch (Exception e)
-												{}
-												handler.obtainMessage(DISMISS).sendToTarget();
+												{Toast.makeText(getActivity(),"请安装一个裁剪图片的软件",Toast.LENGTH_LONG).show();}
 												
 											}
 											catch (Exception e)
@@ -243,7 +243,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 												catch (IOException e)
 												{}
 											}
-
+											handler.obtainMessage(DISMISS).sendToTarget();
 											}
 									}.start();
 								}

@@ -10,13 +10,14 @@ import com.moe.LiveVisualizer.draw.RadialDraw;
 import com.moe.LiveVisualizer.draw.LineChartDraw;
 import com.moe.LiveVisualizer.draw.CircleLineDraw;
 import com.moe.LiveVisualizer.inter.Draw;
+import com.moe.LiveVisualizer.draw.CircleInsideDraw;
 
 public class ImageDraw implements OnColorSizeChangedListener
 {
 	private LiveWallpaper.WallpaperEngine engine;
 	private double[] fft;
-	private Draw line,chart,circle,pop_circle;
-	private Shader shader;
+	private Draw line,chart,circle,pop_circle,circle_inside;
+	private Shader shader,fade;
 	private float downSpeed;
 	public ImageDraw(LiveWallpaper.WallpaperEngine engine){
 		this.engine=engine;
@@ -50,7 +51,8 @@ public class ImageDraw implements OnColorSizeChangedListener
 			circle.onBorderHeightChanged(height);
 		if(pop_circle!=null)
 			pop_circle.onBorderHeightChanged(height);
-		
+		if(circle_inside!=null)
+			circle_inside.onBorderHeightChanged(height);
 	}
 	public void setSpaceWidth(int space){
 		if(line!=null)
@@ -61,7 +63,8 @@ public class ImageDraw implements OnColorSizeChangedListener
 			circle.onSpaceWidthChanged(space);
 		if(pop_circle!=null)
 			pop_circle.onSpaceWidthChanged(space);
-		
+		if(circle_inside!=null)
+			circle_inside.onSpaceWidthChanged(space);
 	}
 	public void setBorderWidth(int width){
 		if(line!=null)
@@ -72,11 +75,13 @@ public class ImageDraw implements OnColorSizeChangedListener
 			circle.onBorderWidthChanged(width);
 		if(pop_circle!=null)
 		pop_circle.onBorderWidthChanged(width);
+		if(circle_inside!=null)
+			circle_inside.onBorderWidthChanged(width);
 	}
 	@Override
 	public void onColorSizeChanged()
 	{
-		setFade(null);
+		fade=null;
 		shader=null;
 	}
 	public double[] getFft(){
@@ -96,10 +101,10 @@ public class ImageDraw implements OnColorSizeChangedListener
 		return get();
 	}*/
 	final public void setFade(Shader shader){
-			this.shader=shader;
+			this.fade=shader;
 	}
 	final public Shader getFade(){
-		return shader;
+		return fade;
 	}
 	private Draw get(){
 		switch(engine.getSharedPreferences().getString("visualizer_mode","0")){
@@ -111,10 +116,15 @@ public class ImageDraw implements OnColorSizeChangedListener
 				return circle==null?circle=new CircleLineDraw(this,engine):circle;
 			case "3"://弹弹圈
 				return pop_circle==null?pop_circle=new PopCircleDraw(this,engine):pop_circle;
-			case "4":
-				//return WaveDraw.getInstance(this,engine);
+			case "4"://
+				return circle_inside==null?circle_inside=new CircleInsideDraw(this,engine):circle_inside;
 		}
 		return null;
 	}
-	
+	public void setShader(Shader shader){
+		this.shader=shader;
+	}
+	public Shader getShader(){
+		return shader;
+	}
 }

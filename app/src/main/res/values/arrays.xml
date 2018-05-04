@@ -12,7 +12,7 @@
 			<item>折线图</item>
 			<item>圆形射线图</item>
 			<item>弹弹圈</item>
-			<!--<item>波浪图</item>-->
+			<item>圆环内射线</item>
 		</string-array>
 		<string-array name="color_mode_v">
 			<item>0</item>

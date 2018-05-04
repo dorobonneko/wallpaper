@@ -43,7 +43,7 @@ public class PopCircleDraw extends Draw
 		catch (Exception e)
 		{}
 		try{
-			size = size > getEngine().getCaptureSize() ?getEngine().getCaptureSize(): size;
+			size = size > getEngine().getFftSize() ?getEngine().getFftSize(): size;
 			spaceWidth = (getEngine().getWidth()-size*paint.getStrokeWidth()) / ((float)size-1);
 			}catch(Exception e){}
 		
@@ -128,9 +128,9 @@ public class PopCircleDraw extends Draw
 					paint.setXfermode(null);
 					canvas.drawBitmap(src, 0, 0, paint);
 					src.recycle();*/
-						if ( getEngine().getShader() == null )
-							getEngine().setShader(new LinearGradient(0, 0, canvas.getWidth(), 0, getEngine().getColorList().toArray(), null, LinearGradient.TileMode.CLAMP));
-						paint.setShader(getEngine().getShader());
+						if (getShader() == null )
+							setShader(new LinearGradient(0, 0, canvas.getWidth(), 0, getEngine().getColorList().toArray(), null, LinearGradient.TileMode.CLAMP));
+						paint.setShader(getShader());
 						drawPop(canvas,color_mode,false);	
 						paint.setShader(null);
 					break;

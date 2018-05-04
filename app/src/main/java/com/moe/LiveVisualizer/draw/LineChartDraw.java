@@ -42,7 +42,7 @@ public class LineChartDraw extends Draw
 		catch (Exception e)
 		{}
 		try{
-			size = size > getEngine().getCaptureSize() ?getEngine().getCaptureSize(): size;
+			size = size > getEngine().getFftSize() ?getEngine().getFftSize(): size;
 			spaceWidth = (getEngine().getWidth()-size*paint.getStrokeWidth()) / ((float)size-1);
 			step=getEngine().getWidth()/size;
 		}catch(Exception e){}
@@ -125,9 +125,9 @@ public class LineChartDraw extends Draw
 							src.recycle();
 							//break;
 						}*/
-						if ( getEngine().getShader() == null )
-								getEngine().setShader(new LinearGradient(0, 0, canvas.getWidth(), 0, getEngine().getColorList().toArray(), null, LinearGradient.TileMode.CLAMP));
-							paint.setShader(getEngine().getShader());
+						if ( getShader() == null )
+								setShader(new LinearGradient(0, 0, canvas.getWidth(), 0, getEngine().getColorList().toArray(), null, LinearGradient.TileMode.CLAMP));
+							paint.setShader(getShader());
 						lineChart(getFft(), canvas);
 						paint.setShader(null);
 						break;

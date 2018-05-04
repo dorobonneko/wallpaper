@@ -50,7 +50,7 @@ public class CircleLineDraw extends Draw
 		catch (Exception e)
 		{}
 		try{
-		size = size > getEngine().getCaptureSize() ?getEngine().getCaptureSize(): size;
+		size = size > getEngine().getFftSize() ?getEngine().getFftSize(): size;
 		}catch(Exception e){}
 		
 	}

@@ -20,4 +20,6 @@ public interface Draw
 	void onDrawHeightChanged(float height);
 	int size();
 	int getColor();
+	void setShader(Shader shader);
+	Shader getShader();
 }

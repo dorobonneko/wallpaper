@@ -416,18 +416,23 @@ public class LiveWallpaper extends WallpaperService
 		private WallpaperThread refresh=null;
 		//private int artwork_color=0xff39c5bb;
 		//private Bitmap artwork;
-		private Shader shader;
 		private List<OnColorSizeChangedListener> sizeListener=new ArrayList<>();
 		private VisualizerThread mVisualizer;
 		private LiveWallpaper live;
 		public WallpaperEngine(LiveWallpaper live){
 			this.live=live;
 		}
-
+		/*public int getColor(){
+			if(refresh!=null)
+				return refresh.getColor();
+			return 0xff39c5bb;
+		}*/
 		public int getCaptureSize()
 		{
-			// TODO: Implement this method
-			return 512;
+			return 1024;
+		}
+		public int getFftSize(){
+			return getCaptureSize()/2;
 		}
 		public String getError(){
 			return mVisualizer.getMessage();
@@ -439,44 +444,13 @@ public class LiveWallpaper extends WallpaperService
 		{
 			sizeListener.add(l);
 		}
-		public void setShader(LinearGradient linearGradient)
-		{
-			shader = linearGradient;
-		}
+		
 		public Bitmap getCircleImage()
 		{
 			return live.getCenterCircleImage();
 		}
-		public Shader getShader()
-		{
-			// TODO: Implement this method
-			return shader;
-		}
-
-		/*public void setArtwork(Bitmap artwork)
-		 {
-
-		 if ( this.artwork != null && !this.artwork.isRecycled() )
-		 this.artwork.recycle();
-
-		 this.artwork = artwork;
-		 }
-
-		 public Bitmap getArtwork()
-		 {
-		 return artwork;
-		 }
-
-		 public void setColor(int intExtra)
-		 {
-		 this.artwork_color = intExtra;
-		 }
-
-
-		 public int getColor()
-		 {
-		 return artwork_color;
-		 }*/
+		
+		
 		public ColorList getColorList()
 		{
 			return live.getColorList();
@@ -497,7 +471,9 @@ public class LiveWallpaper extends WallpaperService
 		}
 		public void notifyColorChanged()
 		{
-			shader = null;
+			/*if(refresh!=null)
+			refresh.notifyColorChanged();*/
+			
 			for ( OnColorSizeChangedListener l:sizeListener )
 				l.onColorSizeChanged();
 			//if ( refresh != null )refresh.notifyColorChanged();
@@ -513,6 +489,7 @@ public class LiveWallpaper extends WallpaperService
 			refresh.setName("wllpaper_daemon");
 			refresh.setDaemon(true);
 			refresh.start();
+			if(colorList!=null)
 			notifyColorChanged();
 			mVisualizer=new VisualizerThread(this);
 			mVisualizer.setName("visualizerThread");

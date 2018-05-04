@@ -15,10 +15,12 @@ public class VisualizerThread extends Thread
 	private LiveWallpaper.WallpaperEngine engine;
 	private Object locked=new Object();
 	private String error_msg;
-	public VisualizerThread(LiveWallpaper.WallpaperEngine engine){
-		this.engine=engine;
+	public VisualizerThread(LiveWallpaper.WallpaperEngine engine)
+	{
+		this.engine = engine;
 	}
-	public Visualizer getVisualizer(){
+	public Visualizer getVisualizer()
+	{
 		return mVisualizer;
 	}
 	public void release()
@@ -30,93 +32,116 @@ public class VisualizerThread extends Thread
 	public void run()
 	{
 		Looper.prepare();
-		handler=new Handler(){
-			public void handleMessage(Message msg){
-				switch(msg.what){
+		handler = new Handler(){
+			public void handleMessage(Message msg)
+			{
+				switch ( msg.what )
+				{
 					case 0:
-						synchronized(locked){
-							if(mVisualizer!=null)break;
-							try{
-						mVisualizer = new Visualizer(0);
-						mVisualizer.setEnabled(false);
-						mVisualizer.setCaptureSize(mVisualizer.getCaptureSizeRange()[1]);
-						//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
-						mVisualizer.setEnabled(engine.isVisible());
-						}catch(Exception e){
-							error_msg=e.getMessage();
-							/*new Handler(Looper.getMainLooper()).post(new Runnable(){
-								public void run(){
-									Toast.makeText(engine.getContext(),"没有录音权限",Toast.LENGTH_LONG).show();
-									}
-									});*/
-						}
+						synchronized ( locked )
+						{
+							if ( mVisualizer != null )break;
+							try
+							{
+								mVisualizer = new Visualizer(0);
+								mVisualizer.setEnabled(false);
+								mVisualizer.setCaptureSize(engine.getCaptureSize());
+								//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
+								mVisualizer.setEnabled(engine.isVisible());
+							}
+							catch (Exception e)
+							{
+								error_msg = e.getMessage();
+								/*new Handler(Looper.getMainLooper()).post(new Runnable(){
+								 public void run(){
+								 Toast.makeText(engine.getContext(),"没有录音权限",Toast.LENGTH_LONG).show();
+								 }
+								 });*/
+							}
 						}
 						break;
 					case 1:
-						if(mVisualizer!=null){
-							try{
-						if(mVisualizer.setEnabled(engine.isVisible())!=Visualizer.SUCCESS)
+						if ( mVisualizer != null )
+						{
+							try
 							{
-								mVisualizer.release();
-								mVisualizer=null;
-								//msg.obj=0;
-								check();
+								if ( mVisualizer.setEnabled(engine.isVisible()) != Visualizer.SUCCESS )
+								{
+									mVisualizer.release();
+									mVisualizer = null;
+									//msg.obj=0;
+									check();
+								}
 							}
-							}catch(Exception e){
-								BuglyLog.e(getName(),e.getMessage());
+							catch (Exception e)
+							{
+								BuglyLog.e(getName(), e.getMessage());
 								//error_msg=e.getMessage();
 							}
 						}
 						break;
 					case 2:
-						if(mVisualizer!=null){
+						if ( mVisualizer != null )
+						{
 							mVisualizer.setEnabled(false);
 							mVisualizer.release();
 						}
 						break;
 					case 3:
-						try{
+						try
+						{
 							mVisualizer.setEnabled(engine.isVisible());
-							}catch(Exception e){
-								BuglyLog.e(getName(),e.getMessage());
-								//error_msg=e.getMessage();
-							}
+						}
+						catch (Exception e)
+						{
+							BuglyLog.e(getName(), e.getMessage());
+							//error_msg=e.getMessage();
+						}
 						break;
 				}
 			}
 		};
 		Looper.loop();
 	}
-	public synchronized void check(){
-		if(handler!=null){
-		if(mVisualizer==null){
-			try{
-				mVisualizer = new Visualizer(0);
-				mVisualizer.setEnabled(false);
-				mVisualizer.setCaptureSize(engine.getCaptureSize());
-				mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
-				handler.obtainMessage(3).sendToTarget();
-				//mVisualizer.setEnabled(engine.isVisible());
-			}catch(Exception e){
-				//error_msg=e.getMessage();
-				//BuglyLog.e(getName(),e.getMessage());
-				/*new Handler(Looper.getMainLooper()).post(new Runnable(){
-				 public void run(){
-				 Toast.makeText(engine.getContext(),"没有录音权限",Toast.LENGTH_LONG).show();
-				 }
-				 });*/
-				 handler.obtainMessage(0).sendToTarget();
+	public synchronized void check()
+	{
+		if ( handler != null )
+		{
+			if ( mVisualizer == null )
+			{
+				try
+				{
+					mVisualizer = new Visualizer(0);
+					mVisualizer.setEnabled(false);
+					mVisualizer.setCaptureSize(engine.getCaptureSize());
+					//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
+					handler.obtainMessage(3).sendToTarget();
+					//mVisualizer.setEnabled(engine.isVisible());
+				}
+				catch (Exception e)
+				{
+					//error_msg=e.getMessage();
+					//BuglyLog.e(getName(),e.getMessage());
+					/*new Handler(Looper.getMainLooper()).post(new Runnable(){
+					 public void run(){
+					 Toast.makeText(engine.getContext(),"没有录音权限",Toast.LENGTH_LONG).show();
+					 }
+					 });*/
+					handler.obtainMessage(0).sendToTarget();
+				}
+				//handler.obtainMessage(0).sendToTarget();
 			}
-			//handler.obtainMessage(0).sendToTarget();
-			}else
-			handler.obtainMessage(1).sendToTarget();
-			}
-			
+			else
+				handler.obtainMessage(1).sendToTarget();
+		}
+
 	}
-	public String getMessage(){
+	public String getMessage()
+	{
 		return error_msg;
 	}
-	public boolean isInit(){
-		return mVisualizer!=null;
+	public boolean isInit()
+	{
+		return mVisualizer != null;
 	}
 }

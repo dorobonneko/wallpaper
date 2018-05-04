@@ -19,6 +19,8 @@ import android.graphics.Movie;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.gifdecoder.GifDecoder;
 import com.moe.LiveVisualizer.inter.Draw;
+import android.animation.ValueAnimator;
+import android.animation.ObjectAnimator;
 
 public class WallpaperThread extends Thread implements SharedPreferences.OnSharedPreferenceChangeListener
 {
@@ -31,6 +33,7 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 	private byte[] fft;
 	private Paint paint=new Paint();
 	private int fpsDelay=33;
+	//private ValueAnimator colorAnime;
 	public WallpaperThread(LiveWallpaper.WallpaperEngine engine)
 	{
 		this.engine = engine;
@@ -41,6 +44,8 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 		engine.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 		onSharedPreferenceChanged(engine.getSharedPreferences(),"highfps");
 		onSharedPreferenceChanged(engine.getSharedPreferences(),"downspeed");
+		if(engine.getColorList()!=null)
+		onSharedPreferenceChanged(engine.getSharedPreferences(),"color_mode");
 	}
 
 	@Override
@@ -68,10 +73,41 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 			if(imageDraw!=null)
 				imageDraw.setDrawHeight(engine.getHeight()-p1.getInt(p2,10)/100.0f*engine.getHeight());
 				break;
+			/*case "color_mode":
+				if(p1.getString(p2,"0").equals("4")){
+					if(colorAnime!=null){
+						colorAnime.cancel();
+					}
+					if(engine.getColorList().size()>0){
+					colorAnime=ObjectAnimator.ofInt(engine.getColorList().toArray());
+					colorAnime.setDuration(engine.getColorList().size()*30000);
+					try{colorAnime.start();}catch(Exception e){}
+					}
+					}else if(colorAnime!=null){
+						colorAnime.cancel();
+						colorAnime=null;
+					}
+				break;*/
 		}
 	}
-
-
+	/*public int getColor(){
+		try{
+		if(colorAnime!=null)return colorAnime.getAnimatedValue();
+		}catch(Exception e){}
+		return 0xff39c5bb;
+	}
+	public void notifyColorChanged(){
+		if(engine.getSharedPreferences().getString("color_mode","0").equals("4")){
+			if(colorAnime!=null){
+				colorAnime.cancel();
+			}
+			if(engine.getColorList().size()>0){
+			colorAnime=ObjectAnimator.ofInt(engine.getColorList().toArray());
+			colorAnime.setDuration(engine.getColorList().size()*5000);
+			try{colorAnime.start();}catch(Exception e){}
+			}
+		}
+	}*/
 	/*public void updateFft(double[] fft)
 	{
 		this.fft=fft;
@@ -160,13 +196,13 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 						{
 							try{
 							if(fft==null)
-								fft=new byte[engine.getVisualizer().getCaptureSize()];
+								fft=new byte[engine.getCaptureSize()];
 								engine.getVisualizer().getFft(fft);
 							if(buffer==null)
-								buffer = new double[fft.length/ 2-1];    
+								buffer = new double[engine.getFftSize()];    
 							//model[0] =(byte)(fft[0]&0x7f);  
 
-							for (int n = 1; n < buffer.length+1;n++)    
+							for (int n = 1; n < buffer.length;n++)    
 							{    
 								//第k个点频率 getSamplingRate() * k /(getCaptureSize()/2)  
 								int k=2*n;
