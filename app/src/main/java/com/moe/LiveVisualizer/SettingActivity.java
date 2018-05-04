@@ -106,13 +106,17 @@ public class SettingActivity extends Activity
 		if ( requestCode == 432 )
 		{
 			boolean flag=true;
-			for(int grant:grantResults)
+			for(int grant:grantResults){
 			if(grant==PackageManager.PERMISSION_DENIED)
 				flag=false;
+				break;
+				}
 			if(flag)
 			init();
-			else
+			else{
+				Toast.makeText(getApplicationContext(),"未给权限，已退出",Toast.LENGTH_LONG).show();
 			finish();
+			}
 		}
 	}
 

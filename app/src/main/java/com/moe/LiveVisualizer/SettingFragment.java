@@ -199,6 +199,32 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 												while ( (len = is.read(buffer)) != -1 )
 													fos.write(buffer, 0, len);
 												fos.flush();
+												final File wallpaper=new File(getActivity().getExternalCacheDir(), "wallpaper");
+												Intent intent = new Intent("com.android.camera.action.CROP");
+												if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N )
+												{
+													intent.setDataAndType(FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", tmp), "image/*");
+													intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+												}
+												else
+													intent.setDataAndType(Uri.fromFile(tmp), "image/*");
+
+												intent.putExtra("crop", "true");
+												intent.putExtra("aspectX", display.widthPixels);
+												intent.putExtra("aspectY", display.heightPixels);
+												intent.putExtra("outputX", display.widthPixels);
+												intent.putExtra("outputY", display.heightPixels);
+												intent.putExtra("output", Uri.fromFile(wallpaper));
+												intent.putExtra("return-data", false);
+												intent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
+												try
+												{
+													startActivityForResult(intent, CROP);
+												}
+												catch (Exception e)
+												{}
+												handler.obtainMessage(DISMISS).sendToTarget();
+												
 											}
 											catch (Exception e)
 											{}
@@ -218,32 +244,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 												{}
 											}
 
-											final File wallpaper=new File(getActivity().getExternalCacheDir(), "wallpaper");
-											Intent intent = new Intent("com.android.camera.action.CROP");
-											if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N )
-											{
-												intent.setDataAndType(FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", tmp), "image/*");
-												intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 											}
-											else
-												intent.setDataAndType(Uri.fromFile(tmp), "image/*");
-
-											intent.putExtra("crop", "true");
-											intent.putExtra("aspectX", display.widthPixels);
-											intent.putExtra("aspectY", display.heightPixels);
-											intent.putExtra("outputX", display.widthPixels);
-											intent.putExtra("outputY", display.heightPixels);
-											intent.putExtra("output", Uri.fromFile(wallpaper));
-											intent.putExtra("return-data", false);
-											intent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
-											try
-											{
-												startActivityForResult(intent, CROP);
-											}
-											catch (Exception e)
-											{}
-											handler.obtainMessage(DISMISS).sendToTarget();
-										}
 									}.start();
 								}
 							});

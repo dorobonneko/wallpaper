@@ -14,12 +14,68 @@ import com.moe.LiveVisualizer.internal.ImageDraw;
 
 public class RadialDraw extends Draw
 {
+private int borderHeight,size;
+private float spaceWidth,drawHeight;
+	@Override
+	public void onBorderHeightChanged(int height)
+	{
+		borderHeight=height;
+		onSizeChanged();
+	}
+
+	@Override
+	public void onSpaceWidthChanged(int space)
+	{
+		spaceWidth=space;
+		onSizeChanged();
+	}
+
+	@Override
+	public int size()
+	{
+		return size;
+	}
+private void onSizeChanged(){
+	try
+	{
+		size = (int)((getEngine().getWidth() - spaceWidth) / (paint.getStrokeWidth() + spaceWidth));
+	}
+	catch (Exception e)
+	{}
+	try{
+	size = size > getEngine().getCaptureSize() ?getEngine().getCaptureSize(): size;
+	spaceWidth = (getEngine().getWidth()-size*paint.getStrokeWidth()) / ((float)size-1);
+		
+	}catch(Exception e){}
+	
+}
+
+@Override
+public void onDrawHeightChanged(float height)
+{
+	drawHeight=height;
+}
+
+
+	@Override
+	public void onBorderWidthChanged(int width)
+	{
+		paint.setStrokeWidth(width);
+		onSizeChanged();
+	}
+
 	private Paint paint;
 	private float[] points;
 	public RadialDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine)
 	{
 		super(draw,engine);
 		paint = new Paint();
+		paint.setStrokeWidth(engine.getSharedPreferences().getInt("borderWidth",30));
+		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
+		spaceWidth=engine.getSharedPreferences().getInt("spaceWidth",20);
+		drawHeight=engine.getHeight()-engine.getSharedPreferences().getInt("height",10)/100.0f*engine.getHeight();
+		onSizeChanged();
+		
 	}
 
 	
@@ -28,6 +84,11 @@ public class RadialDraw extends Draw
 	{
 		if(color_mode==2){
 			drawLine(getFft(),canvas,color_mode,true);
+		}else if(color_mode==4){
+			paint.setColor(0xffffffff);
+			paint.setShadowLayer(paint.getStrokeWidth(),0,0,getColor());
+			drawLine(getFft(),canvas,color_mode,false);
+			paint.setShadowLayer(0,0,0,0);
 		}else
 		switch ( getEngine().getColorList().size() )
 		{
@@ -82,28 +143,17 @@ public class RadialDraw extends Draw
 	}
 	private void drawLine(double[] buffer, Canvas canvas,int color_mode,boolean useMode)
 	{
-		int borderWidth=getEngine().getSharedPreferences().getInt("borderWidth", 30);
-		float spaceWidth=getEngine().getSharedPreferences().getInt("spaceWidth", 20);
-		int borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getEngine().getSharedPreferences().getInt("borderHeight", 30), getEngine().getContext().getResources().getDisplayMetrics());
-		int size=0;
-		try
-		{
-			size = (int)((canvas.getWidth() - spaceWidth) / (borderWidth + spaceWidth));
-		}
-		catch (Exception e)
-		{}
-		if ( size == 0 )return;
-		size = size > buffer.length ?buffer.length: size;
+		//int borderWidth=getEngine().getSharedPreferences().getInt("borderWidth", 30);
+		
 		if(points==null||points.length!=size)
 			points=new float[size];
-		spaceWidth = (canvas.getWidth()-size*borderWidth) / ((float)size-1);
 		float x=0;//起始像素
-		float y=canvas.getHeight() - getEngine().getSharedPreferences().getInt("height", 10) / 100.0f * canvas.getHeight();
 		//int step=buffer.length / size;
 		int colorStep=0;
 		int mode=Integer.parseInt(getEngine().getSharedPreferences().getString("color_mode", "0"));
 		//if ( mode == 3 )
 			//paint.setColor(getEngine().getColor());
+		final float halfWidth=paint.getStrokeWidth()/2;
 		for ( int i=0;i < size;i ++ )
 		{
 			if(useMode){
@@ -125,10 +175,11 @@ public class RadialDraw extends Draw
 				height=points[i]-(points[i]-height)*getDownSpeed();
 				if(height<0)height=0;
 				points[i]=height;
-			canvas.drawRect(x, y - height, x += borderWidth, y, paint);
-			canvas.drawRect(x-=borderWidth, y+ height, x += borderWidth, y, paint);
-			
-			x+=spaceWidth;
+			//canvas.drawRect(x, y - height, x += paint.getStrokeWidth(), y, paint);
+			//canvas.drawRect(x-=paint.getStrokeWidth(), y+ height, x += borderWidth, y, paint);
+			canvas.drawLine(x+=halfWidth,drawHeight-height,x,drawHeight,paint);
+			canvas.drawLine(x,drawHeight+height,x,drawHeight,paint);
+			x+=halfWidth+spaceWidth;
 		}
 
 	}

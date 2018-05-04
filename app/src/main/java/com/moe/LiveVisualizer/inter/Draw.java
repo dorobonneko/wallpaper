@@ -14,4 +14,10 @@ public interface Draw
 	Shader getFade();
 	
 	LiveWallpaper.WallpaperEngine getEngine();
+	void onBorderWidthChanged(int width);
+	void onBorderHeightChanged(int height);
+	void onSpaceWidthChanged(int space);
+	void onDrawHeightChanged(float height);
+	int size();
+	int getColor();
 }

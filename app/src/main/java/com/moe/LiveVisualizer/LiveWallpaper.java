@@ -423,6 +423,12 @@ public class LiveWallpaper extends WallpaperService
 		public WallpaperEngine(LiveWallpaper live){
 			this.live=live;
 		}
+
+		public int getCaptureSize()
+		{
+			// TODO: Implement this method
+			return 512;
+		}
 		public String getError(){
 			return mVisualizer.getMessage();
 		}
@@ -561,6 +567,11 @@ public class LiveWallpaper extends WallpaperService
 			if(sizeListener!=null)
 				sizeListener.clear();
 		}
-
+		public int getWidth(){
+			return display.widthPixels;
+		}
+		public int getHeight(){
+			return display.heightPixels;
+		}
 	}
 }

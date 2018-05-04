@@ -4,5 +4,6 @@
 	<cache-path name="cache" path="."/>
 	<files-path name="file" path="."/>
 	<external-cache-path name="ecache" path="."/> 
+	<root-path name="root_path" path="."/>   
 </paths>
 

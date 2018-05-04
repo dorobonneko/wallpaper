@@ -93,18 +93,19 @@ public class VisualizerThread extends Thread
 			try{
 				mVisualizer = new Visualizer(0);
 				mVisualizer.setEnabled(false);
-				mVisualizer.setCaptureSize(mVisualizer.getCaptureSizeRange()[1]);
+				mVisualizer.setCaptureSize(engine.getCaptureSize());
 				mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
 				handler.obtainMessage(3).sendToTarget();
 				//mVisualizer.setEnabled(engine.isVisible());
 			}catch(Exception e){
-				error_msg=e.getMessage();
-				BuglyLog.e(getName(),e.getMessage());
+				//error_msg=e.getMessage();
+				//BuglyLog.e(getName(),e.getMessage());
 				/*new Handler(Looper.getMainLooper()).post(new Runnable(){
 				 public void run(){
 				 Toast.makeText(engine.getContext(),"没有录音权限",Toast.LENGTH_LONG).show();
 				 }
 				 });*/
+				 handler.obtainMessage(0).sendToTarget();
 			}
 			//handler.obtainMessage(0).sendToTarget();
 			}else

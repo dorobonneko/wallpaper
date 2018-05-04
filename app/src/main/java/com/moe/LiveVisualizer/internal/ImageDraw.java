@@ -30,7 +30,49 @@ public class ImageDraw implements OnColorSizeChangedListener
 	public float getDownSpeed(){
 		return downSpeed;
 	}
-
+	public void setDrawHeight(float height){
+		if(line!=null)
+			line.onDrawHeightChanged(height);
+		if(chart!=null)
+			chart.onDrawHeightChanged(height);
+		if(circle!=null)
+			circle.onDrawHeightChanged(height);
+		if(pop_circle!=null)
+			pop_circle.onDrawHeightChanged(height);
+		
+	}
+	public void setBorderHeight(int height){
+		if(line!=null)
+			line.onBorderHeightChanged(height);
+		if(chart!=null)
+			chart.onBorderHeightChanged(height);
+		if(circle!=null)
+			circle.onBorderHeightChanged(height);
+		if(pop_circle!=null)
+			pop_circle.onBorderHeightChanged(height);
+		
+	}
+	public void setSpaceWidth(int space){
+		if(line!=null)
+			line.onSpaceWidthChanged(space);
+		if(chart!=null)
+			chart.onSpaceWidthChanged(space);
+		if(circle!=null)
+			circle.onSpaceWidthChanged(space);
+		if(pop_circle!=null)
+			pop_circle.onSpaceWidthChanged(space);
+		
+	}
+	public void setBorderWidth(int width){
+		if(line!=null)
+			line.onBorderWidthChanged(width);
+		if(chart!=null)
+			chart.onBorderWidthChanged(width);
+		if(circle!=null)
+			circle.onBorderWidthChanged(width);
+		if(pop_circle!=null)
+		pop_circle.onBorderWidthChanged(width);
+	}
 	@Override
 	public void onColorSizeChanged()
 	{

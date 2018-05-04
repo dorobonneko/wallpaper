@@ -47,11 +47,26 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 	public void onSharedPreferenceChanged(SharedPreferences p1, String p2)
 	{
 		switch(p2){
-			case "highfps":
+			case "highfps"://false
 				fpsDelay=p1.getBoolean(p2,false)?16:33;
 				break;
-			case "downspeed":
+			case "downspeed"://50
 				if(imageDraw!=null)imageDraw.setDownSpeed(p1.getInt("downspeed",50));
+				break;
+			case "borderWidth"://30px
+				if(imageDraw!=null)imageDraw.setBorderWidth(p1.getInt(p2,30));
+				break;
+			case "borderHeight"://100dp
+			if(imageDraw!=null)
+				imageDraw.setBorderHeight((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,p1.getInt(p2,100),engine.getContext().getResources().getDisplayMetrics()));
+			break;
+			case "spaceWidth"://20px
+			if(imageDraw!=null)
+				imageDraw.setSpaceWidth(p1.getInt(p2,20));
+				break;
+			case "height"://10%
+			if(imageDraw!=null)
+				imageDraw.setDrawHeight(engine.getHeight()-p1.getInt(p2,10)/100.0f*engine.getHeight());
 				break;
 		}
 	}
@@ -143,10 +158,10 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 							canvas.drawColor(0xff000000);
 						if ( imageDraw != null &&engine.getVisualizer()!=null)
 						{
+							try{
 							if(fft==null)
 								fft=new byte[engine.getVisualizer().getCaptureSize()];
-								try{
-							engine.getVisualizer().getFft(fft);
+								engine.getVisualizer().getFft(fft);
 							if(buffer==null)
 								buffer = new double[fft.length/ 2-1];    
 							//model[0] =(byte)(fft[0]&0x7f);  

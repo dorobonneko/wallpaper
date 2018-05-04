@@ -5,6 +5,7 @@
 			<item>间隔取色</item>
 			<item>随机颜色</item>
 			<item>由上至下渐变</item>
+			<item>霓虹灯</item>
 			</string-array>
 		<string-array name="visualizer_mode">
 			<item>柱形图</item>
@@ -18,6 +19,7 @@
 			<item>1</item>
 			<item>2</item>
 			<item>3</item>
+			<item>4</item>
 		</string-array>
 		<string-array name="visualizer_mode_v">
 			<item>0</item>
