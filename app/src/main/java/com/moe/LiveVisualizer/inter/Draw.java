@@ -2,6 +2,7 @@ package com.moe.LiveVisualizer.inter;
 import android.graphics.Canvas;
 import android.graphics.Shader;
 import com.moe.LiveVisualizer.LiveWallpaper;
+import android.graphics.Matrix;
 
 public interface Draw
 {
@@ -22,4 +23,7 @@ public interface Draw
 	int getColor();
 	void setShader(Shader shader);
 	Shader getShader();
+	void setRound(boolean round);
+	void setCutImage(boolean cut);
+	Matrix getCenterScale();
 }

@@ -15,29 +15,22 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.PorterDuff;
 import android.graphics.SweepGradient;
 import android.graphics.LinearGradient;
+import android.graphics.Matrix;
 
-public class CircleInsideDraw extends Draw
+public class CircleInsideDraw extends CircleDraw
 {
 	
 	
 	private int size;
 	private float spaceWidth,borderHeight;
-	private Paint paint;
-	private int degress=0;
+	
 	private Shader shader;
 	private float[] points;
 	private Bitmap shaderBuffer;
+	
 	public CircleInsideDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
 	{
 		super(draw, engine);
-		paint = new Paint();
-		paint.setStrokeCap(Paint.Cap.ROUND);
-		//paint.setStrokeWidth(2);
-		paint.setAntiAlias(true);
-		paint.setDither(true);
-		paint.setColor(0xff39c5bb);
-		paint.setStyle(Paint.Style.FILL);
-		paint.setStrokeWidth(engine.getSharedPreferences().getInt("borderWidth",30));
 		borderHeight=engine.getWidth()/6f;
 		//borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
 		spaceWidth=engine.getSharedPreferences().getInt("spaceWidth",20);
@@ -57,6 +50,8 @@ public class CircleInsideDraw extends Draw
 			});
 	}
 
+	
+	
 	@Override
 	public void onBorderHeightChanged(int height)
 	{
@@ -80,7 +75,7 @@ public class CircleInsideDraw extends Draw
 		final double length=getEngine().getWidth() / 3 * Math.PI;
 		try
 		{
-			size = (int)((length - spaceWidth) / (paint.getStrokeWidth() + spaceWidth));
+			size = (int)((length - spaceWidth) / (getPaint().getStrokeWidth() + spaceWidth));
 		}
 		catch (Exception e)
 		{}
@@ -99,49 +94,15 @@ public class CircleInsideDraw extends Draw
 	@Override
 	public void onBorderWidthChanged(int width)
 	{
-		paint.setStrokeWidth(width);
+		getPaint().setStrokeWidth(width);
 		onSizeChanged();
 	}
 
 	@Override
 	public void onDraw(Canvas canvas, int color_mode)
 	{
-		if ( getEngine().getCircleImage() == null )
-		{
-			paint.setStyle(Paint.Style.STROKE);
-			canvas.drawCircle(canvas.getWidth() / 2.0f, canvas.getHeight() / 2.0f, canvas.getWidth() / 6, paint);
-			paint.setStyle(Paint.Style.FILL);
-		}
-		else
-		{
-			final Bitmap circle=getEngine().getCircleImage();
-			//paint.setStyle(Paint.Style.FILL);
-			//final Bitmap src=Bitmap.createBitmap(canvas.getWidth() / 3, canvas.getWidth() / 3, Bitmap.Config.ARGB_8888);
-			//Canvas tmp=new Canvas(src);
-			final RectF bounds=new RectF();
-			bounds.left=canvas.getWidth()/3.0f;
-			bounds.top=(canvas.getHeight()-bounds.left)/2.0f;
-			//bounds.right=canvas.getWidth()-bounds.left;
-			//bounds.bottom=canvas.getHeight()-bounds.top;
-			final int layer=canvas.saveLayer(0,0,canvas.getWidth(),canvas.getHeight(),null,canvas.ALL_SAVE_FLAG);
-			//canvas.drawColor(0xffffffff);
-			final PointF point=new PointF();
-			point.x=canvas.getWidth()/2.0f;
-			point.y=canvas.getHeight()/2.0f;
-			if(getEngine().getSharedPreferences().getBoolean("circleSwitch",true)){
-				canvas.rotate(degress,point.x,point.y);
-				degress++;
-				if ( degress >= 360 )degress = 0;
-			}
-			canvas.drawCircle(point.x,point.y, canvas.getWidth() / 6.0f, paint);
-			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-			canvas.drawBitmap(circle, bounds.left,bounds.top, paint);
-			paint.setXfermode(null);
-			canvas.restoreToCount(layer);
-			//canvas.drawBitmap(src, (canvas.getWidth() - tmp.getWidth()) / 2.0f, (canvas.getHeight() - tmp.getHeight()) / 2.0f, null);
-			//src.recycle();
-		}
-		//paint.setStyle(Paint.Style.FILL);
+		Paint paint=getPaint();
+		drawCircleImage(canvas);
 		if(color_mode==2){
 			drawLines(getFft(),canvas,true,color_mode);
 		}else if(color_mode==4){
@@ -204,12 +165,12 @@ public class CircleInsideDraw extends Draw
 					}
 					break;
 			}
-
+			
 	}
 
 	private void drawLines(double[] buffer, Canvas canvas, boolean useMode,final int mode)
 	{
-
+		Paint paint=getPaint();
 		//final int borderWidth=getEngine().getSharedPreferences().getInt("borderWidth", 30);
 		if(points==null||points.length!=size)
 			points=new float[size];
@@ -227,7 +188,7 @@ public class CircleInsideDraw extends Draw
 		center.y = canvas.getHeight() / 2.0f;
 		canvas.rotate(degress_step / 2.0f, center.x, center.y);
 		float offsetX=(canvas.getWidth() - paint.getStrokeWidth()) / 2.0f+paint.getStrokeWidth()/2;
-		int end=size-1;
+		//int end=size-1;
 		for ( int i=0;i < size;i ++ )
 		{
 			if ( useMode )

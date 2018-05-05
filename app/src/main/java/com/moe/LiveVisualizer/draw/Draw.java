@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.animation.TypeEvaluator;
 import android.animation.PropertyValuesHolder;
+import android.graphics.Matrix;
 
 abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 {
@@ -156,5 +157,19 @@ private int getMiddleColor(int c1,int c2){
 	private int getCurrentColor(int start, int end,float fraction) {  
 		return start-(int)((start-end)*fraction);
 	}
+
+	@Override
+	public void setCutImage(boolean cut)
+	{
+		
+	}
+
+	@Override
+	public Matrix getCenterScale()
+	{
+		return draw.getCenterScale();
+	}
+
+	
 
 }

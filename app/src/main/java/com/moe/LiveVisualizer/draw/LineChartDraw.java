@@ -67,7 +67,7 @@ public class LineChartDraw extends Draw
 	{
 		super(draw,engine);
 		paint = new Paint();
-		paint.setStrokeCap(Paint.Cap.ROUND);
+		paint.setStrokeCap(getEngine().getSharedPreferences().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
 		paint.setStrokeWidth(engine.getSharedPreferences().getInt("borderWidth",30));
 		paint.setAntiAlias(true);
 		paint.setDither(true);
@@ -79,7 +79,12 @@ public class LineChartDraw extends Draw
 		
 			}
 
-	
+	@Override
+	public void setRound(boolean round)
+	{
+		if(paint!=null)
+			paint.setStrokeCap(round?Paint.Cap.ROUND:Paint.Cap.SQUARE);
+	}
 
 	@Override
 	public void onDraw(Canvas canvas, int color_mode)

@@ -51,12 +51,29 @@ public class VisualizerThread extends Thread
 							}
 							catch (Exception e)
 							{
-								error_msg = e.getMessage();
-								/*new Handler(Looper.getMainLooper()).post(new Runnable(){
-								 public void run(){
-								 Toast.makeText(engine.getContext(),"没有录音权限",Toast.LENGTH_LONG).show();
-								 }
-								 });*/
+								//error_msg=e.getMessage();
+								new Handler(Looper.getMainLooper()).post(new Runnable(){
+
+										@Override
+										public void run()
+										{
+											try
+											{
+												mVisualizer = new Visualizer(0);
+												if(!mVisualizer.getEnabled()){
+												mVisualizer.setCaptureSize(engine.getCaptureSize());
+												//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
+												handler.obtainMessage(3).sendToTarget();
+												}
+												//mVisualizer.setEnabled(engine.isVisible());
+											}
+											catch (Exception e)
+											{
+												
+												error_msg=e.getMessage();
+											}
+										}
+									});
 							}
 						}
 						break;
@@ -86,6 +103,7 @@ public class VisualizerThread extends Thread
 							mVisualizer.setEnabled(false);
 							mVisualizer.release();
 						}
+						getLooper().quit();
 						break;
 					case 3:
 						try
@@ -107,30 +125,8 @@ public class VisualizerThread extends Thread
 	{
 		if ( handler != null )
 		{
-			if ( mVisualizer == null )
-			{
-				try
-				{
-					mVisualizer = new Visualizer(0);
-					mVisualizer.setEnabled(false);
-					mVisualizer.setCaptureSize(engine.getCaptureSize());
-					//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
-					handler.obtainMessage(3).sendToTarget();
-					//mVisualizer.setEnabled(engine.isVisible());
-				}
-				catch (Exception e)
-				{
-					//error_msg=e.getMessage();
-					//BuglyLog.e(getName(),e.getMessage());
-					/*new Handler(Looper.getMainLooper()).post(new Runnable(){
-					 public void run(){
-					 Toast.makeText(engine.getContext(),"没有录音权限",Toast.LENGTH_LONG).show();
-					 }
-					 });*/
-					handler.obtainMessage(0).sendToTarget();
-				}
-				//handler.obtainMessage(0).sendToTarget();
-			}
+			if(mVisualizer==null)
+				handler.obtainMessage(0).sendToTarget();
 			else
 				handler.obtainMessage(1).sendToTarget();
 		}

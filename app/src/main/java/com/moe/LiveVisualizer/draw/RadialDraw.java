@@ -71,6 +71,7 @@ public void onDrawHeightChanged(float height)
 		super(draw,engine);
 		paint = new Paint();
 		paint.setStrokeWidth(engine.getSharedPreferences().getInt("borderWidth",30));
+		paint.setStrokeCap(getEngine().getSharedPreferences().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
 		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
 		spaceWidth=engine.getSharedPreferences().getInt("spaceWidth",20);
 		drawHeight=engine.getHeight()-engine.getSharedPreferences().getInt("height",10)/100.0f*engine.getHeight();
@@ -78,7 +79,12 @@ public void onDrawHeightChanged(float height)
 		
 	}
 
-	
+	@Override
+	public void setRound(boolean round)
+	{
+		if(paint!=null)
+			paint.setStrokeCap(round?Paint.Cap.ROUND:Paint.Cap.SQUARE);
+	}
 	@Override
 	public void onDraw(Canvas canvas, int color_mode)
 	{
@@ -86,9 +92,11 @@ public void onDrawHeightChanged(float height)
 			drawLine(getFft(),canvas,color_mode,true);
 		}else if(color_mode==4){
 			paint.setColor(0xffffffff);
+			//paint.setStyle(Paint.Style.STROKE);
 			paint.setShadowLayer(paint.getStrokeWidth(),0,0,getColor());
 			drawLine(getFft(),canvas,color_mode,false);
 			paint.setShadowLayer(0,0,0,0);
+			//paint.setStyle(Paint.Style.FILL);
 		}else
 		switch ( getEngine().getColorList().size() )
 		{

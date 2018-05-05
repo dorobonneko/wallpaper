@@ -89,6 +89,7 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 								try{
 								colorList.add( Color.parseColor(view.getText().toString()));
 								((ColorAdapter)listview.getAdapter()).notifyDataSetChanged();
+								notifyColorFileChanged();
 								}catch(Exception e){}
 							}
 						}).create();
@@ -157,6 +158,8 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 		
 	};*/
 	private void notifyColorFileChanged(){
+		new Thread(){
+			public void run(){
 		synchronized(fileLock){
 			File colorFile=new File(getExternalCacheDir(),"color");
 			OutputStream os=null;
@@ -179,6 +182,7 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 			}
 		}
 		sendBroadcast(new Intent("color_changed"));
+		}}.start();
 	}
 	
 	private void read(){

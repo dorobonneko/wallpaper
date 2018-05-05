@@ -43,7 +43,7 @@ public class SettingActivity extends Activity
 			WallpaperInfo info=WallpaperManager.getInstance(this).getWallpaperInfo();
 			if ( info == null || !getPackageName().equals(((WallpaperManager)getSystemService(WALLPAPER_SERVICE)).getWallpaperInfo().getPackageName()) )
 			{
-
+				Toast.makeText(getApplicationContext(),"先激活动态壁纸才能继续使用",Toast.LENGTH_LONG).show();
 				try
 				{
 					Intent intent =new Intent(

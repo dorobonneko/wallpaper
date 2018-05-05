@@ -11,6 +11,7 @@ import com.moe.LiveVisualizer.draw.LineChartDraw;
 import com.moe.LiveVisualizer.draw.CircleLineDraw;
 import com.moe.LiveVisualizer.inter.Draw;
 import com.moe.LiveVisualizer.draw.CircleInsideDraw;
+import android.graphics.Matrix;
 
 public class ImageDraw implements OnColorSizeChangedListener
 {
@@ -19,14 +20,46 @@ public class ImageDraw implements OnColorSizeChangedListener
 	private Draw line,chart,circle,pop_circle,circle_inside;
 	private Shader shader,fade;
 	private float downSpeed;
+	private Matrix centerImageMatrix;
 	public ImageDraw(LiveWallpaper.WallpaperEngine engine){
 		this.engine=engine;
 		engine.registerColorSizeChangedListener(this);
 	}
+	public void setCenterScale(boolean scale){
+		if(scale)
+			centerImageMatrix=new Matrix();
+			else
+			centerImageMatrix=null;
+	}
+	public Matrix getCenterScale(){
+		return centerImageMatrix;
+	}
+	public void setCutImage(boolean cut)
+	{
+		if(circle_inside!=null)
+			circle_inside.setCutImage(cut);
+		if(circle!=null)
+		circle.setCutImage(cut);
+	}
+
+	public void setRound(boolean round)
+	{
+		if(line!=null)
+			line.setRound(round);
+		if(chart!=null)
+			chart.setRound(round);
+		if(circle!=null)
+			circle.setRound(round);
+		if(pop_circle!=null)
+			pop_circle.setRound(round);
+		if(circle_inside!=null)
+			circle_inside.setRound(round);
+		
+	}
 
 	public void setDownSpeed(int speed)
 	{
-		downSpeed=speed/100.0f;
+		downSpeed=speed/50.0f;
 	}
 	public float getDownSpeed(){
 		return downSpeed;

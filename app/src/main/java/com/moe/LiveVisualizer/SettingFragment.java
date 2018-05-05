@@ -21,11 +21,12 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 {
 	private final static int WALLPAPER=0X02;
 	private final static int CIRCLE=0x03;
-	private final static int CROP=0x04;
-	private final static int DISMISS=0x05;
-	private AlertDialog delete;
-	private AlertDialog circle_delete;
-	private ProgressDialog gif_dialog=null;
+	private final static int WALLPAPER_SUCCESS=0x04;
+	private final static int WALLPAPER_DISMISS=0x05;
+	private final static int CIRCLE_SUCCESS=0x06;
+	private final static int CIRCLE_DISMISS=0x07;
+	private AlertDialog delete,circle_delete;
+	private ProgressDialog gif_dialog=null,circle_dialog;
 	private ListPreference color_mode,visualizer_mode;
 	private DisplayMetrics display;
 	private SoftReference<Uri> weak;
@@ -141,7 +142,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 				{
 					Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 					intent.setType("image/*");
-					intent.putExtra("crop", "true");
+					/*intent.putExtra("crop", "true");
 					//width:height
 					intent.putExtra("aspectX", 1);
 					intent.putExtra("aspectY", 1);
@@ -149,7 +150,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 					intent.putExtra("outputY", display.widthPixels / 3);
 					intent.putExtra("output", Uri.fromFile(circle));
 					intent.putExtra("return-data", false);
-					intent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
+					intent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());*/
 					try
 					{startActivityForResult(Intent.createChooser(intent, "Choose Image"), CIRCLE);}
 					catch (Exception e)
@@ -187,8 +188,6 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 										public void run()
 										{
 											final File tmp=new File(getActivity().getExternalCacheDir(), "tmpImage");
-											final File gif=new File(getActivity().getExternalCacheDir(), "gif");
-											if ( gif.exists() )gif.delete();
 											FileOutputStream fos=null;
 											InputStream is=null;
 											try
@@ -220,7 +219,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 												intent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
 												try
 												{
-													startActivityForResult(intent, CROP);
+													startActivityForResult(intent, WALLPAPER_SUCCESS);
 												}
 												catch (Exception e)
 												{Toast.makeText(getActivity(),"请安装一个裁剪图片的软件",Toast.LENGTH_LONG).show();}
@@ -243,7 +242,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 												catch (IOException e)
 												{}
 											}
-											handler.obtainMessage(DISMISS).sendToTarget();
+											handler.obtainMessage(WALLPAPER_DISMISS).sendToTarget();
 											}
 									}.start();
 								}
@@ -261,13 +260,6 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 									new Thread(){
 										public void run(){
 											final File tmp=new File(getActivity().getExternalCacheDir(), "wallpaper");
-											final File gif=new File(getActivity().getExternalCacheDir(), "gif");
-											try
-											{
-												if ( !gif.exists() )gif.createNewFile();
-											}
-											catch (IOException e)
-											{}
 											FileOutputStream fos=null;
 											InputStream is=null;
 											try
@@ -298,12 +290,12 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 												{}
 											}
 											getActivity().sendBroadcast(new Intent("wallpaper_changed"));
-											handler.obtainMessage(DISMISS).sendToTarget();
+											handler.obtainMessage(WALLPAPER_DISMISS).sendToTarget();
 										}
 									}.start();
 								}
 							});
-							gif_dialog.setButton(ProgressDialog.BUTTON3,"取消",handler.obtainMessage(DISMISS));
+							gif_dialog.setButton(ProgressDialog.BUTTON3,"取消",handler.obtainMessage(WALLPAPER_DISMISS));
 							gif_dialog.setCanceledOnTouchOutside(false);
 					}
 					gif_dialog.show();
@@ -325,76 +317,154 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 					 }*/
 					break;
 				case CIRCLE:
-					if ( data.getData() == null )
-						getActivity().sendBroadcast(new Intent("circle_changed"));
-					else
+					weak=new SoftReference<Uri>(data.getData());
+					if ( circle_dialog == null )
 					{
-						new Thread(){
-							public void run()
-							{
-								final File tmp=new File(getActivity().getExternalCacheDir(), "tmpImage");
-								FileOutputStream fos=null;
-								InputStream is=null;
-								try
-								{
-									fos = new FileOutputStream(tmp);
-									is = getActivity().getContentResolver().openInputStream(data.getData());
-									byte[] buffer=new byte[512];
-									int len;
-									while ( (len = is.read(buffer)) != -1 )
-										fos.write(buffer, 0, len);
-									fos.flush();
-								}
-								catch (IOException e)
-								{}
-								finally
-								{
-									try
-									{
-										if ( fos != null )fos.close();
-									}
-									catch (IOException e)
-									{}
-									try
-									{
-										if ( is != null )is.close();
-									}
-									catch (IOException e)
-									{}
-								}
+						circle_dialog = new ProgressDialog(getActivity());
+						circle_dialog.setMessage("如何处理图片");
+						circle_dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+						circle_dialog.setButton(ProgressDialog.BUTTON1,"裁剪", new DialogInterface.OnClickListener(){
 
-								final File circle=new File(getActivity().getExternalCacheDir(), "circle");
-								Intent intent = new Intent("com.android.camera.action.CROP");
-								//可以选择图片类型，如果是*表明所有类型的图片
-								if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N )
+								@Override
+								public void onClick(DialogInterface p1, int p2)
 								{
-									intent.setDataAndType(FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", tmp), "image/*");
-									intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-								}
-								else
-									intent.setDataAndType(Uri.fromFile(tmp), "image/*");
+									try{
+										Field progressBar=circle_dialog.getClass().getDeclaredField("mProgress");
+										progressBar.setAccessible(true);
+										((ProgressBar)progressBar.get(circle_dialog)).setVisibility(ProgressBar.VISIBLE);
+									}catch(Exception e){}
+									new Thread(){
+										public void run()
+										{
+											final File tmp=new File(getActivity().getExternalCacheDir(), "tmpImage");
+											FileOutputStream fos=null;
+											InputStream is=null;
+											try
+											{
+												fos = new FileOutputStream(tmp);
+												is = getActivity().getContentResolver().openInputStream(weak.get());
+												byte[] buffer=new byte[16*1024];
+												int len;
+												while ( (len = is.read(buffer)) != -1 )
+													fos.write(buffer, 0, len);
+												fos.flush();
+												final File circle_file=new File(getActivity().getExternalCacheDir(), "circle");
+												Intent intent = new Intent("com.android.camera.action.CROP");
+												if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N )
+												{
+													intent.setDataAndType(FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", tmp), "image/*");
+													intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+												}
+												else
+													intent.setDataAndType(Uri.fromFile(tmp), "image/*");
 
-								intent.putExtra("crop", "true");
-								intent.putExtra("aspectX", 1);
-								intent.putExtra("aspectY", 1);
-								intent.putExtra("outputX", display.widthPixels / 3);
-								intent.putExtra("outputY", display.widthPixels / 3);
-								intent.putExtra("output", Uri.fromFile(circle));
-								intent.putExtra("return-data", false);
-								intent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
-								try
+												intent.putExtra("crop", "true");
+												intent.putExtra("aspectX", 1);
+												intent.putExtra("aspectY", 1);
+												intent.putExtra("outputX", display.widthPixels/3);
+												intent.putExtra("outputY", display.widthPixels/3);
+												intent.putExtra("output", Uri.fromFile(circle_file));
+												intent.putExtra("return-data", false);
+												intent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
+												try
+												{
+													startActivityForResult(intent, CIRCLE_SUCCESS);
+												}
+												catch (Exception e)
+												{Toast.makeText(getActivity(),"请安装一个裁剪图片的软件",Toast.LENGTH_LONG).show();}
+
+											}
+											catch (Exception e)
+											{}
+											finally
+											{
+												try
+												{
+													if ( fos != null )fos.close();
+												}
+												catch (IOException e)
+												{}
+												try
+												{
+													if ( is != null )is.close();
+												}
+												catch (IOException e)
+												{}
+											}
+											handler.obtainMessage(CIRCLE_DISMISS).sendToTarget();
+										}
+									}.start();
+								}
+							});
+						circle_dialog.setButton(ProgressDialog.BUTTON2,"GIF", new DialogInterface.OnClickListener(){
+
+								@Override
+								public void onClick(DialogInterface p1, int p2)
 								{
-									startActivityForResult(intent, CIRCLE);
+									try{
+										Field progressBar=circle_dialog.getClass().getDeclaredField("mProgress");
+										progressBar.setAccessible(true);
+										((ProgressBar)progressBar.get(circle_dialog)).setVisibility(ProgressBar.VISIBLE);
+									}catch(Exception e){}
+									new Thread(){
+										public void run(){
+											final File tmp=new File(getActivity().getExternalCacheDir(), "circle");
+											FileOutputStream fos=null;
+											InputStream is=null;
+											try
+											{
+												fos = new FileOutputStream(tmp);
+												is = getActivity().getContentResolver().openInputStream(weak.get());
+												byte[] buffer=new byte[16*1024];
+												int len;
+												while ( (len = is.read(buffer)) != -1 )
+													fos.write(buffer, 0, len);
+												fos.flush();
+											}
+											catch (Exception e)
+											{}
+											finally
+											{
+												try
+												{
+													if ( fos != null )fos.close();
+												}
+												catch (IOException e)
+												{}
+												try
+												{
+													if ( is != null )is.close();
+												}
+												catch (IOException e)
+												{}
+											}
+											getActivity().sendBroadcast(new Intent("circle_changed"));
+											handler.obtainMessage(CIRCLE_DISMISS).sendToTarget();
+										}
+									}.start();
 								}
-								catch (Exception e)
-								{}
-
-							}
-						}.start();
+							});
+						circle_dialog.setButton(ProgressDialog.BUTTON3,"取消",handler.obtainMessage(CIRCLE_SUCCESS));
+						circle_dialog.setCanceledOnTouchOutside(false);
 					}
+					circle_dialog.show();
+					try
+					{
+						Field progressBar=circle_dialog.getClass().getDeclaredField("mProgress");
+						progressBar.setAccessible(true);
+						((ProgressBar)progressBar.get(circle_dialog)).setVisibility(ProgressBar.GONE);
+						Field show=Dialog.class.getDeclaredField("mShowing");
+						show.setAccessible(true);
+						show.setBoolean(circle_dialog,false);
+					}
+					catch (Exception e)
+					{}
 					break;
-				case CROP:
+				case WALLPAPER_SUCCESS:
 					getActivity().sendBroadcast(new Intent("wallpaper_changed"));
+					break;
+				case CIRCLE_SUCCESS:
+					getActivity().sendBroadcast(new Intent("circle_changed"));
 					break;
 			}
 	}
@@ -405,7 +475,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 		public void handleMessage(Message msg)
 		{
 			switch(msg.what){
-				case DISMISS:
+				case WALLPAPER_DISMISS:
 					if(gif_dialog!=null){
 						try{
 							Field show=Dialog.class.getDeclaredField("mShowing");
@@ -415,6 +485,16 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 						gif_dialog.dismiss();
 					}
 					break;
+					case CIRCLE_DISMISS:
+					if(circle_dialog!=null){
+						try{
+							Field show=Dialog.class.getDeclaredField("mShowing");
+							show.setAccessible(true);
+							show.setBoolean(circle_dialog,true);
+						}catch(Exception e){}
+						circle_dialog.dismiss();
+					}
+						break;
 			}
 		}
 	

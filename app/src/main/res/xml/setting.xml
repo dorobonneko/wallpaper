@@ -68,5 +68,25 @@
 		android:summary="加速度"
 		app:unit="%"
 		android:key="downspeed"
-		android:defaultValue="50"/>
+		android:max="50"
+		android:defaultValue="15"/>
+	<SwitchPreference
+		android:title="线条圆角"
+		android:defaultValue="true"
+		android:key="round"/>
+	<SwitchPreference
+		android:title="中心图旋转开关"
+		android:summary="推荐使用状态栏快捷图块"
+		android:key="circleSwitch"
+		android:defaultValue="true"/>
+	<SwitchPreference
+		android:title="自动缩放图片"
+		android:summary="主要针对gif图片"
+		android:key="scaleImage"
+		android:defaultValue="true"/>
+	<SwitchPreference
+		android:title="裁剪中心圆图片"
+		android:summary="将会裁成圆形，配合自动缩放使用"
+		android:key="cutImage"
+		android:defaultValue="true"/>
 </PreferenceScreen>

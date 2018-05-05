@@ -60,7 +60,7 @@ public class PopCircleDraw extends Draw
 	@Override
 	public void onBorderWidthChanged(int width)
 	{
-		paint.setStrokeWidth(width);
+		paint.setStrokeWidth(width/2.0f);
 		onSizeChanged();
 	}
 
@@ -70,8 +70,9 @@ public class PopCircleDraw extends Draw
 	public PopCircleDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		super(draw,engine);
 		paint=new Paint();
-		paint.setStrokeWidth(engine.getSharedPreferences().getInt("borderWidth",30));
-
+		paint.setStrokeWidth(engine.getSharedPreferences().getInt("borderWidth",30)/2.0f);
+		paint.setStrokeCap(getEngine().getSharedPreferences().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
+		
 		paint.setStyle(Paint.Style.STROKE);
 		
 		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
@@ -79,7 +80,15 @@ public class PopCircleDraw extends Draw
 		drawHeight=engine.getHeight()-engine.getSharedPreferences().getInt("height",10)/100.0f*engine.getHeight();
 		onSizeChanged();
 		
-		}
+	}
+
+	@Override
+	public void setRound(boolean round)
+	{
+		if(paint!=null)
+			paint.setStrokeCap(round?Paint.Cap.ROUND:Paint.Cap.SQUARE);
+	}
+
 
 	@Override
 	public void onDraw(Canvas canvas, int color_mode)
