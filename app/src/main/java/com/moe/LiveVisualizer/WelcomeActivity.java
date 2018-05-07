@@ -1,35 +1,23 @@
 package com.moe.LiveVisualizer;
 import android.app.Activity;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.content.Intent;
-import android.app.WallpaperManager;
 import android.content.ComponentName;
+import android.os.Build;
 import android.app.WallpaperInfo;
 import android.widget.Toast;
-import android.net.Uri;
-import android.view.MenuItem;
-import android.content.ActivityNotFoundException;
-import android.provider.Settings;
-import android.content.pm.PermissionInfo;
-import android.content.pm.PermissionGroupInfo;
-import android.content.pm.PackageManager;
-import android.os.Build;
+import android.content.Intent;
+import android.app.WallpaperManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 
-public class SettingActivity extends Activity
+public class WelcomeActivity extends Activity
 {
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		if(Intent.ACTION_MAIN.equals(getIntent().getAction()))
 		init();
-		else{
-			Toast.makeText(this,"别点了，进不来的",Toast.LENGTH_SHORT).show();
-			finish();}
 	}
 	private void init()
 	{
@@ -82,16 +70,13 @@ public class SettingActivity extends Activity
 			}
 			else
 			{
-				setContentView(R.layout.setting_view);
-				Fragment setting=getFragmentManager().findFragmentByTag("setting");
-				if ( setting == null )setting = new SettingFragment();
-				if ( setting.isAdded() )
-					getFragmentManager().beginTransaction().show(setting).commit();
-				else
-					getFragmentManager().beginTransaction().add(R.id.setting_view, setting, "setting").commit();
-				getActionBar().setDisplayHomeAsUpEnabled(true);
-				getActionBar().setHomeButtonEnabled(true);
-			}
+				ComponentName setting=new ComponentName(this,SettingActivity.class);
+				if(getPackageManager().getComponentEnabledSetting(setting)!=PackageManager.COMPONENT_ENABLED_STATE_ENABLED)
+				getPackageManager().setComponentEnabledSetting(setting,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,PackageManager.DONT_KILL_APP);
+				}
+				startActivity(new Intent(this,SettingActivity.class));
+				finish();
+				getPackageManager().setComponentEnabledSetting(new ComponentName(this,WelcomeActivity.class),PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
 		}
 		else
 		{
@@ -125,54 +110,4 @@ public class SettingActivity extends Activity
 	}
 
 	
-
-	
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		switch ( item.getItemId() )
-		{
-			case android.R.id.home:
-				finish();
-				return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-	/*private void gotoNotificationAccessSetting()
-	{  
-		try
-		{  
-			final Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-			intent.putExtra("package", getPackageName());
-			intent.putExtra("uid", getApplicationInfo().uid);
-
-			startActivity(intent); 
-		}
-		catch (ActivityNotFoundException e)
-		{  try
-			{  
-				final Intent intent = new Intent();  
-				final ComponentName cn = new ComponentName("com.android.settings", "com.android.settings.Settings$NotificationAccessSettingsActivity");  
-				intent.setComponent(cn);  
-				intent.putExtra(":settings:show_fragment", "NotificationAccessSettings");  
-				startActivity(intent);   
-			}
-			catch (Exception ex)
-			{  
-			return;
-			}  
-		} 
-		finish();
-	}  
-	private boolean notificationListenerEnable()
-	{  
-		boolean enable = false;  
-		String flat= Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");  
-		if ( flat != null )
-		{  
-			enable = flat.contains(NotifycationListener.class.getName());  
-		}  
-		return enable;  
-	}  */
 }

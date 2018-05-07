@@ -86,15 +86,16 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 	{
 		return draw.getShader();
 	}
-
-	
-
-
-
 	
 	@Override
 	public int getColor()
 	{
+		switch(engine.getColorList().size()){
+			case 0:
+				return 0xff39c5bb;
+			case 1:
+				return engine.getColorList().get(0);
+				default:
 		if(anime.isRunning()){
 			if(anime.getDuration()==5000)
 				return fade[0];
@@ -119,6 +120,7 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 				handler.sendEmptyMessage(0);
 			}
 			return fade[0];
+			}
 	}
 /*
 

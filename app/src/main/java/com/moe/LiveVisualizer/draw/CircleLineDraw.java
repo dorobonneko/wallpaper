@@ -88,11 +88,7 @@ public class CircleLineDraw extends CircleDraw
 
 	}
 
-	@Override
-	public void onDrawHeightChanged(float height)
-	{
-		//无效
-	}
+	
 
 	@Override
 	public void onBorderWidthChanged(int width)
@@ -218,8 +214,10 @@ public class CircleLineDraw extends CircleDraw
 				height = points[i] - (points[i] - height) * getDownSpeed();
 			if ( height < 0 )height = 0;
 			points[i] = height;
+			if(paint.getStrokeCap()==Paint.Cap.ROUND)
 			canvas.drawLine(offsetX, y, offsetX, y - height, paint);
-			//canvas.drawRect(offsetX, y, offsetX + borderWidth, y - height, paint);
+			else
+			canvas.drawRect(offsetX-paint.getStrokeWidth()/2, y, offsetX + paint.getStrokeWidth()/2, y - height, paint);
 			canvas.rotate(degress_step, center.x, center.y);
 			//degress+=degress_step;
 			if ( i == end )

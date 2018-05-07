@@ -50,10 +50,11 @@ public class ImageThread extends Thread implements Handler.Callback
 				loadWallpaper();
 				break;
 			case 1:
-					try{gifDecoder.advance();}catch(Exception e){}
+					try{gifDecoder.advance();
 					image=gifDecoder.getNextFrame();
 					if(live.getEngine()!=null&&live.getEngine().isVisible())
 					handler.sendEmptyMessageDelayed(1,gifDecoder.getNextDelay());
+					}catch(Exception e){}
 				break;
 		}
 		return true;

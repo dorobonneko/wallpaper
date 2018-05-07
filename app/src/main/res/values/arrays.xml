@@ -13,6 +13,8 @@
 			<item>圆形射线图</item>
 			<item>弹弹圈</item>
 			<item>圆环内射线</item>
+			<item>射线</item>
+			<item>水波纹</item>
 		</string-array>
 		<string-array name="color_mode_v">
 			<item>0</item>
@@ -27,5 +29,7 @@
 			<item>2</item>
 			<item>3</item>
 			<item>4</item>
+			<item>5</item>
+			<item>6</item>
 		</string-array>
 		</resources>

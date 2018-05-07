@@ -77,7 +77,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 				/*Intent intent=new Intent(Intent.ACTION_GET_CONTENT);
 				 intent.setType("image/*");
 				 startActivityForResult(intent,GET_IMAGE);*/
-				final File wallpaper=new File(getActivity().getExternalCacheDir(), "wallpaper");
+				final File wallpaper=new File(getActivity().getExternalFilesDir(null), "wallpaper");
 				if ( wallpaper.exists() )
 				{
 					if ( delete == null )
@@ -88,7 +88,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 								public void onClick(DialogInterface p1, int p2)
 								{
 									wallpaper.delete();
-									final File gif=new File(getActivity().getExternalCacheDir(), "gif");
+									final File gif=new File(getActivity().getExternalFilesDir(null), "gif");
 									if ( gif.exists() )gif.delete();
 									getActivity().sendBroadcast(new Intent("wallpaper_changed"));
 
@@ -120,7 +120,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 				}
 				break;
 			case "circle_image":
-				final File circle=new File(getActivity().getExternalCacheDir(), "circle");
+				final File circle=new File(getActivity().getExternalFilesDir(null), "circle");
 				if ( circle.exists() )
 				{
 					if ( circle_delete == null )
@@ -187,7 +187,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 									new Thread(){
 										public void run()
 										{
-											final File tmp=new File(getActivity().getExternalCacheDir(), "tmpImage");
+											final File tmp=new File(getActivity().getExternalFilesDir(null),"tmpImage");
 											FileOutputStream fos=null;
 											InputStream is=null;
 											try
@@ -199,7 +199,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 												while ( (len = is.read(buffer)) != -1 )
 													fos.write(buffer, 0, len);
 												fos.flush();
-												final File wallpaper=new File(getActivity().getExternalCacheDir(), "wallpaper");
+												final File wallpaper=new File(getActivity().getExternalFilesDir(null), "wallpaper");
 												Intent intent = new Intent("com.android.camera.action.CROP");
 												if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N )
 												{
@@ -259,7 +259,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 									}catch(Exception e){}
 									new Thread(){
 										public void run(){
-											final File tmp=new File(getActivity().getExternalCacheDir(), "wallpaper");
+											final File tmp=new File(getActivity().getExternalFilesDir(null), "wallpaper");
 											FileOutputStream fos=null;
 											InputStream is=null;
 											try
@@ -336,7 +336,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 									new Thread(){
 										public void run()
 										{
-											final File tmp=new File(getActivity().getExternalCacheDir(), "tmpImage");
+											final File tmp=new File(getActivity().getExternalFilesDir(null), "tmpImage");
 											FileOutputStream fos=null;
 											InputStream is=null;
 											try
@@ -348,7 +348,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 												while ( (len = is.read(buffer)) != -1 )
 													fos.write(buffer, 0, len);
 												fos.flush();
-												final File circle_file=new File(getActivity().getExternalCacheDir(), "circle");
+												final File circle_file=new File(getActivity().getExternalFilesDir(null), "circle");
 												Intent intent = new Intent("com.android.camera.action.CROP");
 												if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N )
 												{
@@ -408,7 +408,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 									}catch(Exception e){}
 									new Thread(){
 										public void run(){
-											final File tmp=new File(getActivity().getExternalCacheDir(), "circle");
+											final File tmp=new File(getActivity().getExternalFilesDir(null), "circle");
 											FileOutputStream fos=null;
 											InputStream is=null;
 											try

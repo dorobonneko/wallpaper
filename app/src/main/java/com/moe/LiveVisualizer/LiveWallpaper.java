@@ -40,9 +40,9 @@ public class LiveWallpaper extends WallpaperService
 		filter.addAction("circle_changed");
 		registerReceiver(changed = new WallpaperChanged(), filter);
 		loadColor();
-		background=new ImageThread(this,new File(getExternalCacheDir(),"wallpaper"));
+		background=new ImageThread(this,new File(getExternalFilesDir(null),"wallpaper"));
 		background.start();
-		centerImage=new ImageThread(this,new File(getExternalCacheDir(),"circle"));
+		centerImage=new ImageThread(this,new File(getExternalFilesDir(null),"circle"));
 		centerImage.start();
 	}
 	
@@ -79,7 +79,7 @@ public class LiveWallpaper extends WallpaperService
 		new Thread("init_thread"){
 			public void run()
 			{
-		final File color=new File(getExternalCacheDir(), "color");
+		final File color=new File(getExternalFilesDir(null), "color");
 		if ( !(color.exists() && color.isFile()) )return;
 		BufferedReader read=null;
 		try
@@ -166,7 +166,7 @@ public class LiveWallpaper extends WallpaperService
 	public class WallpaperEngine extends WallpaperService.Engine
 	{
 		private WallpaperThread refresh=null;
-		private List<OnColorSizeChangedListener> sizeListener=new ArrayList<>();
+		private List<OnColorSizeChangedListener> sizeListener;
 		private VisualizerThread mVisualizer;
 		private LiveWallpaper live;
 		public WallpaperEngine(LiveWallpaper live){
@@ -217,7 +217,7 @@ public class LiveWallpaper extends WallpaperService
 		{
 			/*if(refresh!=null)
 			refresh.notifyColorChanged();*/
-			
+			if(sizeListener!=null)
 			for ( OnColorSizeChangedListener l:sizeListener )
 				l.onColorSizeChanged();
 			//if ( refresh != null )refresh.notifyColorChanged();
@@ -229,6 +229,7 @@ public class LiveWallpaper extends WallpaperService
 		public void onCreate(SurfaceHolder surfaceHolder)
 		{
 			super.onCreate(surfaceHolder);
+			sizeListener=new ArrayList<>();
 			refresh = new WallpaperThread(this);
 			refresh.setName("wllpaper_daemon");
 			refresh.setDaemon(true);
@@ -274,5 +275,13 @@ public class LiveWallpaper extends WallpaperService
 		public int getHeight(){
 			return display.heightPixels;
 		}
+
+		@Override
+		public void onSurfaceCreated(SurfaceHolder holder)
+		{
+			holder.setType(holder.SURFACE_TYPE_GPU);
+			super.onSurfaceCreated(holder);
+		}
+		
 	}
 }

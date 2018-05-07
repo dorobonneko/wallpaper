@@ -161,7 +161,7 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 		new Thread(){
 			public void run(){
 		synchronized(fileLock){
-			File colorFile=new File(getExternalCacheDir(),"color");
+			File colorFile=new File(getExternalFilesDir(null),"color");
 			OutputStream os=null;
 			try
 			{
@@ -186,7 +186,7 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 	}
 	
 	private void read(){
-		File color=new File(getExternalCacheDir(),"color");
+		File color=new File(getExternalFilesDir(null),"color");
 		if(!(color.exists()&&color.isFile()))return;
 		BufferedReader read=null;
 		try

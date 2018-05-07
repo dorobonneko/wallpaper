@@ -47,14 +47,14 @@ public abstract class CircleDraw extends Draw
 			paint.setStrokeCap(round?Paint.Cap.ROUND:Paint.Cap.SQUARE);
 	}
 	public void drawCircleImage(Canvas canvas){
-		if ( getEngine().getCircleImage() == null )
+		/*if ( getEngine().getCircleImage() == null )
 		{
 			paint.setStyle(Paint.Style.STROKE);
 			canvas.drawCircle(canvas.getWidth() / 2.0f, canvas.getHeight() / 2.0f, canvas.getWidth() / 6, paint);
 			paint.setStyle(Paint.Style.FILL);
 		}
-		else
-		{
+		else*/
+		if(getEngine().getCircleImage()!=null){
 			final int layer=canvas.saveLayer(0,0,canvas.getWidth(),canvas.getHeight(),null,canvas.ALL_SAVE_FLAG);
 			//canvas.drawColor(0xffffffff);
 			if(getEngine().getSharedPreferences().getBoolean("circleSwitch",true)){
@@ -87,4 +87,12 @@ public abstract class CircleDraw extends Draw
 
 		}
 	}
+
+	@Override
+	final public void onDrawHeightChanged(float height)
+	{
+		// TODO: Implement this method
+	}
+
+	
 }

@@ -14,7 +14,7 @@ import com.moe.LiveVisualizer.internal.ImageDraw;
 
 public class RadialDraw extends Draw
 {
-private int borderHeight,size;
+private int borderHeight,size,borderWidth;
 private float spaceWidth,drawHeight;
 	@Override
 	public void onBorderHeightChanged(int height)
@@ -38,13 +38,13 @@ private float spaceWidth,drawHeight;
 private void onSizeChanged(){
 	try
 	{
-		size = (int)((getEngine().getWidth() - spaceWidth) / (paint.getStrokeWidth() + spaceWidth));
+		size = (int)((getEngine().getWidth() - spaceWidth) / (borderWidth + spaceWidth));
 	}
 	catch (Exception e)
 	{}
 	try{
 	size = size > getEngine().getFftSize() ?getEngine().getFftSize(): size;
-	spaceWidth = (getEngine().getWidth()-size*paint.getStrokeWidth()) / ((float)size-1);
+	spaceWidth = (getEngine().getWidth()-size*borderWidth) / ((float)size-1);
 		
 	}catch(Exception e){}
 	
@@ -60,6 +60,7 @@ public void onDrawHeightChanged(float height)
 	@Override
 	public void onBorderWidthChanged(int width)
 	{
+		borderWidth=width;
 		paint.setStrokeWidth(width);
 		onSizeChanged();
 	}
@@ -70,11 +71,13 @@ public void onDrawHeightChanged(float height)
 	{
 		super(draw,engine);
 		paint = new Paint();
-		paint.setStrokeWidth(engine.getSharedPreferences().getInt("borderWidth",30));
+		paint.setStyle(Paint.Style.FILL);
 		paint.setStrokeCap(getEngine().getSharedPreferences().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
 		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
 		spaceWidth=engine.getSharedPreferences().getInt("spaceWidth",20);
 		drawHeight=engine.getHeight()-engine.getSharedPreferences().getInt("height",10)/100.0f*engine.getHeight();
+		borderWidth=engine.getSharedPreferences().getInt("borderWidth",30);
+		paint.setStrokeWidth(borderWidth);
 		onSizeChanged();
 		
 	}
@@ -176,18 +179,25 @@ public void onDrawHeightChanged(float height)
 				paint.setColor((int)(Math.random()*0xffffff)|0xff000000);
 			}
 			}
-			float height=(float)(buffer[i]/ 127.0 * borderHeight);
+			float height=(float)(buffer[i]/ 127* borderHeight);
 			if(height>points[i])
 				points[i]=height;
 				else
 				height=points[i]-(points[i]-height)*getDownSpeed();
 				if(height<0)height=0;
 				points[i]=height;
-			//canvas.drawRect(x, y - height, x += paint.getStrokeWidth(), y, paint);
-			//canvas.drawRect(x-=paint.getStrokeWidth(), y+ height, x += borderWidth, y, paint);
+			if(paint.getStrokeCap()==Paint.Cap.SQUARE){
+				//paint.setStrokeWidth(10);
+			canvas.drawRect(x, drawHeight - height, x +=borderWidth , drawHeight, paint);
+			canvas.drawRect(x-=borderWidth, drawHeight+ height, x += borderWidth, drawHeight, paint);
+			x+=spaceWidth;
+			}else{
+				//paint.setStrokeWidth(borderWidth);
 			canvas.drawLine(x+=halfWidth,drawHeight-height,x,drawHeight,paint);
-			canvas.drawLine(x,drawHeight+height,x,drawHeight,paint);
-			x+=halfWidth+spaceWidth;
+			canvas.drawLine(x,drawHeight+height+borderWidth,x,drawHeight+borderWidth,paint);
+				x+=halfWidth+spaceWidth;
+			}
+			
 		}
 
 	}

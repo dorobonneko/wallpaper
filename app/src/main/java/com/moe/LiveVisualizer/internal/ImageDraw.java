@@ -12,12 +12,14 @@ import com.moe.LiveVisualizer.draw.CircleLineDraw;
 import com.moe.LiveVisualizer.inter.Draw;
 import com.moe.LiveVisualizer.draw.CircleInsideDraw;
 import android.graphics.Matrix;
+import com.moe.LiveVisualizer.draw.CircleRadialDraw;
+import com.moe.LiveVisualizer.draw.RippleDraw;
 
 public class ImageDraw implements OnColorSizeChangedListener
 {
 	private LiveWallpaper.WallpaperEngine engine;
 	private double[] fft;
-	private Draw line,chart,circle,pop_circle,circle_inside;
+	private Draw[] drawList=new Draw[7];
 	private Shader shader,fade;
 	private float downSpeed;
 	private Matrix centerImageMatrix;
@@ -36,25 +38,17 @@ public class ImageDraw implements OnColorSizeChangedListener
 	}
 	public void setCutImage(boolean cut)
 	{
-		if(circle_inside!=null)
-			circle_inside.setCutImage(cut);
-		if(circle!=null)
-		circle.setCutImage(cut);
+		for(Draw draw:drawList)
+		if(draw!=null)
+		draw.setCutImage(cut);
+		
 	}
 
 	public void setRound(boolean round)
 	{
-		if(line!=null)
-			line.setRound(round);
-		if(chart!=null)
-			chart.setRound(round);
-		if(circle!=null)
-			circle.setRound(round);
-		if(pop_circle!=null)
-			pop_circle.setRound(round);
-		if(circle_inside!=null)
-			circle_inside.setRound(round);
-		
+		for(Draw draw:drawList)
+			if(draw!=null)
+				draw.setRound(round);
 	}
 
 	public void setDownSpeed(int speed)
@@ -65,52 +59,24 @@ public class ImageDraw implements OnColorSizeChangedListener
 		return downSpeed;
 	}
 	public void setDrawHeight(float height){
-		if(line!=null)
-			line.onDrawHeightChanged(height);
-		if(chart!=null)
-			chart.onDrawHeightChanged(height);
-		if(circle!=null)
-			circle.onDrawHeightChanged(height);
-		if(pop_circle!=null)
-			pop_circle.onDrawHeightChanged(height);
-		
+		for(Draw draw:drawList)
+			if(draw!=null)
+				draw.onDrawHeightChanged(height);
 	}
 	public void setBorderHeight(int height){
-		if(line!=null)
-			line.onBorderHeightChanged(height);
-		if(chart!=null)
-			chart.onBorderHeightChanged(height);
-		if(circle!=null)
-			circle.onBorderHeightChanged(height);
-		if(pop_circle!=null)
-			pop_circle.onBorderHeightChanged(height);
-		if(circle_inside!=null)
-			circle_inside.onBorderHeightChanged(height);
-	}
+		for(Draw draw:drawList)
+			if(draw!=null)
+				draw.onBorderHeightChanged(height);
+				}
 	public void setSpaceWidth(int space){
-		if(line!=null)
-			line.onSpaceWidthChanged(space);
-		if(chart!=null)
-			chart.onSpaceWidthChanged(space);
-		if(circle!=null)
-			circle.onSpaceWidthChanged(space);
-		if(pop_circle!=null)
-			pop_circle.onSpaceWidthChanged(space);
-		if(circle_inside!=null)
-			circle_inside.onSpaceWidthChanged(space);
-	}
+		for(Draw draw:drawList)
+			if(draw!=null)
+				draw.onSpaceWidthChanged(space);
+				}
 	public void setBorderWidth(int width){
-		if(line!=null)
-			line.onBorderWidthChanged(width);
-		if(chart!=null)
-			chart.onBorderWidthChanged(width);
-		if(circle!=null)
-			circle.onBorderWidthChanged(width);
-		if(pop_circle!=null)
-		pop_circle.onBorderWidthChanged(width);
-		if(circle_inside!=null)
-			circle_inside.onBorderWidthChanged(width);
-	}
+		for(Draw draw:drawList)
+			if(draw!=null)
+				draw.onBorderWidthChanged(width);}
 	@Override
 	public void onColorSizeChanged()
 	{
@@ -142,15 +108,19 @@ public class ImageDraw implements OnColorSizeChangedListener
 	private Draw get(){
 		switch(engine.getSharedPreferences().getString("visualizer_mode","0")){
 			case "0"://柱形图
-				return line==null?line=new RadialDraw(this,engine):line;
+				return drawList[0]==null?drawList[0]=new RadialDraw(this,engine):drawList[0];
 			case "1"://折线图
-				return chart==null?chart=new LineChartDraw(this,engine):chart;
+				return drawList[1]==null?drawList[1]=new LineChartDraw(this,engine):drawList[1];
 			case "2"://圆形射线
-				return circle==null?circle=new CircleLineDraw(this,engine):circle;
+				return drawList[2]==null?drawList[2]=new CircleLineDraw(this,engine):drawList[2];
 			case "3"://弹弹圈
-				return pop_circle==null?pop_circle=new PopCircleDraw(this,engine):pop_circle;
+				return drawList[3]==null?drawList[3]=new PopCircleDraw(this,engine):drawList[3];
 			case "4"://
-				return circle_inside==null?circle_inside=new CircleInsideDraw(this,engine):circle_inside;
+				return drawList[4]==null?drawList[4]=new CircleInsideDraw(this,engine):drawList[4];
+			case "5":
+				return drawList[5]==null?drawList[5]=new CircleRadialDraw(this,engine):drawList[5];
+			case "6":
+				return drawList[6]==null?drawList[6]=new RippleDraw(this,engine):drawList[6];
 		}
 		return null;
 	}
