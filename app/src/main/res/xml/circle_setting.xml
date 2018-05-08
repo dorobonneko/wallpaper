@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:fitsSystemWindows="true"
+	>
+   <Preference
+	   android:title="中心图"
+	   android:key="circle_image"
+	   />
+	<com.moe.LiveVisualizer.preference.SeekBarPreference
+		android:title="旋转速度"
+		android:summary="受帧率影响"
+		android:key="degress"
+		app:unit="%"
+		android:defaultValue="10"
+		android:max="100"/>
+	<com.moe.LiveVisualizer.preference.SeekBarPreference
+		android:title="中心圆半径"
+		app:unit="px"
+		android:key="circleRadius"
+	/>
+	<com.moe.LiveVisualizer.preference.SeekBarPreference
+		android:title="X轴偏移"
+		app:unit="px"
+		android:key="offsetX"
+		/>
+	<com.moe.LiveVisualizer.preference.SeekBarPreference
+		android:title="Y轴偏移"
+		app:unit="px"
+		android:key="offsetY"
+		/>
+	<SwitchPreference
+		android:title="中心图旋转开关"
+		android:summary="推荐使用状态栏快捷图块"
+		android:key="circleSwitch"
+		android:defaultValue="true"/>
+	
+	<SwitchPreference
+		android:title="裁剪中心圆图片"
+		android:summary="将会裁成圆形，配合自动缩放使用"
+		android:key="cutImage"
+		android:defaultValue="true"/>
+</PreferenceScreen>

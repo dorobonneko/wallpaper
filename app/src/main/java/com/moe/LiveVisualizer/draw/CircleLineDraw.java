@@ -175,24 +175,16 @@ public class CircleLineDraw extends CircleDraw
 
 	private void drawLines(double[] buffer, Canvas canvas, boolean useMode, final int mode)
 	{
+		PointF point=getPointF();
+		float radius=getRadius();
 		Paint paint=getPaint();
-		//final int borderWidth=getEngine().getSharedPreferences().getInt("borderWidth", 30);
 		if ( points == null || points.length != size )
 			points = new float[size];
-		//spaceWidth=(float)(length/2.0f/borderWidth/size);
-		//final int step=buffer.length / size;
 		int colorStep=0;
 		float degress_step=180.0f / size;
-		//float degress=0;
-		final int y=(canvas.getHeight() - canvas.getWidth() / 3) / 2 - (int)(paint.getStrokeWidth() / 2);
-		//if(mode==3)
-		//	paint.setColor(getEngine().getColor());
 		canvas.save();
-		final PointF center=new PointF();
-		center.x = canvas.getWidth() / 2.0f;
-		center.y = canvas.getHeight() / 2.0f;
+		final PointF center=getPointF();
 		canvas.rotate(degress_step / 2.0f, center.x, center.y);
-		float offsetX=(canvas.getWidth() - paint.getStrokeWidth()) / 2.0f + paint.getStrokeWidth() / 2;
 		int end=size - 1;
 		for ( int i=0;i < size;i ++ )
 		{
@@ -215,9 +207,9 @@ public class CircleLineDraw extends CircleDraw
 			if ( height < 0 )height = 0;
 			points[i] = height;
 			if(paint.getStrokeCap()==Paint.Cap.ROUND)
-			canvas.drawLine(offsetX, y, offsetX, y - height, paint);
+			canvas.drawLine(point.x,point.y-radius, point.x, point.y -radius- height, paint);
 			else
-			canvas.drawRect(offsetX-paint.getStrokeWidth()/2, y, offsetX + paint.getStrokeWidth()/2, y - height, paint);
+			canvas.drawRect(point.x-paint.getStrokeWidth()/2, point.y-radius, point.x + paint.getStrokeWidth()/2, point.y -radius- height, paint);
 			canvas.rotate(degress_step, center.x, center.y);
 			//degress+=degress_step;
 			if ( i == end )

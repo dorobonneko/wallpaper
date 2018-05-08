@@ -17,10 +17,11 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.view.Menu;
 
 public class SettingActivity extends Activity
 {
-
+	private MenuItem item;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -124,6 +125,14 @@ public class SettingActivity extends Activity
 		}
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		item=menu.add(0,0,0,"中心圆设置");
+		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		return true;
+	}
+
 	
 
 	
@@ -134,11 +143,33 @@ public class SettingActivity extends Activity
 		switch ( item.getItemId() )
 		{
 			case android.R.id.home:
-				finish();
+				onBackPressed();
+				return true;
+			case 0:
+				item.setVisible(false);
+				Fragment setting=getFragmentManager().findFragmentByTag("circle_setting");
+				if ( setting == null )setting = new CircleSettingFragment();
+				if ( setting.isAdded() )
+					getFragmentManager().beginTransaction().hide(getFragmentManager().findFragmentByTag("setting")).show(setting).commit();
+				else
+					getFragmentManager().beginTransaction().hide(getFragmentManager().findFragmentByTag("setting")).add(R.id.setting_view, setting, "circle_setting").commit();
+				
 				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+	@Override
+	public void onBackPressed()
+	{
+		Fragment setting=getFragmentManager().findFragmentByTag("circle_setting");
+		if(setting!=null&&!setting.isHidden()){
+			getFragmentManager().beginTransaction().hide(setting).show(getFragmentManager().findFragmentByTag("setting")).commit();
+			if(item!=null)item.setVisible(true);
+			}else
+		super.onBackPressed();
+	}
+	
 	/*private void gotoNotificationAccessSetting()
 	{  
 		try

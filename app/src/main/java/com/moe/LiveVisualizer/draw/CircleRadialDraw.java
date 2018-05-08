@@ -20,13 +20,11 @@ public class CircleRadialDraw extends CircleDraw
 	private Shader shader;
 	private Bitmap shaderBuffer;
 	private float degress,borderHeight;
-	private PointF point;
 	public CircleRadialDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		super(draw,engine);
 		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
 		spaceWidth=engine.getSharedPreferences().getInt("spaceWidth",20);
 		
-		point=new PointF(engine.getWidth()/2f,engine.getHeight()/2f);
 		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
 
 				@Override
@@ -153,6 +151,7 @@ public class CircleRadialDraw extends CircleDraw
 		Paint paint=getPaint();
 		canvas.save();
 		int colorStep=0;
+		PointF point=getPointF();
 		canvas.rotate(-90,point.x,point.y);
 		for(int i=0;i<size;i++){
 			if ( useMode )

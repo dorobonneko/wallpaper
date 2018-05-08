@@ -26,4 +26,6 @@ public interface Draw
 	void setRound(boolean round);
 	void setCutImage(boolean cut);
 	Matrix getCenterScale();
+	void setOffsetX(int x);
+	void setOffsetY(int y);
 }

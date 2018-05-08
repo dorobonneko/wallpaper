@@ -182,13 +182,17 @@ public class LiveWallpaper extends WallpaperService
 			return 1024;
 		}
 		public int getFftSize(){
-			return getCaptureSize()/2;
+			return getCaptureSize()/4;
 		}
 		public String getError(){
+			if(mVisualizer!=null)
 			return mVisualizer.getMessage();
+			return null;
 		}
 		public boolean isReady(){
+			if(mVisualizer!=null)
 			return mVisualizer.isInit();
+			return false;
 		}
 		public void registerColorSizeChangedListener(OnColorSizeChangedListener l)
 		{

@@ -172,6 +172,20 @@ private int getMiddleColor(int c1,int c2){
 		return draw.getCenterScale();
 	}
 
+	@Override
+	public void setOffsetX(int x)
+	{
+		// TODO: Implement this method
+	}
+
+	@Override
+	public void setOffsetY(int y)
+	{
+		// TODO: Implement this method
+	}
+
+
+
 	
 
 }

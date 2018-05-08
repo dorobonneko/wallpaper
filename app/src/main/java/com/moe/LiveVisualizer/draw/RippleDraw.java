@@ -19,11 +19,9 @@ public class RippleDraw extends CircleDraw
 	private Shader shader;
 	private Bitmap shaderBuffer;
 	private float borderHeight;
-	private PointF point;
 	public RippleDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		super(draw,engine);
 		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
-		point=new PointF(engine.getWidth()/2f,engine.getHeight()/2f);
 		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
 
 				@Override
@@ -137,6 +135,7 @@ public class RippleDraw extends CircleDraw
 		Paint paint=getPaint();
 		paint.setStyle(Paint.Style.STROKE);
 		int colorStep=0;
+		PointF point=getPointF();
 		for(int i=0;i<size();i++){
 			if ( useMode )
 				if ( mode == 1 )

@@ -22,7 +22,7 @@ public class CircleInsideDraw extends CircleDraw
 	
 	
 	private int size;
-	private float spaceWidth,borderHeight;
+	private float spaceWidth;
 	
 	private Shader shader;
 	private float[] points;
@@ -31,10 +31,7 @@ public class CircleInsideDraw extends CircleDraw
 	public CircleInsideDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
 	{
 		super(draw, engine);
-		borderHeight=engine.getWidth()/6f;
-		//borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
 		spaceWidth=engine.getSharedPreferences().getInt("spaceWidth",20);
-		//drawHeight=engine.getHeight()-engine.getSharedPreferences().getInt("height",10)/100.0f*engine.getHeight();
 		onSizeChanged();
 
 		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
@@ -165,24 +162,14 @@ public class CircleInsideDraw extends CircleDraw
 	private void drawLines(double[] buffer, Canvas canvas, boolean useMode,final int mode)
 	{
 		Paint paint=getPaint();
-		//final int borderWidth=getEngine().getSharedPreferences().getInt("borderWidth", 30);
 		if(points==null||points.length!=size)
 			points=new float[size];
-		//spaceWidth=(float)(length/2.0f/borderWidth/size);
-		//final int step=buffer.length / size;
 		int colorStep=0;
 		float degress_step=360.0f / size;
-		//float degress=0;
-		final int y=(canvas.getHeight() - canvas.getWidth() / 3) / 2-(int)(paint.getStrokeWidth()/2);
-		//if(mode==3)
-		//	paint.setColor(getEngine().getColor());
+		float radius=getRadius();
 		canvas.save();
-		final PointF center=new PointF();
-		center.x = canvas.getWidth() / 2.0f;
-		center.y = canvas.getHeight() / 2.0f;
+		final PointF center=getPointF();
 		canvas.rotate(degress_step / 2.0f, center.x, center.y);
-		float offsetX=(canvas.getWidth() - paint.getStrokeWidth()) / 2.0f+paint.getStrokeWidth()/2;
-		//int end=size-1;
 		for ( int i=0;i < size;i ++ )
 		{
 			if ( useMode )
@@ -196,7 +183,7 @@ public class CircleInsideDraw extends CircleDraw
 				{
 					paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
 				}
-			float height=(float) (buffer[i] / 127d * borderHeight);
+			float height=(float) (buffer[i] / 127d * radius);
 			if(height>points[i])
 				points[i]=height;
 			else
@@ -204,26 +191,10 @@ public class CircleInsideDraw extends CircleDraw
 			if(height<0)height=0;
 			points[i]=height;
 			if(paint.getStrokeCap()==Paint.Cap.ROUND)
-			canvas.drawLine(offsetX,y,offsetX,y+height,paint);
+			canvas.drawLine(center.x,center.y-radius,center.x,center.y-radius+height,paint);
 			else
-			canvas.drawRect(offsetX-paint.getStrokeWidth()/2, y, offsetX + paint.getStrokeWidth()/2, y + height, paint);
+			canvas.drawRect(center.x-paint.getStrokeWidth()/2, center.y-radius, center.x + paint.getStrokeWidth()/2, center.y-radius + height, paint);
 			canvas.rotate(degress_step, center.x, center.y);
-			//degress+=degress_step;
-			/*if ( i == end )
-			{
-				if ( degress_step > 0 )
-				{
-					canvas.restore();
-					canvas.save();
-					degress_step = -degress_step;
-					canvas.rotate(degress_step / 2.0f, center.x, center.y);
-					i = -1;
-				}
-				else
-				{
-					break;
-				}
-			}*/
 		}
 		canvas.restore();
 	}

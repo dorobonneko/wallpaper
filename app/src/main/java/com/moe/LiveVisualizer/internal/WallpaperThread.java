@@ -16,7 +16,6 @@ import android.graphics.PorterDuff;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Movie;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.gifdecoder.GifDecoder;
 import com.moe.LiveVisualizer.inter.Draw;
 import android.animation.ValueAnimator;
@@ -90,6 +89,23 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 				if(imageDraw!=null)
 					imageDraw.setCutImage(p1.getBoolean(p2,true));
 				break;
+			case "offsetX":
+				if(imageDraw!=null)
+					imageDraw.setOffsetX(p1.getInt(p2,engine.getWidth()/2));
+					break;
+			case "offsetY":
+				if(imageDraw!=null)
+					imageDraw.setOffsetY(p1.getInt(p2,engine.getHeight()/2));
+					break;
+			case "degress":
+				if(imageDraw!=null)
+					imageDraw.setDegressStep(p1.getInt(p2,10)/100f*10);
+				break;
+			case "circleRadius":
+				if(imageDraw!=null)
+					imageDraw.setCircleRadius(p1.getInt(p2,Math.min(engine.getWidth(),engine.getHeight())/6));
+				break;
+			
 		}
 	}
 	

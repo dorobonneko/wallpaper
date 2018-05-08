@@ -14,6 +14,7 @@ import com.moe.LiveVisualizer.draw.CircleInsideDraw;
 import android.graphics.Matrix;
 import com.moe.LiveVisualizer.draw.CircleRadialDraw;
 import com.moe.LiveVisualizer.draw.RippleDraw;
+import com.moe.LiveVisualizer.draw.CircleDraw;
 
 public class ImageDraw implements OnColorSizeChangedListener
 {
@@ -26,6 +27,29 @@ public class ImageDraw implements OnColorSizeChangedListener
 	public ImageDraw(LiveWallpaper.WallpaperEngine engine){
 		this.engine=engine;
 		engine.registerColorSizeChangedListener(this);
+	}
+	public void setCircleRadius(int radius){
+		for(Draw draw:drawList)
+		if(draw instanceof CircleDraw)
+		((CircleDraw)draw).setRadius(radius);
+	}
+	public void setDegressStep(float step){
+		for(Draw draw:drawList)
+		if(draw instanceof CircleDraw)
+		((CircleDraw)draw).setDegressStep(step);
+	}
+	public void setOffsetY(int y)
+	{
+		for(Draw draw:drawList)
+			if(draw!=null)
+				draw.setOffsetY(y);
+	}
+
+	public void setOffsetX(int x)
+	{
+		for(Draw draw:drawList)
+			if(draw!=null)
+				draw.setOffsetX(x);
 	}
 	public void setCenterScale(boolean scale){
 		if(scale)

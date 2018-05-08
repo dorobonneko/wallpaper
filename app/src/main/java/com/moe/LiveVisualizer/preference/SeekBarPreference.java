@@ -77,7 +77,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 		// TODO: Implement this method
 		super.onSetInitialValue(restorePersistedValue, defaultValue);
 		if(restorePersistedValue)
-		progress=getPersistedInt(progress);
+		progress=getPersistedInt(defaultValue!=null?defaultValue:progress);
 	}
 
 	@Override
@@ -85,6 +85,12 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 	{
 		progress=a.getInt(index,progress);
 		return progress;
+	}
+
+	@Override
+	public void setDefaultValue(Object defaultValue)
+	{
+		progress=defaultValue;
 	}
 	
 }

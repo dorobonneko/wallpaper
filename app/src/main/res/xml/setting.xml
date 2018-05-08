@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	
+	android:fitsSystemWindows="true"
 	>
    <Preference
 	   android:title="背景"
@@ -31,11 +31,11 @@
 	   android:entries="@array/visualizer_mode"
 	   android:entryValues="@array/visualizer_mode_v"
 	   android:defaultValue="0"/>
-   <Preference
+   <!--<Preference
 	   android:shouldDisableView="true"
 	   android:title="中心圆图片"
 	   android:summary="配置圆形频谱的中心部分"
-	   android:key="circle_image"/>
+	   android:key="circle_image"/>-->
 	<com.moe.LiveVisualizer.preference.SeekBarPreference
 		android:title="频谱高度"
 		android:summary="仅对非圆形频谱有效"
@@ -74,19 +74,19 @@
 		android:title="线条圆角"
 		android:defaultValue="true"
 		android:key="round"/>
-	<SwitchPreference
+	<!--<SwitchPreference
 		android:title="中心图旋转开关"
 		android:summary="推荐使用状态栏快捷图块"
 		android:key="circleSwitch"
-		android:defaultValue="true"/>
+		android:defaultValue="true"/>-->
 	<SwitchPreference
 		android:title="自动缩放图片"
 		android:summary="主要针对gif图片"
 		android:key="scaleImage"
 		android:defaultValue="true"/>
-	<SwitchPreference
+	<!--<SwitchPreference
 		android:title="裁剪中心圆图片"
 		android:summary="将会裁成圆形，配合自动缩放使用"
 		android:key="cutImage"
-		android:defaultValue="true"/>
+		android:defaultValue="true"/>-->
 </PreferenceScreen>
