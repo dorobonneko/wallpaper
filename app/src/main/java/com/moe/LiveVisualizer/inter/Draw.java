@@ -24,8 +24,8 @@ public interface Draw
 	void setShader(Shader shader);
 	Shader getShader();
 	void setRound(boolean round);
-	void setCutImage(boolean cut);
-	Matrix getCenterScale();
+	//void setCutImage(boolean cut);
+	//Matrix getCenterScale();
 	void setOffsetX(int x);
 	void setOffsetY(int y);
 }

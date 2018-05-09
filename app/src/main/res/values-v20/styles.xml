@@ -2,6 +2,6 @@
 <resources>
     <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
 		<item name="android:windowTranslucentNavigation">true</item>
-		<item name="android:windowTranslucentStatus">false</item>
-		</style>
+		<item name="android:windowTranslucentStatus">true</item>
+	</style>
 </resources>

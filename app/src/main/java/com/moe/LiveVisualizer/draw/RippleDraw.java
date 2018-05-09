@@ -19,8 +19,17 @@ public class RippleDraw extends CircleDraw
 	private Shader shader;
 	private Bitmap shaderBuffer;
 	private float borderHeight;
+	private Paint paint;
 	public RippleDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		super(draw,engine);
+		paint = new Paint();
+		paint.setStrokeCap(getEngine().getSharedPreferences().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
+		paint.setAntiAlias(true);
+		paint.setDither(true);
+		paint.setColor(0xff39c5bb);
+		paint.setStyle(Paint.Style.FILL);
+		paint.setStrokeWidth(engine.getSharedPreferences().getInt("borderWidth",30));
+		
 		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
 		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
 
@@ -34,10 +43,18 @@ public class RippleDraw extends CircleDraw
 				}
 			});
 	}
+
+	@Override
+	public void setRound(boolean round)
+	{
+		paint.setStrokeCap(round?Paint.Cap.ROUND:Paint.Cap.SQUARE);
+	}
+
+	
 	@Override
 	public void onDraw(Canvas canvas, int color_mode)
 	{
-		Paint paint=getPaint();
+		Paint paint=this.paint;
 		if(color_mode==2){
 			drawMode(canvas,color_mode,true);
 		}else if(color_mode==4){
@@ -105,7 +122,7 @@ public class RippleDraw extends CircleDraw
 	@Override
 	public void onBorderWidthChanged(int width)
 	{
-		getPaint().setStrokeWidth(width);
+		paint.setStrokeWidth(width);
 	}
 
 	@Override
@@ -132,7 +149,7 @@ public class RippleDraw extends CircleDraw
 		if(points==null||points.length!=size())
 			points=new float[size()];
 		double[] buffer=getFft();
-		Paint paint=getPaint();
+		Paint paint=this.paint;
 		paint.setStyle(Paint.Style.STROKE);
 		int colorStep=0;
 		PointF point=getPointF();

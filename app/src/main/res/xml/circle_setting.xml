@@ -40,4 +40,10 @@
 		android:summary="将会裁成圆形，配合自动缩放使用"
 		android:key="cutImage"
 		android:defaultValue="true"/>
+	<ListPreference
+		android:title="方向"
+		android:key="direction"
+		android:defaultValue="0"
+		android:entries="@array/direction"
+		android:entryValues="@array/direction_v"/>
 </PreferenceScreen>

@@ -8,13 +8,14 @@ import android.graphics.Shader;
 import com.moe.LiveVisualizer.draw.PopCircleDraw;
 import com.moe.LiveVisualizer.draw.RadialDraw;
 import com.moe.LiveVisualizer.draw.LineChartDraw;
-import com.moe.LiveVisualizer.draw.CircleLineDraw;
-import com.moe.LiveVisualizer.inter.Draw;
-import com.moe.LiveVisualizer.draw.CircleInsideDraw;
-import android.graphics.Matrix;
 import com.moe.LiveVisualizer.draw.CircleRadialDraw;
+import com.moe.LiveVisualizer.inter.Draw;
+import android.graphics.Matrix;
+import com.moe.LiveVisualizer.draw.CenterRadialDraw;
 import com.moe.LiveVisualizer.draw.RippleDraw;
 import com.moe.LiveVisualizer.draw.CircleDraw;
+import com.moe.LiveVisualizer.draw.RingDraw;
+import com.moe.LiveVisualizer.draw.CircleTriangleDraw;
 
 public class ImageDraw implements OnColorSizeChangedListener
 {
@@ -28,15 +29,22 @@ public class ImageDraw implements OnColorSizeChangedListener
 		this.engine=engine;
 		engine.registerColorSizeChangedListener(this);
 	}
+
+	public void setDirection(int direction)
+	{
+		for(Draw draw:drawList)
+			if(draw instanceof RingDraw)
+				((RingDraw)draw).setDirection(direction);
+	}
 	public void setCircleRadius(int radius){
 		for(Draw draw:drawList)
-		if(draw instanceof CircleDraw)
-		((CircleDraw)draw).setRadius(radius);
+		if(draw instanceof RingDraw)
+		((RingDraw)draw).setRadius(radius);
 	}
 	public void setDegressStep(float step){
 		for(Draw draw:drawList)
-		if(draw instanceof CircleDraw)
-		((CircleDraw)draw).setDegressStep(step);
+		if(draw instanceof RingDraw)
+		((RingDraw)draw).setDegressStep(step);
 	}
 	public void setOffsetY(int y)
 	{
@@ -63,8 +71,8 @@ public class ImageDraw implements OnColorSizeChangedListener
 	public void setCutImage(boolean cut)
 	{
 		for(Draw draw:drawList)
-		if(draw!=null)
-		draw.setCutImage(cut);
+		if(draw instanceof RingDraw)
+		((RingDraw)draw).setCutImage(cut);
 		
 	}
 
@@ -136,14 +144,14 @@ public class ImageDraw implements OnColorSizeChangedListener
 			case "1"://折线图
 				return drawList[1]==null?drawList[1]=new LineChartDraw(this,engine):drawList[1];
 			case "2"://圆形射线
-				return drawList[2]==null?drawList[2]=new CircleLineDraw(this,engine):drawList[2];
+				return drawList[2]==null?drawList[2]=new CircleRadialDraw(this,engine):drawList[2];
 			case "3"://弹弹圈
 				return drawList[3]==null?drawList[3]=new PopCircleDraw(this,engine):drawList[3];
-			case "4"://
-				return drawList[4]==null?drawList[4]=new CircleInsideDraw(this,engine):drawList[4];
-			case "5":
-				return drawList[5]==null?drawList[5]=new CircleRadialDraw(this,engine):drawList[5];
-			case "6":
+			case "4"://圆环三角
+				return drawList[4]==null?drawList[4]=new CircleTriangleDraw(this,engine):drawList[4];
+			case "5"://射线
+				return drawList[5]==null?drawList[5]=new CenterRadialDraw(this,engine):drawList[5];
+			case "6"://波纹
 				return drawList[6]==null?drawList[6]=new RippleDraw(this,engine):drawList[6];
 		}
 		return null;

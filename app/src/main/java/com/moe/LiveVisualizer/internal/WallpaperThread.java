@@ -20,6 +20,7 @@ import com.bumptech.glide.gifdecoder.GifDecoder;
 import com.moe.LiveVisualizer.inter.Draw;
 import android.animation.ValueAnimator;
 import android.animation.ObjectAnimator;
+import com.moe.LiveVisualizer.draw.RingDraw;
 
 public class WallpaperThread extends Thread implements SharedPreferences.OnSharedPreferenceChangeListener
 {
@@ -105,6 +106,10 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 				if(imageDraw!=null)
 					imageDraw.setCircleRadius(p1.getInt(p2,Math.min(engine.getWidth(),engine.getHeight())/6));
 				break;
+			case "direction":
+				if(imageDraw!=null)
+					imageDraw.setDirection(Integer.parseInt(p1.getString(p2,RingDraw.OUTSIDE+"")));
+					break;
 			
 		}
 	}

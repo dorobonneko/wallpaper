@@ -35,7 +35,7 @@ public class SettingActivity extends Activity
 	private void init()
 	{
 		ComponentName service=new ComponentName(this,LiveWallpaper.class);
-		if (Build.VERSION.SDK_INT<23||(checkSelfPermission("android.permission.RECORD_AUDIO") == PackageManager.PERMISSION_GRANTED &&checkSelfPermission("android.permission.READ_PHONE_STATE")==PackageManager.PERMISSION_GRANTED))
+		if (Build.VERSION.SDK_INT<23||checkSelfPermission("android.permission.RECORD_AUDIO") == PackageManager.PERMISSION_GRANTED)
 		{
 			/*if ( Build.VERSION.SDK_INT > 18 && !notificationListenerEnable() )
 			 {

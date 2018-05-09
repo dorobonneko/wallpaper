@@ -10,9 +10,9 @@
 		<string-array name="visualizer_mode">
 			<item>柱形图</item>
 			<item>折线图</item>
-			<item>圆形射线图</item>
+			<item>圆环射线</item>
 			<item>弹弹圈</item>
-			<item>圆环内射线</item>
+			<item>圆环三角</item>
 			<item>射线</item>
 			<item>水波纹</item>
 		</string-array>
@@ -32,4 +32,12 @@
 			<item>5</item>
 			<item>6</item>
 		</string-array>
+		<string-array name="direction">
+			<item>向外</item>
+			<item>向内</item>
+			</string-array>
+		<string-array name="direction_v">
+			<item>0</item>
+			<item>1</item>
+			</string-array>
 		</resources>

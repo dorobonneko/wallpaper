@@ -5,8 +5,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.widget.Toast;
 import com.moe.LiveVisualizer.LiveWallpaper;
-import com.tencent.bugly.Bugly;
-import com.tencent.bugly.crashreport.BuglyLog;
 
 public class VisualizerThread extends Thread
 {
@@ -92,7 +90,6 @@ public class VisualizerThread extends Thread
 							}
 							catch (Exception e)
 							{
-								BuglyLog.e(getName(), e.getMessage());
 								//error_msg=e.getMessage();
 							}
 						}
@@ -112,7 +109,6 @@ public class VisualizerThread extends Thread
 						}
 						catch (Exception e)
 						{
-							BuglyLog.e(getName(), e.getMessage());
 							//error_msg=e.getMessage();
 						}
 						break;

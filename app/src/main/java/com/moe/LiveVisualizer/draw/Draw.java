@@ -160,18 +160,9 @@ private int getMiddleColor(int c1,int c2){
 		return start-(int)((start-end)*fraction);
 	}
 
-	@Override
-	public void setCutImage(boolean cut)
-	{
-		
-	}
+	
 
-	@Override
-	public Matrix getCenterScale()
-	{
-		return draw.getCenterScale();
-	}
-
+	
 	@Override
 	public void setOffsetX(int x)
 	{

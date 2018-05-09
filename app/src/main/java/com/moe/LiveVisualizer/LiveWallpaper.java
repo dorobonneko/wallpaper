@@ -11,7 +11,6 @@ import android.service.wallpaper.WallpaperService;
 import android.util.DisplayMetrics;
 import com.bumptech.glide.gifdecoder.GifDecoder;
 import com.moe.LiveVisualizer.utils.ColorList;
-import com.tencent.bugly.Bugly;
 
 public class LiveWallpaper extends WallpaperService
 {
@@ -27,7 +26,6 @@ public class LiveWallpaper extends WallpaperService
 	public void onCreate()
 	{
 		super.onCreate();
-		Bugly.init(getApplicationContext(), "39c93f2bb3", false);
 		display = new DisplayMetrics();
 		((WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getRealMetrics(display);
 		moe = getSharedPreferences("moe", 0);

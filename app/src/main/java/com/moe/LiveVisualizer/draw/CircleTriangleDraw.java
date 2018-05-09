@@ -1,81 +1,41 @@
 package com.moe.LiveVisualizer.draw;
-import android.graphics.Paint;
+import com.moe.LiveVisualizer.internal.ImageDraw;
 import com.moe.LiveVisualizer.LiveWallpaper;
 import android.graphics.Canvas;
+import android.graphics.Shader;
 import android.graphics.Bitmap;
+import android.util.TypedValue;
+import android.graphics.Paint;
+import android.graphics.SweepGradient;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.PorterDuff;
-import android.util.TypedValue;
 import android.graphics.LinearGradient;
-import android.graphics.Shader;
-import android.graphics.RadialGradient;
-import android.graphics.SweepGradient;
-import android.graphics.Point;
 import android.graphics.PointF;
-import com.moe.LiveVisualizer.internal.ImageDraw;
-import com.moe.LiveVisualizer.internal.OnColorSizeChangedListener;
-import android.graphics.RectF;
-import android.content.SharedPreferences;
 
-public class CircleLineDraw extends CircleDraw
+public class CircleTriangleDraw extends RingDraw
 {
 
-
-
-	private int borderHeight,size;
-	private float spaceWidth;
-	private Shader shader;
 	private float[] points;
-	private Bitmap shaderBuffer;
-	public CircleLineDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
+	private int size;
+	public CircleTriangleDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
 	{
 		super(draw, engine);
-
-		borderHeight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, engine.getSharedPreferences().getInt("borderHeight", 100), engine.getContext().getResources().getDisplayMetrics());
-		spaceWidth = engine.getSharedPreferences().getInt("spaceWidth", 20);
-		//drawHeight=engine.getHeight()-engine.getSharedPreferences().getInt("height",10)/100.0f*engine.getHeight();
-		onSizeChanged();
-
-		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
-
-				@Override
-				public void onColorSizeChanged()
-				{
-					shader = null;
-					if ( shaderBuffer != null )
-						shaderBuffer.recycle();
-					shaderBuffer = null;
-				}
-			});
-	}
-
-	@Override
-	public void onBorderHeightChanged(int height)
-	{
-		borderHeight = height;
-		onSizeChanged();
-	}
-
-
-
-	@Override
-	public void onSpaceWidthChanged(int space)
-	{
-		spaceWidth = space;
-		onSizeChanged();
 	}
 
 	@Override
 	public int size()
 	{
+		// TODO: Implement this method
 		return size;
 	}
-	private void onSizeChanged()
+
+	@Override
+	public void onSizeChanged()
 	{
 		final double length=getEngine().getWidth() / 3 * Math.PI;
 		try
 		{
-			size = (int)((length / 2.0f - spaceWidth) / (getPaint().getStrokeWidth() + spaceWidth));
+			size = (int)((length / 2.0f - getSpaceWidth()) / (getPaint().getStrokeWidth()*2 + getSpaceWidth()));
 		}
 		catch (Exception e)
 		{}
@@ -85,23 +45,14 @@ public class CircleLineDraw extends CircleDraw
 		}
 		catch (Exception e)
 		{}
-
 	}
-
 	
-
-	@Override
-	public void onBorderWidthChanged(int width)
-	{
-		getPaint().setStrokeWidth(width);
-		onSizeChanged();
-	}
 
 	@Override
 	public void onDraw(Canvas canvas, int color_mode)
 	{
 		Paint paint=getPaint();
-		
+
 		if ( color_mode == 2 )
 		{
 			drawLines(getFft(), canvas, true, color_mode);
@@ -132,19 +83,19 @@ public class CircleLineDraw extends CircleDraw
 							//final Canvas tmpCanvas=new Canvas(src);
 							final int layer=canvas.saveLayer(0, 0, canvas.getWidth(), canvas.getHeight(), null, Canvas.ALL_SAVE_FLAG);
 							drawLines(getFft(), canvas, false, color_mode);
-							if ( shader == null )
-								shader = new SweepGradient(canvas.getWidth() / 2.0f, canvas.getHeight() / 2.0f, getEngine().getColorList().toArray(), null);
-							if ( shaderBuffer == null )
+							if ( getShader() == null )
+								setShader( new SweepGradient(canvas.getWidth() / 2.0f, canvas.getHeight() / 2.0f, getEngine().getColorList().toArray(), null));
+							if ( getShaderBuffer() == null )
 							{
-								shaderBuffer = Bitmap.createBitmap(getEngine().getWidth(), getEngine().getHeight(), Bitmap.Config.ARGB_4444);
-								Canvas shaderCanvas=new Canvas(shaderBuffer);
-								paint.setShader(shader);
+								setShaderBuffer( Bitmap.createBitmap(getEngine().getWidth(), getEngine().getHeight(), Bitmap.Config.ARGB_4444));
+								Canvas shaderCanvas=new Canvas(getShaderBuffer());
+								paint.setShader(getShader());
 								shaderCanvas.drawRect(0, 0, shaderCanvas.getWidth(), shaderCanvas.getHeight(), paint);
 								paint.setShader(null);
 							}
 							paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 							//canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint);
-							canvas.drawBitmap(shaderBuffer, 0, 0, paint);
+							canvas.drawBitmap(getShaderBuffer(), 0, 0, paint);
 							//paint.setShader(null);
 							paint.setXfermode(null);
 							canvas.restoreToCount(layer);
@@ -177,16 +128,21 @@ public class CircleLineDraw extends CircleDraw
 	{
 		PointF point=getPointF();
 		float radius=getRadius();
+		final float radialHeight=getDirection()==OUTSIDE?getBorderHeight():getRadius();
 		Paint paint=getPaint();
-		if ( points == null || points.length != size )
-			points = new float[size];
+		paint.setStyle(Paint.Style.STROKE);
+		float width=paint.getStrokeWidth()/2;
+		//paint.setStrokeWidth(0);
+		if ( points == null || points.length != size() )
+			points = new float[size()];
 		int colorStep=0;
-		float degress_step=180.0f / size;
+		float degress_step=360f / size();
+		
 		canvas.save();
 		final PointF center=getPointF();
-		canvas.rotate(degress_step / 2.0f, center.x, center.y);
-		int end=size - 1;
-		for ( int i=0;i < size;i ++ )
+		//canvas.rotate(degress_step / 2.0f, center.x, center.y);
+		float[] lines=new float[8];
+		for ( int i=0;i < size();i ++ )
 		{
 			if ( useMode )
 				if ( mode == 1 )
@@ -199,36 +155,32 @@ public class CircleLineDraw extends CircleDraw
 				{
 					paint.setColor(0xff000000 | (int)(Math.random() * 0xffffff));
 				}
-			float height=(float) (buffer[i] / 127d * borderHeight);
+			float height=(float) (buffer[i] / 127d * radialHeight);
 			if ( height > points[i] )
 				points[i] = height;
 			else
 				height = points[i] - (points[i] - height) * getDownSpeed();
 			if ( height < 0 )height = 0;
 			points[i] = height;
-			if(paint.getStrokeCap()==Paint.Cap.ROUND)
-			canvas.drawLine(point.x,point.y-radius, point.x, point.y -radius- height, paint);
-			else
-			canvas.drawRect(point.x-paint.getStrokeWidth()/2, point.y-radius, point.x + paint.getStrokeWidth()/2, point.y -radius- height, paint);
+			//if(paint.getStrokeCap()==Paint.Cap.ROUND){
+				lines[0]=point.x-width-getSpaceWidth()/2;
+				lines[1]=point.y-radius;
+				lines[2]=point.x;
+				lines[3]=point.y-radius+(getDirection()==OUTSIDE?-height:height);
+				System.arraycopy(lines,2,lines,4,2);
+				lines[6]=point.x+width+getSpaceWidth()/2;
+				lines[7]=point.y-radius;
+				canvas.drawLines(lines, paint);
+				//canvas.drawArc(point.x-radius,point.y-radius,point.x+radius,point.y+radius,0,360,false,paint);
+			//}else{
+				//canvas.drawRect(point.x-paint.getStrokeWidth()/2, point.y-radius, point.x + paint.getStrokeWidth()/2, point.y -radius+(getDirection()==OUTSIDE?- height:height), paint);
+			//}
 			canvas.rotate(degress_step, center.x, center.y);
 			//degress+=degress_step;
-			if ( i == end )
-			{
-				if ( degress_step > 0 )
-				{
-					canvas.restore();
-					canvas.save();
-					degress_step = -degress_step;
-					canvas.rotate(degress_step / 2.0f, center.x, center.y);
-					i = -1;
-				}
-				else
-				{
-					break;
-				}
-			}
 		}
 		canvas.restore();
+		//paint.setStyle(Paint.Style.FILL);
+		//paint.setStrokeWidth(width*2);
 	}
-
+	
 }

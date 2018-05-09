@@ -2,7 +2,6 @@ package com.moe.LiveVisualizer.app;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import com.tencent.bugly.Bugly;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import android.content.res.Resources;
@@ -43,7 +42,7 @@ public class Application extends android.app.Application implements Thread.Uncau
 	public void onCreate()
 	{
 		super.onCreate();
-		Bugly.init(this,"39c93f2bb3",false);
+		//Bugly.init(this,"39c93f2bb3",false);
 		Thread.currentThread().setUncaughtExceptionHandler(this);
 	}
 }
