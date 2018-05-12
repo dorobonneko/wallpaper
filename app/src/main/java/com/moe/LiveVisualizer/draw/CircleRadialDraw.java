@@ -71,7 +71,7 @@ public class CircleRadialDraw extends RingDraw
 								setShader( new SweepGradient(canvas.getWidth() / 2.0f, canvas.getHeight() / 2.0f, getEngine().getColorList().toArray(), null));
 							if ( getShaderBuffer() == null )
 							{
-								setShaderBuffer( Bitmap.createBitmap(getEngine().getWidth(), getEngine().getHeight(), Bitmap.Config.ARGB_4444));
+								setShaderBuffer( Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_4444));
 								Canvas shaderCanvas=new Canvas(getShaderBuffer());
 								paint.setShader(getShader());
 								shaderCanvas.drawRect(0, 0, shaderCanvas.getWidth(), shaderCanvas.getHeight(), paint);

@@ -16,6 +16,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 	private TextView tips;
 	private SeekBar seekbar;
 	private int progress,max=100;
+	private boolean init;
 	public SeekBarPreference(Context context,AttributeSet attrs){
 		super(context,attrs);
 		TypedArray ta=context.obtainStyledAttributes(attrs,new int[]{R.attr.unit,android.R.attr.max});
@@ -74,10 +75,10 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 	@Override
 	protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue)
 	{
-		// TODO: Implement this method
-		super.onSetInitialValue(restorePersistedValue, defaultValue);
-		if(restorePersistedValue)
+		init=true;
+		if(restorePersistedValue){
 		progress=getPersistedInt(defaultValue!=null?defaultValue:progress);
+		}
 	}
 
 	@Override
@@ -90,7 +91,10 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 	@Override
 	public void setDefaultValue(Object defaultValue)
 	{
-		progress=defaultValue;
+		if(!init)
+			progress=defaultValue==null?progress:(int)defaultValue;
+		
+			
 	}
 	
 }

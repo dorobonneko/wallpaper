@@ -31,6 +31,9 @@ public class ImageThread extends Thread implements Handler.Callback
 		loadWallpaper();
 		Looper.loop();
 	}
+	public boolean isGif(){
+		return gifDecoder!=null;
+	}
 	public void loadImage()
 	{
 		if ( handler != null )
@@ -52,7 +55,8 @@ public class ImageThread extends Thread implements Handler.Callback
 			case 1:
 					try{gifDecoder.advance();
 					image=gifDecoder.getNextFrame();
-					if(live.getEngine()!=null&&live.getEngine().isVisible())
+					if(handler.hasMessages(1))
+						handler.removeMessages(1);
 					handler.sendEmptyMessageDelayed(1,gifDecoder.getNextDelay());
 					}catch(Exception e){}
 				break;
@@ -66,6 +70,8 @@ public class ImageThread extends Thread implements Handler.Callback
 	}
 	public Bitmap getImage()
 	{
+		if(gifDecoder!=null&&handler!=null&&!handler.hasMessages(1))
+			handler.sendEmptyMessage(1);
 		return image;
 	}
 	private synchronized void loadWallpaper()

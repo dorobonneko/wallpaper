@@ -74,6 +74,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 				 intent.setType("image/*");
 				 startActivityForResult(intent,GET_IMAGE);*/
 				final File wallpaper=new File(getActivity().getExternalFilesDir(null), "wallpaper");
+				final File wallpaper_p=new File(getActivity().getExternalFilesDir(null),"wallpaper_p");
 				if ( wallpaper.exists() )
 				{
 					if ( delete == null )
@@ -84,8 +85,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 								public void onClick(DialogInterface p1, int p2)
 								{
 									wallpaper.delete();
-									final File gif=new File(getActivity().getExternalFilesDir(null), "gif");
-									if ( gif.exists() )gif.delete();
+									wallpaper_p.delete();
 									getActivity().sendBroadcast(new Intent("wallpaper_changed"));
 
 								}
@@ -160,6 +160,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 												fos.flush();
 												final File wallpaper=new File(getActivity().getExternalFilesDir(null), "wallpaper");
 												Intent intent = new Intent("com.android.camera.action.CROP");
+												intent.setClass(getActivity(),CropActivity.class);
 												if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N )
 												{
 													intent.setDataAndType(FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", tmp), "image/*");
@@ -174,7 +175,9 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 												intent.putExtra("outputX", display.widthPixels);
 												intent.putExtra("outputY", display.heightPixels);
 												intent.putExtra("output", Uri.fromFile(wallpaper));
+												intent.putExtra("output2",Uri.fromFile(new File(getActivity().getExternalFilesDir(null),"wallpaper_p")));
 												intent.putExtra("return-data", false);
+												intent.putExtra("two",true);
 												intent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
 												try
 												{

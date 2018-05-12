@@ -32,7 +32,7 @@ public class CircleTriangleDraw extends RingDraw
 	@Override
 	public void onSizeChanged()
 	{
-		final double length=getEngine().getWidth() / 3 * Math.PI;
+		final double length=Math.min(getEngine().getDisplayWidth(),getEngine().getDisplayHeight()) / 3 * Math.PI;
 		try
 		{
 			size = (int)((length / 2.0f - getSpaceWidth()) / (getPaint().getStrokeWidth()*2 + getSpaceWidth()));
@@ -87,7 +87,7 @@ public class CircleTriangleDraw extends RingDraw
 								setShader( new SweepGradient(canvas.getWidth() / 2.0f, canvas.getHeight() / 2.0f, getEngine().getColorList().toArray(), null));
 							if ( getShaderBuffer() == null )
 							{
-								setShaderBuffer( Bitmap.createBitmap(getEngine().getWidth(), getEngine().getHeight(), Bitmap.Config.ARGB_4444));
+								setShaderBuffer( Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_4444));
 								Canvas shaderCanvas=new Canvas(getShaderBuffer());
 								paint.setShader(getShader());
 								shaderCanvas.drawRect(0, 0, shaderCanvas.getWidth(), shaderCanvas.getHeight(), paint);
@@ -130,7 +130,6 @@ public class CircleTriangleDraw extends RingDraw
 		float radius=getRadius();
 		final float radialHeight=getDirection()==OUTSIDE?getBorderHeight():getRadius();
 		Paint paint=getPaint();
-		paint.setStyle(Paint.Style.STROKE);
 		float width=paint.getStrokeWidth()/2;
 		//paint.setStrokeWidth(0);
 		if ( points == null || points.length != size() )

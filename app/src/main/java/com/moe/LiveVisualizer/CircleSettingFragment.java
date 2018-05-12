@@ -40,9 +40,6 @@ public class CircleSettingFragment extends PreferenceFragment implements Prefere
 	private ProgressDialog circle_dialog;
 	private AlertDialog circle_delete;
 	private SoftReference<Uri> weak;
-	
-	
-
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
@@ -54,14 +51,15 @@ public class CircleSettingFragment extends PreferenceFragment implements Prefere
 		getPreferenceManager().setSharedPreferencesName("moe");
 		addPreferencesFromResource(R.xml.circle_setting);
 		findPreference("circle_image").setOnPreferenceClickListener(this);
+		int width=Math.min(display.widthPixels,display.heightPixels);
+		int height=Math.max(display.widthPixels,display.heightPixels);
 		SeekBarPreference offsetX=(SeekBarPreference)findPreference("offsetX");
-		offsetX.setMax(display.widthPixels);
-		offsetX.setDefaultValue(display.widthPixels/2);
+		offsetX.setMax(width);
+		offsetX.setDefaultValue(width/2);
 		SeekBarPreference offsetY=(SeekBarPreference) findPreference("offsetY");
-		offsetY.setMax(display.heightPixels);
-		offsetY.setDefaultValue(display.heightPixels/2);
+		offsetY.setMax(height);
+		offsetY.setDefaultValue(height);
 		SeekBarPreference circle_radius=(SeekBarPreference) findPreference("circleRadius");
-		int width=Math.min(display.widthPixels,display.heightPixels)/2;
 		circle_radius.setMax(width);
 		circle_radius.setDefaultValue(width/3);
 	}

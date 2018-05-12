@@ -7,6 +7,8 @@ import java.lang.reflect.Proxy;
 import android.content.res.Resources;
 import java.lang.reflect.InvocationHandler;
 import com.moe.LiveVisualizer.R;
+import android.content.Intent;
+import com.moe.LiveVisualizer.CrashActivity;
 
 public class Application extends android.app.Application implements Thread.UncaughtExceptionHandler
 {
@@ -14,27 +16,15 @@ public class Application extends android.app.Application implements Thread.Uncau
 	@Override
 	public void uncaughtException(Thread p1, Throwable p2)
 	{
-		FileOutputStream fos=null;
-		try
-		{
-			fos = new FileOutputStream(getExternalCacheDir().getAbsolutePath() + "/log",true);
-			fos.write((p2.getMessage()+"\n").getBytes());
-			for(StackTraceElement element:p2.getStackTrace()){
-				fos.write((element.toString()+"\n").getBytes());
-			}
-			fos.write("\n\n".getBytes());
-			fos.flush();
-		}
-		catch (Exception e)
-		{}finally{
-			try
-			{
-				if ( fos != null )fos.close();
-			}
-			catch (IOException e)
-			{}
-			android.os.Process.killProcess(android.os.Process.myPid());
-		}
+		StringBuffer sb=new StringBuffer(p2.getMessage());
+		for(StackTraceElement element:p2.getStackTrace())
+		sb.append("\n").append(element.toString());
+		Intent intent=new Intent(this,CrashActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra(Intent.EXTRA_TEXT,sb.toString());
+		startActivity(intent);
+		Runtime.getRuntime().exit(1);
+		//android.os.Process.killProcess(android.os.Process.myPid());
 	}
 
 

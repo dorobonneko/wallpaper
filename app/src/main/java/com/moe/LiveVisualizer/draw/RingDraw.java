@@ -40,7 +40,7 @@ public abstract class RingDraw extends CircleDraw
 		paint.setColor(0xff39c5bb);
 		paint.setStyle(Paint.Style.FILL);
 		paint.setStrokeWidth(engine.getSharedPreferences().getInt("borderWidth",30));
-		radius=engine.getSharedPreferences().getInt("circleRadius",Math.min(engine.getWidth(),engine.getHeight())/6);
+		radius=engine.getSharedPreferences().getInt("circleRadius",Math.min(engine.getDisplayWidth(),engine.getDisplayHeight())/6);
 		cutCenterImage=engine.getSharedPreferences().getBoolean("cutImage",true);
 		degress_step=engine.getSharedPreferences().getInt("degress",10)/100f*10;
 		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
@@ -66,7 +66,17 @@ public abstract class RingDraw extends CircleDraw
 	public void onBorderHeightChanged(int height)
 	{
 		borderHeight = height;
-		onSizeChanged();
+	}
+
+	@Override
+	public void notifySizeChanged()
+	{
+		super.notifySizeChanged();
+		shader=null;
+		if(shaderBuffer!=null)
+			shaderBuffer.recycle();
+			shaderBuffer=null;
+			onSizeChanged();
 	}
 
 
@@ -85,7 +95,7 @@ public abstract class RingDraw extends CircleDraw
 	}
 	public void onSizeChanged()
 	{
-		final double length=getEngine().getWidth() / 3 * Math.PI;
+		final double length=Math.min(getEngine().getDisplayWidth(),getEngine().getDisplayHeight()) / 3 * Math.PI;
 		try
 		{
 			size = (int)((length / 2.0f - spaceWidth) / (getPaint().getStrokeWidth() + spaceWidth));
@@ -100,8 +110,6 @@ public abstract class RingDraw extends CircleDraw
 		{}
 
 	}
-
-
 
 	@Override
 	public void onBorderWidthChanged(int width)

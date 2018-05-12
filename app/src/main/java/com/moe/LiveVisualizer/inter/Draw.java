@@ -28,4 +28,5 @@ public interface Draw
 	//Matrix getCenterScale();
 	void setOffsetX(int x);
 	void setOffsetY(int y);
+	void notifySizeChanged();
 }

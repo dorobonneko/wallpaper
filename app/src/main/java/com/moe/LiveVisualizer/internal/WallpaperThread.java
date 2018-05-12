@@ -49,6 +49,13 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 		//onSharedPreferenceChanged(engine.getSharedPreferences(),"cutImage");
 	}
 
+	public void onSizeChanged()
+	{
+		if(imageDraw!=null)
+			imageDraw.notifySizeChanged();
+			onSharedPreferenceChanged(engine.getSharedPreferences(),"height");
+	}
+
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences p1, String p2)
 	{
@@ -72,7 +79,7 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 				break;
 			case "height"://10%
 			if(imageDraw!=null)
-				imageDraw.setDrawHeight(engine.getHeight()-p1.getInt(p2,10)/100.0f*engine.getHeight());
+				imageDraw.setDrawHeight(engine.getDisplayHeight()-p1.getInt(p2,10)/100f*engine.getDisplayHeight());
 				break;
 			case "round"://圆角
 				if(imageDraw!=null)
@@ -92,11 +99,11 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 				break;
 			case "offsetX":
 				if(imageDraw!=null)
-					imageDraw.setOffsetX(p1.getInt(p2,engine.getWidth()/2));
+					imageDraw.setOffsetX(p1.getInt(p2,Math.min(engine.getDisplayWidth(),engine.getDisplayHeight())/2));
 					break;
 			case "offsetY":
 				if(imageDraw!=null)
-					imageDraw.setOffsetY(p1.getInt(p2,engine.getHeight()/2));
+					imageDraw.setOffsetY(p1.getInt(p2,Math.max(engine.getDisplayHeight(),engine.getDisplayWidth())/2));
 					break;
 			case "degress":
 				if(imageDraw!=null)
@@ -104,13 +111,17 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 				break;
 			case "circleRadius":
 				if(imageDraw!=null)
-					imageDraw.setCircleRadius(p1.getInt(p2,Math.min(engine.getWidth(),engine.getHeight())/6));
+					imageDraw.setCircleRadius(p1.getInt(p2,Math.min(engine.getDisplayWidth(),engine.getDisplayHeight())/6));
 				break;
 			case "direction":
 				if(imageDraw!=null)
 					imageDraw.setDirection(Integer.parseInt(p1.getString(p2,RingDraw.OUTSIDE+"")));
 					break;
-			
+			case "gpu":
+				SurfaceHolder holder=engine.getSurfaceHolder();
+				if(holder!=null)
+					holder.setType(p1.getBoolean("gpu",false)?holder.SURFACE_TYPE_PUSH_BUFFERS:holder.SURFACE_TYPE_GPU);
+				break;
 		}
 	}
 	
@@ -148,12 +159,12 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 							Bitmap bitmap=engine.getWallpaper();//获取背景
 							if(bitmap!=null){
 								if(wallpaperMatrix!=null){
-									float scale=Math.min((float)engine.getWidth()/bitmap.getWidth(),(float)engine.getHeight()/bitmap.getHeight());
+									float scale=Math.min((float)canvas.getWidth()/bitmap.getWidth(),(float)canvas.getHeight()/bitmap.getHeight());
 									wallpaperMatrix.setScale(scale,scale);
-									wallpaperMatrix.postTranslate((engine.getWidth()-bitmap.getWidth()*scale)/2,(engine.getHeight()-bitmap.getHeight()*scale)/2);
+									wallpaperMatrix.postTranslate((canvas.getWidth()-bitmap.getWidth()*scale)/2,(canvas.getHeight()-bitmap.getHeight()*scale)/2);
 									canvas.drawBitmap(bitmap,wallpaperMatrix,null);
 								}else{
-									canvas.drawBitmap(bitmap,(engine.getWidth()-bitmap.getWidth())/2f,(engine.getHeight()-bitmap.getHeight())/2f,null);
+									canvas.drawBitmap(bitmap,(canvas.getWidth()-bitmap.getWidth())/2f,(canvas.getHeight()-bitmap.getHeight())/2f,null);
 								}
 							}
 							}

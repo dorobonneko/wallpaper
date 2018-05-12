@@ -84,12 +84,15 @@ public class SettingActivity extends Activity
 			else
 			{
 				setContentView(R.layout.setting_view);
+				
 				Fragment setting=getFragmentManager().findFragmentByTag("setting");
-				if ( setting == null )setting = new SettingFragment();
+				if ( setting == null ){setting = new SettingFragment();
+				
 				if ( setting.isAdded() )
 					getFragmentManager().beginTransaction().show(setting).commit();
 				else
 					getFragmentManager().beginTransaction().add(R.id.setting_view, setting, "setting").commit();
+				}
 				getActionBar().setDisplayHomeAsUpEnabled(true);
 				getActionBar().setHomeButtonEnabled(true);
 			}

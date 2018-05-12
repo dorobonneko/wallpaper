@@ -38,16 +38,23 @@ public class PopCircleDraw extends Draw
 	private void onSizeChanged(){
 		try
 		{
-			size = (int)((getEngine().getWidth() - spaceWidth) / (paint.getStrokeWidth() + spaceWidth));
+			size = (int)((getEngine().getDisplayWidth() - spaceWidth) / (paint.getStrokeWidth() + spaceWidth));
 		}
 		catch (Exception e)
 		{}
 		try{
 			size = size > getEngine().getFftSize() ?getEngine().getFftSize(): size;
-			spaceWidth = (getEngine().getWidth()-size*paint.getStrokeWidth()) / ((float)size-1);
+			spaceWidth = (getEngine().getDisplayWidth()-size*paint.getStrokeWidth()) / ((float)size-1);
 			}catch(Exception e){}
 		
 	}
+
+	@Override
+	public void notifySizeChanged()
+	{
+		onSizeChanged();
+	}
+
 
 	@Override
 	public void onDrawHeightChanged(float height)
@@ -77,7 +84,7 @@ public class PopCircleDraw extends Draw
 		
 		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
 		spaceWidth=engine.getSharedPreferences().getInt("spaceWidth",20);
-		drawHeight=engine.getHeight()-engine.getSharedPreferences().getInt("height",10)/100.0f*engine.getHeight();
+		drawHeight=engine.getDisplayHeight()-engine.getSharedPreferences().getInt("height",10)/100.0f*engine.getDisplayHeight();
 		onSizeChanged();
 		
 	}

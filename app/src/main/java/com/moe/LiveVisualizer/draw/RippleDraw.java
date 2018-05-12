@@ -84,7 +84,7 @@ public class RippleDraw extends CircleDraw
 							if ( shader == null )
 								shader = new SweepGradient(canvas.getWidth() / 2.0f, canvas.getHeight() / 2.0f, getEngine().getColorList().toArray(), null);
 							if(shaderBuffer==null){
-								shaderBuffer=Bitmap.createBitmap(getEngine().getWidth(),getEngine().getHeight(),Bitmap.Config.ARGB_4444);
+								shaderBuffer=Bitmap.createBitmap(canvas.getWidth(),canvas.getHeight(),Bitmap.Config.ARGB_4444);
 								Canvas shaderCanvas=new Canvas(shaderBuffer);
 								paint.setShader(shader);
 								shaderCanvas.drawRect(0,0,shaderCanvas.getWidth(),shaderCanvas.getHeight(),paint);
@@ -136,6 +136,13 @@ public class RippleDraw extends CircleDraw
 	{
 		
 	}
+
+	@Override
+	public void notifySizeChanged()
+	{
+		// TODO: Implement this method
+	}
+
 	
 
 

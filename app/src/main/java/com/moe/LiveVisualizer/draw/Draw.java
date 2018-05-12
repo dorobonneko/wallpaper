@@ -48,6 +48,9 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 		return draw.getDownSpeed();
 	}
 
+	
+
+
 
 	@Override
 	public void setFade(Shader shader)

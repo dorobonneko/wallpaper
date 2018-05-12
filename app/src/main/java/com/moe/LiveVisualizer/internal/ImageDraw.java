@@ -30,6 +30,15 @@ public class ImageDraw implements OnColorSizeChangedListener
 		engine.registerColorSizeChangedListener(this);
 	}
 
+	public void notifySizeChanged()
+	{
+		shader=null;
+		fade=null;
+		for(Draw draw:drawList)
+			if(draw!=null)
+				draw.notifySizeChanged();
+	}
+
 	public void setDirection(int direction)
 	{
 		for(Draw draw:drawList)

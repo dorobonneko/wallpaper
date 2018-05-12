@@ -32,14 +32,14 @@
 				android:resource="@xml/livesetting"/>
 		</service>
 		<activity
-			android:enabled="false"
+			android:enabled="true"
 			android:screenOrientation="portrait"
-			android:name="com.moe.LiveVisualizer.WelcomeActivity"
+			android:name="com.moe.LiveVisualizer.CrashActivity"
 			android:exported="true">
-			<intent-filter>
+			<!--<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<category android:name="android.intent.category.LAUNCHER"/>
-			</intent-filter>
+			</intent-filter>-->
 		</activity>
 		<activity
 			android:enabled="true"
@@ -79,6 +79,8 @@
 				<action android:name="android.service.quicksettings.action.QS_TILE"/>
 			</intent-filter>
 		</service>
+		<activity
+			android:name=".CropActivity"/>
 		</application>
 	
 </manifest>
