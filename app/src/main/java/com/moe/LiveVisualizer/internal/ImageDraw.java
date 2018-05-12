@@ -16,12 +16,14 @@ import com.moe.LiveVisualizer.draw.RippleDraw;
 import com.moe.LiveVisualizer.draw.CircleDraw;
 import com.moe.LiveVisualizer.draw.RingDraw;
 import com.moe.LiveVisualizer.draw.CircleTriangleDraw;
+import com.moe.LiveVisualizer.draw.CircleDisperseDraw;
+import com.moe.LiveVisualizer.draw.YamaLineDraw;
 
 public class ImageDraw implements OnColorSizeChangedListener
 {
 	private LiveWallpaper.WallpaperEngine engine;
 	private double[] fft;
-	private Draw[] drawList=new Draw[7];
+	private Draw[] drawList=new Draw[9];
 	private Shader shader,fade;
 	private float downSpeed;
 	private Matrix centerImageMatrix;
@@ -162,6 +164,10 @@ public class ImageDraw implements OnColorSizeChangedListener
 				return drawList[5]==null?drawList[5]=new CenterRadialDraw(this,engine):drawList[5];
 			case "6"://波纹
 				return drawList[6]==null?drawList[6]=new RippleDraw(this,engine):drawList[6];
+			case "7"://离散
+			return drawList[7]==null?drawList[7]=new CircleDisperseDraw(this,engine):drawList[7];
+			case "8"://山坡线
+			return drawList[8]==null?drawList[8]=new YamaLineDraw(this,engine):drawList[8];
 		}
 		return null;
 	}

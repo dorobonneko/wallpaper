@@ -1,24 +1,21 @@
 package com.moe.LiveVisualizer.draw;
-import android.graphics.Canvas;
-import android.content.SharedPreferences;
-import com.moe.LiveVisualizer.utils.ColorList;
-import com.moe.LiveVisualizer.LiveWallpaper;
 import android.graphics.Paint;
-import android.graphics.Bitmap;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.PorterDuff;
-import android.util.TypedValue;
-import android.graphics.LinearGradient;
-import android.graphics.Shader;
 import com.moe.LiveVisualizer.internal.ImageDraw;
+import com.moe.LiveVisualizer.LiveWallpaper;
+import android.util.TypedValue;
+import android.graphics.Canvas;
+import android.graphics.PorterDuff;
+import android.graphics.LinearGradient;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Shader;
 
-public class RadialDraw extends Draw
+public class YamaLineDraw extends Draw
 {
 	private int borderHeight,size,borderWidth;
 	private float spaceWidth,drawHeight;
 	private Paint paint;
 	private float[] points;
-	public RadialDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
+	public YamaLineDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
 	{
 		super(draw, engine);
 		paint = new Paint();
@@ -167,17 +164,12 @@ public class RadialDraw extends Draw
 	}
 	private void drawLine(double[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
-		//int borderWidth=getEngine().getSharedPreferences().getInt("borderWidth", 30);
-
 		if ( points == null || points.length != size )
 			points = new float[size];
-		float x=0;//起始像素
-		//int step=buffer.length / size;
 		int colorStep=0;
 		int mode=Integer.parseInt(getEngine().getSharedPreferences().getString("color_mode", "0"));
-		//if ( mode == 3 )
-		//paint.setColor(getEngine().getColor());
 		final float halfWidth=paint.getStrokeWidth() / 2;
+		float x=0;
 		for ( int i=0;i < size;i ++ )
 		{
 			if ( useMode )
@@ -200,20 +192,11 @@ public class RadialDraw extends Draw
 				height = points[i] - (points[i] - height) * getDownSpeed();
 			if ( height < 0 )height = 0;
 			points[i] = height;
-			if ( paint.getStrokeCap() == Paint.Cap.SQUARE )
-			{
-				//paint.setStrokeWidth(10);
-				canvas.drawRect(x, drawHeight - height, x += borderWidth , drawHeight, paint);
-				canvas.drawRect(x -= borderWidth, drawHeight + height, x += borderWidth, drawHeight, paint);
-				x += spaceWidth;
-			}
-			else
-			{
-				//paint.setStrokeWidth(borderWidth);
-				canvas.drawLine(x += halfWidth, drawHeight - height, x, drawHeight, paint);
-				canvas.drawLine(x, drawHeight + height + borderWidth, x, drawHeight + borderWidth, paint);
-				x += halfWidth + spaceWidth;
-			}
+			
+			canvas.drawLine(halfWidth, drawHeight, x+=halfWidth, drawHeight-height, paint);
+			canvas.drawLine(x, drawHeight - height, canvas.getWidth()-halfWidth, drawHeight, paint);
+			x += halfWidth + spaceWidth;
+			
 
 		}
 

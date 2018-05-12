@@ -80,6 +80,8 @@ public class CropActivity extends Activity implements CropView.CropCallback
 				finish();
 				break;
 			case 0:
+				if(item.getTitle().length()>2)
+					break;
 				item.setTitle("正在裁剪");
 				crop.crop(this);
 				break;
