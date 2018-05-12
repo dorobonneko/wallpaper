@@ -22,7 +22,6 @@ import java.io.IOException;
 import android.os.Handler;
 import android.os.Message;
 import android.app.Dialog;
-import android.support.v4.content.FileProvider;
 import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
@@ -149,19 +148,21 @@ public class CircleSettingFragment extends PreferenceFragment implements Prefere
 												fos.flush();
 												final File circle_file=new File(getActivity().getExternalFilesDir(null), "circle");
 												Intent intent = new Intent("com.android.camera.action.CROP");
-												if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N )
+												intent.setClass(getActivity(),CropActivity.class);
+												/*if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N )
 												{
 													intent.setDataAndType(FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", tmp), "image/*");
 													intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 												}
-												else
+												else*/
 													intent.setDataAndType(Uri.fromFile(tmp), "image/*");
 
 												intent.putExtra("crop", "true");
 												intent.putExtra("aspectX", 1);
 												intent.putExtra("aspectY", 1);
-												intent.putExtra("outputX", display.widthPixels/3);
-												intent.putExtra("outputY", display.widthPixels/3);
+												int width=Math.min(display.widthPixels,display.heightPixels)/3;
+												intent.putExtra("outputX", width);
+												intent.putExtra("outputY", width);
 												intent.putExtra("output", Uri.fromFile(circle_file));
 												intent.putExtra("return-data", false);
 												intent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());

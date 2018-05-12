@@ -8,8 +8,8 @@ android {
         applicationId "com.moe.LiveVisualizer"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 25
-        versionName "3.0.2"
+        versionCode 27
+        versionName "3.1.1"
     }
     buildTypes {
         release {
@@ -23,7 +23,7 @@ dependencies {
 	//compile 'com.tencent.bugly:crashreport:+'
 	//compile 'com.github.bumptech.glide:gifdecoder:+'  
 	//compile 'pl.droidsonroids.gif:android-gif-drawable:+'
-	compile 'com.android.support:support-core-utils:24+'
+	//compile 'com.android.support:support-core-utils:24+'
 	//compile 'com.android.support:palette-v7:25+'
 	//compile 'com.android.support:support-vector-drawable:25+'
 	//compile 'com.android.support:support-media-compat:25+'

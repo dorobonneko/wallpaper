@@ -7,7 +7,6 @@ import java.io.*;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.v4.content.FileProvider;
 import android.util.DisplayMetrics;
 import com.moe.LiveVisualizer.preference.SeekBarPreference;
 import android.view.WindowManager;
@@ -161,19 +160,21 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 												final File wallpaper=new File(getActivity().getExternalFilesDir(null), "wallpaper");
 												Intent intent = new Intent("com.android.camera.action.CROP");
 												intent.setClass(getActivity(),CropActivity.class);
-												if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N )
+												/*if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N )
 												{
 													intent.setDataAndType(FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", tmp), "image/*");
 													intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 												}
-												else
+												else*/
 													intent.setDataAndType(Uri.fromFile(tmp), "image/*");
 
 												intent.putExtra("crop", "true");
-												intent.putExtra("aspectX", display.widthPixels);
-												intent.putExtra("aspectY", display.heightPixels);
-												intent.putExtra("outputX", display.widthPixels);
-												intent.putExtra("outputY", display.heightPixels);
+												int width=Math.min(display.widthPixels,display.heightPixels);
+												int height=Math.max(display.widthPixels,display.heightPixels);
+												intent.putExtra("aspectX", width);
+												intent.putExtra("aspectY", height);
+												intent.putExtra("outputX", width);
+												intent.putExtra("outputY", height);
 												intent.putExtra("output", Uri.fromFile(wallpaper));
 												intent.putExtra("output2",Uri.fromFile(new File(getActivity().getExternalFilesDir(null),"wallpaper_p")));
 												intent.putExtra("return-data", false);
