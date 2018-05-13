@@ -99,8 +99,9 @@ public class LineChartDraw extends Draw
 		if(color_mode==2){
 			spaceLineChart(getFft(),canvas,color_mode);
 		}else if(color_mode==4){
-			paint.setColor(0xffffffff);
-			paint.setShadowLayer(paint.getStrokeWidth(),0,0,getColor());
+			int color=getColor();
+			paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+			paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 			lineChart(getFft(),canvas);
 			paint.setShadowLayer(0,0,0,0);
 		}else

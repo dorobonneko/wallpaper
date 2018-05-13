@@ -45,13 +45,19 @@ public abstract class CircleDraw extends Draw
 	@Override
 	public void setOffsetX(int x)
 	{
-		point.x=x;
+		if(getEngine().getDisplayWidth()>getEngine().getDisplayHeight())
+			point.y=x;
+			else
+			point.x=x;
 	}
 
 	@Override
 	public void setOffsetY(int y)
 	{
-		point.y=y;
+		if(getEngine().getDisplayWidth()>getEngine().getDisplayHeight())
+			point.x=y;
+			else
+			point.y=y;
 	}
 
 	

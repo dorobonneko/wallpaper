@@ -55,8 +55,9 @@ public class CircleDisperseDraw extends RingDraw
 		}
 		else if ( color_mode == 4 )
 		{
-			paint.setColor(0xffffffff);
-			paint.setShadowLayer(paint.getStrokeWidth(), 0, 0, getColor());
+			int color=getColor();
+			paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+			paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 			drawLines(getFft(), canvas, false, color_mode);
 			paint.setShadowLayer(0, 0, 0, 0);
 		}

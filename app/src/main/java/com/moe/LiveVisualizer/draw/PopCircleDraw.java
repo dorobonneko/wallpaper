@@ -112,8 +112,9 @@ public class PopCircleDraw extends Draw
 		if(color_mode==2){
 			drawPop(canvas,color_mode,true);
 		}else if(color_mode==4){
-			paint.setColor(0xffffffff);
-			paint.setShadowLayer(paint.getStrokeWidth(),0,0,getColor());
+			int color=getColor();
+			paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+			paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 			drawPop(canvas,color_mode,false);
 			paint.setShadowLayer(0,0,0,0);
 		}else

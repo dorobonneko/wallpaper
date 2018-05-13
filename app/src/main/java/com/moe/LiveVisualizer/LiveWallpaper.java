@@ -258,7 +258,6 @@ public class LiveWallpaper extends WallpaperService
 			return height;
 		}
 
-		@Override
 		public void notifyColorsChanged()
 		{
 			if ( sizeListener != null )

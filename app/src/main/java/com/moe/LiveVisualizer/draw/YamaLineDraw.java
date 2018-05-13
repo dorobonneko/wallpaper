@@ -103,9 +103,9 @@ public class YamaLineDraw extends Draw
 		}
 		else if ( color_mode == 4 )
 		{
-			paint.setColor(0xffffffff);
-			//paint.setStyle(Paint.Style.STROKE);
-			paint.setShadowLayer(paint.getStrokeWidth(), 0, 0, getColor());
+			int color=getColor();
+			paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+			paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 			drawLine(getFft(), canvas, color_mode, false);
 			paint.setShadowLayer(0, 0, 0, 0);
 			//paint.setStyle(Paint.Style.FILL);

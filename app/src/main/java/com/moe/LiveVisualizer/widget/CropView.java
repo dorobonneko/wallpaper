@@ -34,7 +34,6 @@ public class CropView extends View implements GestureDetector.OnGestureListener,
 	private ScaleGestureDetector scaleGesture;
 	private Matrix matrix;
 	private RectF vertical=new RectF(),horizontal=new RectF(),bounds=new RectF();
-	private float scaleX;
 	private int width;
 	private int height;
 	private Region regionv=new Region(),regionh=new Region();
@@ -432,7 +431,7 @@ public class CropView extends View implements GestureDetector.OnGestureListener,
 		height = MeasureSpec.getSize(heightMeasureSpec);
 		if ( bit != null )
 		{
-			scaleX = Math.min((float)width / bit.getWidth(), (float)height / bit.getHeight());
+			float scaleX = Math.min((float)width / bit.getWidth(), (float)height / bit.getHeight());
 			matrix.setScale(scaleX, scaleX);
 			matrix.postTranslate((width - bit.getWidth() * scaleX) / 2f, (height - bit.getHeight() * scaleX) / 2f);
 			rect();
@@ -648,7 +647,7 @@ public class CropView extends View implements GestureDetector.OnGestureListener,
 		this.bit = bit;
 		if ( bit != null )
 		{
-			scaleX = Math.min((float)getIWidth() / bit.getWidth(), (float)getIHeight() / bit.getHeight());
+			float scaleX = Math.min((float)getIWidth() / bit.getWidth(), (float)getIHeight() / bit.getHeight());
 			matrix.setScale(scaleX, scaleX);
 			matrix.postTranslate((getIWidth() - bit.getWidth() * scaleX) / 2f, (getIHeight() - bit.getHeight() * scaleX) / 2f);
 		}
@@ -668,40 +667,32 @@ public class CropView extends View implements GestureDetector.OnGestureListener,
 	}
 	private void rect()
 	{
-		if ( aspectX == 0 || aspectY == 0 || bit == null )return;
-		float f=bit.getWidth() / (float)bit.getHeight();
-		float aspect=aspectX / aspectY;
-		float widthV,heightV,widthH = 0,heightH = 0;
-		if ( f > aspect )
-		{//使用图片高度计算出比例宽度
-			widthV = bit.getHeight() * aspect * scaleX;
-			heightV = bit.getHeight() * scaleX;
-			if ( two )
-			{
-				widthH = bit.getWidth() * scaleX;
-				heightH = bit.getWidth() * scaleX * aspect;
-			}
+		if ( aspectX<= 0 || aspectY<= 0 || bit == null )return;
+		float aspect=aspectX/aspectY;
+		float width,height;
+		RectF image=getImageRect();
+		width=image.width();
+		height=image.width()/aspect;
+		if(height>image.height()){
+			height=image.height();
+			width=image.height()*aspect;
 		}
-		else
-		{
-			widthV = bit.getWidth() * scaleX;
-			heightV = bit.getWidth() / aspect * scaleX;
-			if ( two )
-			{
-				widthH = bit.getWidth() * scaleX;
-				heightH = bit.getWidth() * aspect * scaleX;
-			}
-		}
-		vertical.left = (getIWidth() - widthV) / 2;
-		vertical.top = (getIHeight() - heightV) / 2;
-		vertical.right = vertical.left + widthV;
-		vertical.bottom = vertical.top + heightV;
+		vertical.left = (getIWidth() - width) / 2;
+		vertical.top = (getIHeight() - height) / 2;
+		vertical.right = vertical.left + width;
+		vertical.bottom = vertical.top + height;
 		if ( two )
 		{
-			horizontal.left = (getIWidth() - widthH) / 2;
-			horizontal.right = horizontal.left + widthH;
-			horizontal.top = (getIHeight() - heightH) / 2;
-			horizontal.bottom = horizontal.top + heightH;
+			width=image.width();
+			height=image.width()*aspect;
+			if(height>image.height()){
+				height=image.height();
+				width=image.height()/aspect;
+			}
+			horizontal.left = (getIWidth() - width) / 2;
+			horizontal.right = horizontal.left + width;
+			horizontal.top = (getIHeight() - height) / 2;
+			horizontal.bottom = horizontal.top + height;
 		}
 
 	}

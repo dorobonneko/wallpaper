@@ -57,7 +57,7 @@ public class CircleSettingFragment extends PreferenceFragment implements Prefere
 		offsetX.setDefaultValue(width/2);
 		SeekBarPreference offsetY=(SeekBarPreference) findPreference("offsetY");
 		offsetY.setMax(height);
-		offsetY.setDefaultValue(height);
+		offsetY.setDefaultValue(height/2);
 		SeekBarPreference circle_radius=(SeekBarPreference) findPreference("circleRadius");
 		circle_radius.setMax(width);
 		circle_radius.setDefaultValue(width/3);

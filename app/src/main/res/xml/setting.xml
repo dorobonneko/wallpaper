@@ -89,4 +89,8 @@
 		android:summary="显示异常可尝试更改此项"
 		android:key="gpu"
 		android:defaultValue="false"/>
+	<SwitchPreference
+		android:title="霓虹灯颜色同步"
+		android:summary="开启后原先的白色变成当前颜色"
+		android:key="nenosync"/>
 </PreferenceScreen>
