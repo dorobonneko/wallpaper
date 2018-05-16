@@ -22,6 +22,7 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 	private ImageDraw draw;
 	private ValueAnimator anime;
 	private LiveWallpaper.WallpaperEngine engine;
+	private boolean isInterval;
 	Draw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
 	{
 		handler = new Handler(Looper.getMainLooper(), new Handler.Callback(){
@@ -47,24 +48,6 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 		// TODO: Implement this method
 		return draw.getDownSpeed();
 	}
-
-	
-
-
-
-	@Override
-	public void setFade(Shader shader)
-	{
-		draw.setFade(shader);
-	}
-
-	@Override
-	public Shader getFade()
-	{
-		// TODO: Implement this method
-		return draw.getFade();
-	}
-
 	@Override
 	public LiveWallpaper.WallpaperEngine getEngine()
 	{
@@ -100,18 +83,19 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 				return engine.getColorList().get(0);
 				default:
 		if(anime.isRunning()){
-			if(anime.getDuration()==5000)
+			if(isInterval)
 				return fade[0];
 				else
 			return evaluate(anime.getAnimatedFraction(),fade);
-		}else if(anime.getDuration()==5000){
+		}else if(isInterval){
 				//进入渐变
 				int readyIndex=index+1;
 				if(readyIndex>=engine.getColorList().size())
 					readyIndex=0;
 					fade[0]=engine.getColorList().get(index);
 					fade[1]=engine.getColorList().get(readyIndex);
-					anime.setDuration(2000);
+					anime.setDuration(getEngine().getSharedPreferences().getInt("nenofade",2)*1000);
+					isInterval=false;
 					handler.sendEmptyMessage(0);
 					
 			}else{
@@ -119,7 +103,8 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 				if(index>=engine.getColorList().size())
 					index=0;
 				fade[0]=(engine.getColorList().get(index));
-				anime.setDuration(5000);
+				isInterval=true;
+				anime.setDuration(getEngine().getSharedPreferences().getInt("nenointerval",5)*1000);
 				handler.sendEmptyMessage(0);
 			}
 			return fade[0];

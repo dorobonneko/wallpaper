@@ -36,6 +36,8 @@ public class PopCircleDraw extends Draw
 		return size;
 	}
 	private void onSizeChanged(){
+		spaceWidth=getEngine().getSharedPreferences().getInt("spaceWidth", 20);
+		
 		try
 		{
 			size = (int)((getEngine().getDisplayWidth() - spaceWidth) / (paint.getStrokeWidth() + spaceWidth));
@@ -111,7 +113,7 @@ public class PopCircleDraw extends Draw
 	private void animeDraw(Canvas canvas,int color_mode){
 		if(color_mode==2){
 			drawPop(canvas,color_mode,true);
-		}else if(color_mode==4){
+		}else if(color_mode==3){
 			int color=getColor();
 			paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
 			paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
@@ -145,17 +147,10 @@ public class PopCircleDraw extends Draw
 					paint.setXfermode(null);
 					canvas.drawBitmap(src, 0, 0, paint);
 					src.recycle();*/
-						if (getShader() == null )
-							setShader(new LinearGradient(0, 0, canvas.getWidth(), 0, getEngine().getColorList().toArray(), null, LinearGradient.TileMode.CLAMP));
 						paint.setShader(getShader());
 						drawPop(canvas,color_mode,false);	
 						paint.setShader(null);
 					break;
-					case 3:
-						Shader shader=getFade();
-						if(shader==null)
-							setFade(shader=new LinearGradient(0,0,0,canvas.getHeight(),getEngine().getColorList().toArray(),null,LinearGradient.TileMode.CLAMP));
-						paint.setShader(shader);
 					default:
 						drawPop(canvas,color_mode,true);
 						paint.setShader(null);

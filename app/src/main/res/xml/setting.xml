@@ -31,11 +31,12 @@
 	   android:entries="@array/visualizer_mode"
 	   android:entryValues="@array/visualizer_mode_v"
 	   android:defaultValue="0"/>
-   <!--<Preference
-	   android:shouldDisableView="true"
-	   android:title="中心圆图片"
-	   android:summary="配置圆形频谱的中心部分"
-	   android:key="circle_image"/>-->
+	<ListPreference
+		android:title="色带渐变方向"
+		android:key="color_direction"
+		android:entries="@array/color_direction"
+		android:entryValues="@array/color_direction_v"
+		android:defaultValue="0"/>
 	<com.moe.LiveVisualizer.preference.SeekBarPreference
 		android:title="频谱高度"
 		android:summary="仅对非圆形频谱有效"
@@ -93,4 +94,16 @@
 		android:title="霓虹灯颜色同步"
 		android:summary="开启后原先的白色变成当前颜色"
 		android:key="nenosync"/>
+	<com.moe.LiveVisualizer.preference.SeekBarPreference
+		android:title="霓虹灯变色间隔"
+		app:unit="s"
+		android:key="nenointerval"
+		android:max="60"
+		android:defaultValue="5"/>
+	<com.moe.LiveVisualizer.preference.SeekBarPreference
+		android:title="霓虹灯变色过渡时长"
+		app:unit="s"
+		android:key="nenofade"
+		android:max="30"
+		android:defaultValue="2"/>
 </PreferenceScreen>

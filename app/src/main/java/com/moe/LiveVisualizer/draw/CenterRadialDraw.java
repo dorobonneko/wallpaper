@@ -61,7 +61,7 @@ public class CenterRadialDraw extends CircleDraw
 		Paint paint=this.paint;
 		if(color_mode==2){
 			drawMode(canvas,color_mode,true);
-		}else if(color_mode==4){
+		}else if(color_mode==3){
 			int color=getColor();
 			paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
 			paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
@@ -109,11 +109,6 @@ public class CenterRadialDraw extends CircleDraw
 							 drawLines(getFft(), canvas, false,color_mode);
 							 paint.setShader(null);*/
 							break;
-						case 3:
-							Shader shader=getFade();
-							if(shader==null)
-								setFade(shader=new LinearGradient(0,0,0,canvas.getHeight(),getEngine().getColorList().toArray(),null,LinearGradient.TileMode.CLAMP));
-							paint.setShader(shader);
 						default:
 							drawMode(canvas,color_mode,true);
 							paint.setShader(null);

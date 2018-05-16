@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import java.lang.ref.WeakReference;
 import java.lang.ref.SoftReference;
 import android.widget.Toast;
+import java.util.Arrays;
 
 public class SettingFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,Preference.OnPreferenceChangeListener
 {
@@ -23,7 +24,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 	private final static int WALLPAPER_DISMISS=0x05;
 	private AlertDialog delete;
 	private ProgressDialog gif_dialog=null;
-	private ListPreference color_mode,visualizer_mode;
+	private ListPreference color_mode,visualizer_mode,color_direction;
 	private DisplayMetrics display;
 	private SoftReference<Uri> weak;
 	@Override
@@ -38,10 +39,13 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 		//findPreference("artwork").setEnabled(Build.VERSION.SDK_INT>18);
 		color_mode = (ListPreference) findPreference("color_mode");
 		visualizer_mode = (ListPreference) findPreference("visualizer_mode");
+		color_direction=(ListPreference) findPreference("color_direction");
 		color_mode.setOnPreferenceChangeListener(this);
 		visualizer_mode.setOnPreferenceChangeListener(this);
+		color_direction.setOnPreferenceChangeListener(this);
 		onPreferenceChange(color_mode, getPreferenceManager().getSharedPreferences().getString("color_mode", "0"));
 		onPreferenceChange(visualizer_mode, getPreferenceManager().getSharedPreferences().getString("visualizer_mode", "0"));
+		onPreferenceChange(color_direction,getPreferenceManager().getSharedPreferences().getString("color_direction","0"));
 
 		((SeekBarPreference)findPreference("borderHeight")).setMax(250);
 	}
@@ -52,10 +56,15 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 		switch ( p1.getKey() )
 		{
 			case "color_mode":
-				color_mode.setSummary(color_mode.getEntries()[Integer.parseInt(p2.toString())]);
+				try{
+				color_mode.setSummary(color_mode.getEntries()[Arrays.binarySearch(color_mode.getEntryValues(),p2.toString())]);
+				}catch(Exception e){}
 				break;
 			case "visualizer_mode":
 				visualizer_mode.setSummary(visualizer_mode.getEntries()[Integer.parseInt(p2.toString())]);
+				break;
+			case "color_direction":
+				color_direction.setSummary(color_direction.getEntries()[Integer.parseInt(p2.toString())]);
 				break;
 		} 
 		return true;

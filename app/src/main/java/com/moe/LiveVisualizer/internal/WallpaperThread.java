@@ -122,6 +122,10 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 				if(holder!=null)
 					holder.setType(p1.getBoolean("gpu",false)?holder.SURFACE_TYPE_PUSH_BUFFERS:holder.SURFACE_TYPE_GPU);
 				break;
+			case "color_direction":
+				if(imageDraw!=null)
+					imageDraw.setShader(null);
+				break;
 		}
 	}
 	

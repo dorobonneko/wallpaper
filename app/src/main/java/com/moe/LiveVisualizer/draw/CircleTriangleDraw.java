@@ -35,7 +35,7 @@ public class CircleTriangleDraw extends RingDraw
 		final double length=Math.min(getEngine().getDisplayWidth(),getEngine().getDisplayHeight()) / 3 * Math.PI;
 		try
 		{
-			size = (int)((length / 2.0f - getSpaceWidth()) / (getPaint().getStrokeWidth()*2 + getSpaceWidth()));
+			size = (int)((length - getSpaceWidth()*2) / (getPaint().getStrokeWidth()*2 + getSpaceWidth()*2));
 		}
 		catch (Exception e)
 		{}
@@ -57,7 +57,7 @@ public class CircleTriangleDraw extends RingDraw
 		{
 			drawLines(getFft(), canvas, true, color_mode);
 		}
-		else if ( color_mode == 4 )
+		else if ( color_mode == 3 )
 		{
 			int color=getColor();
 			paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
@@ -108,11 +108,6 @@ public class CircleTriangleDraw extends RingDraw
 							 drawLines(getFft(), canvas, false,color_mode);
 							 paint.setShader(null);*/
 							break;
-						case 3:
-							Shader shader=getFade();
-							if ( shader == null )
-								setFade(shader = new LinearGradient(0, 0, 0, canvas.getHeight(), getEngine().getColorList().toArray(), null, LinearGradient.TileMode.CLAMP));
-							paint.setShader(shader);
 						default:
 							drawLines(getFft(), canvas, true, color_mode);
 							paint.setShader(null);

@@ -18,13 +18,14 @@ import com.moe.LiveVisualizer.draw.RingDraw;
 import com.moe.LiveVisualizer.draw.CircleTriangleDraw;
 import com.moe.LiveVisualizer.draw.CircleDisperseDraw;
 import com.moe.LiveVisualizer.draw.YamaLineDraw;
+import android.graphics.LinearGradient;
 
 public class ImageDraw implements OnColorSizeChangedListener
 {
 	private LiveWallpaper.WallpaperEngine engine;
 	private double[] fft;
 	private Draw[] drawList=new Draw[9];
-	private Shader shader,fade;
+	private Shader shader;
 	private float downSpeed;
 	private Matrix centerImageMatrix;
 	public ImageDraw(LiveWallpaper.WallpaperEngine engine){
@@ -35,7 +36,6 @@ public class ImageDraw implements OnColorSizeChangedListener
 	public void notifySizeChanged()
 	{
 		shader=null;
-		fade=null;
 		for(Draw draw:drawList)
 			if(draw!=null)
 				draw.notifySizeChanged();
@@ -123,7 +123,6 @@ public class ImageDraw implements OnColorSizeChangedListener
 	@Override
 	public void onColorSizeChanged()
 	{
-		fade=null;
 		shader=null;
 	}
 	public double[] getFft(){
@@ -142,12 +141,6 @@ public class ImageDraw implements OnColorSizeChangedListener
 		this.buffer=buffer;
 		return get();
 	}*/
-	final public void setFade(Shader shader){
-			this.fade=shader;
-	}
-	final public Shader getFade(){
-		return fade;
-	}
 	private Draw get(){
 		switch(engine.getSharedPreferences().getString("visualizer_mode","0")){
 			case "0"://柱形图
@@ -174,7 +167,36 @@ public class ImageDraw implements OnColorSizeChangedListener
 	public void setShader(Shader shader){
 		this.shader=shader;
 	}
-	public Shader getShader(){
+	public synchronized Shader getShader(){
+		if(shader==null){
+			switch(engine.getSharedPreferences().getString("color_direction","0")){
+				case "0"://lefttoright
+					shader=new LinearGradient(0,0,engine.getDisplayWidth(),0,engine.getColorList().toArray(),null,LinearGradient.TileMode.CLAMP);
+					break;//righttoleft
+				case "1":
+					shader=new LinearGradient(engine.getDisplayWidth(),0,0,0,engine.getColorList().toArray(),null,LinearGradient.TileMode.CLAMP);
+					
+					break;//toptobottom
+				case "2":shader=new LinearGradient(0,0,0,engine.getDisplayHeight(),engine.getColorList().toArray(),null,LinearGradient.TileMode.CLAMP);
+					
+					break;//bottomtotop
+				case "3":shader=new LinearGradient(0,engine.getDisplayHeight(),0,0,engine.getColorList().toArray(),null,LinearGradient.TileMode.CLAMP);
+					
+					break;//toplefttobottomright
+				case "4":shader=new LinearGradient(0,0,engine.getDisplayWidth(),engine.getDisplayHeight(),engine.getColorList().toArray(),null,LinearGradient.TileMode.CLAMP);
+					
+					break;//toprighttobottomleft
+				case "5":shader=new LinearGradient(engine.getDisplayWidth(),0,0,engine.getDisplayHeight(),engine.getColorList().toArray(),null,LinearGradient.TileMode.CLAMP);
+					
+					break;//bottomlefttotopright
+				case "6":shader=new LinearGradient(0,engine.getDisplayHeight(),engine.getDisplayWidth(),0,engine.getColorList().toArray(),null,LinearGradient.TileMode.CLAMP);
+					
+					break;//bottomrighttotopright
+				case "7":shader=new LinearGradient(engine.getDisplayWidth(),engine.getDisplayHeight(),0,0,engine.getColorList().toArray(),null,LinearGradient.TileMode.CLAMP);
+					
+					break;
+			}
+		}
 		return shader;
 	}
 }

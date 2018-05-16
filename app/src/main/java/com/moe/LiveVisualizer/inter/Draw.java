@@ -10,9 +10,6 @@ public interface Draw
 	void onDraw(Canvas canvas,int color_mode);
 	double[] getFft();
 	float getDownSpeed();
-	//上下渐变
-	void setFade(Shader sgader);
-	Shader getFade();
 	
 	LiveWallpaper.WallpaperEngine getEngine();
 	void onBorderWidthChanged(int width);

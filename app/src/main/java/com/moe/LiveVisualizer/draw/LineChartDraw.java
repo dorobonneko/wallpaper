@@ -35,6 +35,7 @@ public class LineChartDraw extends Draw
 		return size;
 	}
 	private void onSizeChanged(){
+		spaceWidth=getEngine().getSharedPreferences().getInt("spaceWidth", 20);
 		try
 		{
 			size = (int)((getEngine().getDisplayWidth() - spaceWidth) / (paint.getStrokeWidth() + spaceWidth));
@@ -98,7 +99,7 @@ public class LineChartDraw extends Draw
 	{
 		if(color_mode==2){
 			spaceLineChart(getFft(),canvas,color_mode);
-		}else if(color_mode==4){
+		}else if(color_mode==3){
 			int color=getColor();
 			paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
 			paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
@@ -138,9 +139,7 @@ public class LineChartDraw extends Draw
 							src.recycle();
 							//break;
 						}*/
-						if ( getShader() == null )
-								setShader(new LinearGradient(0, 0, canvas.getWidth(), 0, getEngine().getColorList().toArray(), null, LinearGradient.TileMode.CLAMP));
-							paint.setShader(getShader());
+						paint.setShader(getShader());
 						lineChart(getFft(), canvas);
 						paint.setShader(null);
 						break;
@@ -150,11 +149,6 @@ public class LineChartDraw extends Draw
 					case 2://random
 						spaceLineChart(getFft(), canvas, color_mode);
 						break;
-					case 3:
-						Shader shader=getFade();
-						if(shader==null)
-							setFade(shader=new LinearGradient(0,0,0,canvas.getHeight(),getEngine().getColorList().toArray(),null,LinearGradient.TileMode.CLAMP));
-						paint.setShader(shader);
 					default:
 						lineChart(getFft(), canvas);
 						paint.setShader(null);

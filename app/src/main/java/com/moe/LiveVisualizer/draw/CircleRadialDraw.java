@@ -19,18 +19,11 @@ import android.content.SharedPreferences;
 
 public class CircleRadialDraw extends RingDraw
 {
-
-
-
-	
 	private float[] points;
 		public CircleRadialDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
 	{
 		super(draw, engine);
-
-		
 	}
-
 
 	@Override
 	public void onDraw(Canvas canvas, int color_mode)
@@ -41,7 +34,7 @@ public class CircleRadialDraw extends RingDraw
 		{
 			drawLines(getFft(), canvas, true, color_mode);
 		}
-		else if ( color_mode == 4 )
+		else if ( color_mode == 3 )
 		{
 			int color=getColor();
 			paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
@@ -92,11 +85,6 @@ public class CircleRadialDraw extends RingDraw
 							 drawLines(getFft(), canvas, false,color_mode);
 							 paint.setShader(null);*/
 							break;
-						case 3:
-							Shader shader=getFade();
-							if ( shader == null )
-								setFade(shader = new LinearGradient(0, 0, 0, canvas.getHeight(), getEngine().getColorList().toArray(), null, LinearGradient.TileMode.CLAMP));
-							paint.setShader(shader);
 						default:
 							drawLines(getFft(), canvas, true, color_mode);
 							paint.setShader(null);
@@ -109,6 +97,12 @@ public class CircleRadialDraw extends RingDraw
 
 	}
 
+	@Override
+	public int size()
+	{
+		return super.size()/2;
+	}
+
 	private void drawLines(double[] buffer, Canvas canvas, boolean useMode, final int mode)
 	{
 		PointF point=getPointF();
@@ -118,7 +112,7 @@ public class CircleRadialDraw extends RingDraw
 		if ( points == null || points.length != size() )
 			points = new float[size()];
 		int colorStep=0;
-		float degress_step=360f / size();
+		float degress_step=180f / size();
 		canvas.save();
 		final PointF center=getPointF();
 		canvas.rotate(degress_step / 2.0f, center.x, center.y);
@@ -149,7 +143,7 @@ public class CircleRadialDraw extends RingDraw
 			canvas.drawRect(point.x-paint.getStrokeWidth()/2, point.y-radius, point.x + paint.getStrokeWidth()/2, point.y -radius+(getDirection()==OUTSIDE?- height:height), paint);
 			canvas.rotate(degress_step, center.x, center.y);
 			//degress+=degress_step;
-			/*if ( i == end )
+			if ( i == end )
 			{
 				if ( degress_step > 0 )
 				{
@@ -163,7 +157,7 @@ public class CircleRadialDraw extends RingDraw
 				{
 					break;
 				}
-			}*/
+			}
 		}
 		canvas.restore();
 	}

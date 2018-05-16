@@ -14,36 +14,12 @@ import android.graphics.LinearGradient;
 public class CircleDisperseDraw extends RingDraw
 {
 	private float[] points;
-	private int size;
 	
 	public CircleDisperseDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
 	{
 		super(draw, engine);
 	}
-	@Override
-	public int size()
-	{
-		// TODO: Implement this method
-		return size;
-	}
-
-	@Override
-	public void onSizeChanged()
-	{
-		final double length=Math.min(getEngine().getDisplayWidth(),getEngine().getDisplayHeight()) / 3 * Math.PI;
-		try
-		{
-			size = (int)((length - getSpaceWidth()) / (getPaint().getStrokeWidth() + getSpaceWidth()));
-		}
-		catch (Exception e)
-		{}
-		try
-		{
-			size = size > getEngine().getFftSize() ?getEngine().getFftSize(): size;
-		}
-		catch (Exception e)
-		{}
-	}
+	
 	@Override
 	public void onDraw(Canvas canvas, int color_mode)
 	{
@@ -53,7 +29,7 @@ public class CircleDisperseDraw extends RingDraw
 		{
 			drawLines(getFft(), canvas, true, color_mode);
 		}
-		else if ( color_mode == 4 )
+		else if ( color_mode == 3 )
 		{
 			int color=getColor();
 			paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
@@ -104,11 +80,6 @@ public class CircleDisperseDraw extends RingDraw
 							 drawLines(getFft(), canvas, false,color_mode);
 							 paint.setShader(null);*/
 							break;
-						case 3:
-							Shader shader=getFade();
-							if ( shader == null )
-								setFade(shader = new LinearGradient(0, 0, 0, canvas.getHeight(), getEngine().getColorList().toArray(), null, LinearGradient.TileMode.CLAMP));
-							paint.setShader(shader);
 						default:
 							drawLines(getFft(), canvas, true, color_mode);
 							paint.setShader(null);
