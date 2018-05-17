@@ -25,9 +25,6 @@ public abstract class CircleDraw extends Draw
 	}
 
 	@Override
-	public abstract void setRound(boolean round);
-
-	@Override
 	public void notifySizeChanged()
 	{
 		point.x=getEngine().getSharedPreferences().getInt("offsetX",Math.min(getEngine().getDisplayWidth(),getEngine().getDisplayHeight())/2);

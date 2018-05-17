@@ -43,8 +43,7 @@ public class PopCircleDraw extends LineDraw
 				}
 				break;
 			case 1:
-				drawGraph(getFft(),canvas,color_mode,true);
-				break;
+			case 4:
 			case 2:
 				drawGraph(getFft(),canvas,color_mode,true);
 				break;
@@ -56,6 +55,7 @@ public class PopCircleDraw extends LineDraw
 				paint.setShadowLayer(0,0,0,0);
 				break;
 		}
+		paint.reset();
 		
 	}
 	
@@ -70,25 +70,30 @@ public class PopCircleDraw extends LineDraw
 		float radius=getBorderWidth()/2.0f;
 		float x=radius;//起始像素
 		float y=canvas.getHeight() - getEngine().getSharedPreferences().getInt("height", 10) / 100.0f * canvas.getHeight();
-		int colorStep=0;
-		int mode=Integer.parseInt(getEngine().getSharedPreferences().getString("color_mode", "0"));
-		//if ( mode == 3 )
-		//	paint.setColor(getEngine().getColor());
+		int color_step=0;
 		canvas.drawLine(0,y,canvas.getWidth(),y,paint);
 		for ( int i=0;i < size();i ++ )
 		{
-			if(useMode){
-				if ( mode == 1 )
-				{
-					paint.setColor(getEngine().getColorList().get(colorStep));
-					colorStep++;
-					if ( colorStep >= getEngine().getColorList().size() )colorStep = 0;
+			if(useMode)
+				switch ( color_mode){
+					case 1:
+						paint.setColor(getEngine().getColorList().get(color_step));
+						color_step++;
+						if ( color_step >= getEngine().getColorList().size() )
+							color_step = 0;
+						break;
+					case 2:
+						paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
+						break;
+					case 4:
+						int color=getEngine().getColorList().get(color_step);
+						paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+						color_step++;
+						if ( color_step >= getEngine().getColorList().size() )
+							color_step = 0;
+						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
+						break;
 				}
-				else if ( mode == 2 )
-				{
-					paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
-				}
-			}
 			float height=(float)(buffer[i]/127d*getBorderHeight());
 			if(height>points[i])
 				points[i]=height;
@@ -99,7 +104,6 @@ public class PopCircleDraw extends LineDraw
 			canvas.drawCircle(x,y-height-radius,radius,paint);
 			x+=(getSpaceWidth()+getBorderWidth());
 		}
-		paint.setStyle(Paint.Style.FILL);
 	}
 
 	

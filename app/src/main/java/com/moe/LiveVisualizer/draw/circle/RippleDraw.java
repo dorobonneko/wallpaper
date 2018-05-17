@@ -19,7 +19,7 @@ public class RippleDraw extends CircleDraw
 	private float[] points;
 	private Shader shader;
 	private Bitmap shaderBuffer;
-	private float borderHeight;
+	private float borderHeight,borderWidth;
 	private Paint paint;
 	public RippleDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		super(draw,engine);
@@ -29,8 +29,8 @@ public class RippleDraw extends CircleDraw
 		paint.setDither(true);
 		paint.setColor(0xff39c5bb);
 		paint.setStyle(Paint.Style.FILL);
-		paint.setStrokeWidth(engine.getSharedPreferences().getInt("borderWidth",30));
-		
+		borderWidth=(engine.getSharedPreferences().getInt("borderWidth",30));
+		//borderWidth=paint.getStrokeWidth();
 		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
 		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
 
@@ -45,17 +45,15 @@ public class RippleDraw extends CircleDraw
 			});
 	}
 
-	@Override
-	public void setRound(boolean round)
-	{
-		paint.setStrokeCap(round?Paint.Cap.ROUND:Paint.Cap.SQUARE);
-	}
+	
 
 	
 	@Override
 	public void onDraw(Canvas canvas, int color_mode)
 	{
 		Paint paint=this.paint;
+		paint.setStrokeCap(getRound());
+		paint.setStrokeWidth(borderWidth);
 		switch(color_mode){
 			case 0:
 				switch ( getEngine().getColorList().size() )
@@ -71,6 +69,7 @@ public class RippleDraw extends CircleDraw
 					default:
 						final int layer=canvas.saveLayer(0,0,canvas.getWidth(),canvas.getHeight(),null,Canvas.ALL_SAVE_FLAG);
 								drawGraph(getFft(),canvas,color_mode,false);
+								paint.setStyle(Paint.Style.FILL);
 								if ( shader == null )
 									shader = new SweepGradient(canvas.getWidth() / 2.0f, canvas.getHeight() / 2.0f, getEngine().getColorList().toArray(), null);
 								if(shaderBuffer==null){
@@ -97,8 +96,7 @@ public class RippleDraw extends CircleDraw
 							}
 				break;
 			case 1:
-				drawGraph(getFft(),canvas,color_mode,true);
-				break;
+			case 4:
 			case 2:
 				drawGraph(getFft(),canvas,color_mode,true);
 				break;
@@ -110,11 +108,13 @@ public class RippleDraw extends CircleDraw
 				paint.setShadowLayer(0,0,0,0);
 				break;
 		}
+		paint.reset();
 	}
 
 	@Override
 	public void onBorderWidthChanged(int width)
 	{
+		borderWidth=width;
 		paint.setStrokeWidth(width);
 	}
 
@@ -143,19 +143,28 @@ public class RippleDraw extends CircleDraw
 			points=new float[size()];
 		Paint paint=this.paint;
 		paint.setStyle(Paint.Style.STROKE);
-		int colorStep=0;
+		int color_step=0;
 		PointF point=getPointF();
 		for(int i=0;i<size();i++){
-			if ( useMode )
-				if ( color_mode == 1 )
-				{
-					paint.setColor(getEngine().getColorList().get(colorStep));
-					colorStep++;
-					if ( colorStep >= getEngine().getColorList().size() )colorStep = 0;
-				}
-				else if ( color_mode == 2 )
-				{
-					paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
+			if(useMode)
+				switch ( color_mode){
+					case 1:
+						paint.setColor(getEngine().getColorList().get(color_step));
+						color_step++;
+						if ( color_step >= getEngine().getColorList().size() )
+							color_step = 0;
+						break;
+					case 2:
+						paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
+						break;
+					case 4:
+						int color=getEngine().getColorList().get(color_step);
+						paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+						color_step++;
+						if ( color_step >= getEngine().getColorList().size() )
+							color_step = 0;
+						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
+						break;
 				}
 			float height=(float)(buffer[i]/127d*borderHeight);
 			if(height<points[i])
@@ -169,7 +178,7 @@ public class RippleDraw extends CircleDraw
 			//canvas.rotate(degress,point.x,point.y);
 		}
 
-		paint.setStyle(Paint.Style.FILL);
+		//paint.setStyle(Paint.Style.FILL);
 	}
 
 }

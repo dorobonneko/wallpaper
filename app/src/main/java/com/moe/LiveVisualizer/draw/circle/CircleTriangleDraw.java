@@ -35,7 +35,7 @@ public class CircleTriangleDraw extends RingDraw
 		final double length=Math.min(getEngine().getDisplayWidth(),getEngine().getDisplayHeight()) / 3 * Math.PI;
 		try
 		{
-			size = (int)((length - getSpaceWidth()*2) / (getPaint().getStrokeWidth()*2 + getSpaceWidth()*2));
+			size = (int)((length - getSpaceWidth()*2) / (getBorderWidth()*2 + getSpaceWidth()*2));
 		}
 		catch (Exception e)
 		{}
@@ -52,6 +52,8 @@ public class CircleTriangleDraw extends RingDraw
 	public void onDraw(Canvas canvas, int color_mode)
 	{
 		Paint paint=getPaint();
+		paint.setStrokeCap(getRound());
+		paint.setStrokeWidth(getBorderWidth());
 		switch(color_mode){
 			case 0:
 				switch ( getEngine().getColorList().size() )
@@ -95,6 +97,7 @@ public class CircleTriangleDraw extends RingDraw
 				break;
 			case 1:
 			case 2:
+			case 4:
 				drawGraph(getFft(), canvas, color_mode,true);
 				break;
 			case 3:
@@ -105,22 +108,23 @@ public class CircleTriangleDraw extends RingDraw
 				paint.setShadowLayer(0, 0, 0, 0);
 				break;
 		}
+		paint.reset();
 		drawCircleImage(canvas);
 
 	}
 
 	@Override
-	public void drawGraph(byte[] buffer, Canvas canvas,  final int mode,boolean useMode)
+	public void drawGraph(byte[] buffer, Canvas canvas,  final int color_mode,boolean useMode)
 	{
 		PointF point=getPointF();
 		float radius=getRadius();
 		final float radialHeight=getDirection()==OUTSIDE?getBorderHeight():getRadius();
 		Paint paint=getPaint();
-		float width=paint.getStrokeWidth()/2;
+		float width=getBorderWidth()/2;
 		//paint.setStrokeWidth(0);
 		if ( points == null || points.length != size() )
 			points = new float[size()];
-		int colorStep=0;
+		int color_step=0;
 		float degress_step=360f / size();
 		
 		canvas.save();
@@ -129,16 +133,25 @@ public class CircleTriangleDraw extends RingDraw
 		float[] lines=new float[8];
 		for ( int i=0;i < size();i ++ )
 		{
-			if ( useMode )
-				if ( mode == 1 )
-				{
-					paint.setColor(getEngine().getColorList().get(colorStep));
-					colorStep++;
-					if ( colorStep >= getEngine().getColorList().size() )colorStep = 0;
-				}
-				else if ( mode == 2 )
-				{
-					paint.setColor(0xff000000 | (int)(Math.random() * 0xffffff));
+			if(useMode)
+				switch ( color_mode){
+					case 1:
+						paint.setColor(getEngine().getColorList().get(color_step));
+						color_step++;
+						if ( color_step >= getEngine().getColorList().size() )
+							color_step = 0;
+						break;
+					case 2:
+						paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
+						break;
+					case 4:
+						int color=getEngine().getColorList().get(color_step);
+						paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+						color_step++;
+						if ( color_step >= getEngine().getColorList().size() )
+							color_step = 0;
+						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
+						break;
 				}
 			float height=(float) (buffer[i] / 127d * radialHeight);
 			if ( height > points[i] )

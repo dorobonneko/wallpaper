@@ -2,6 +2,7 @@ package com.moe.LiveVisualizer.draw;
 import com.moe.LiveVisualizer.internal.ImageDraw;
 import com.moe.LiveVisualizer.LiveWallpaper;
 import android.graphics.Paint;
+import android.graphics.Canvas;
 
 public abstract class LineDraw extends Draw
 {
@@ -49,6 +50,17 @@ public abstract class LineDraw extends Draw
 	}
 
 	@Override
+	public void draw(Canvas canvas)
+	{
+		paint.setStrokeWidth(borderWidth);
+		paint.setStrokeCap(getRound());
+		super.draw(canvas);
+	}
+
+	
+
+
+	@Override
 	final public void onBorderWidthChanged(int width)
 	{
 		this.borderWidth=width;
@@ -88,9 +100,4 @@ public abstract class LineDraw extends Draw
 		{}
 	}
 
-	@Override
-	final public void setRound(boolean round)
-	{
-		paint.setStrokeCap(round?Paint.Cap.ROUND:Paint.Cap.SQUARE);
-	}
 }

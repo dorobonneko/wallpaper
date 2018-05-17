@@ -13,9 +13,11 @@ import android.os.Message;
 import android.animation.TypeEvaluator;
 import android.animation.PropertyValuesHolder;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 
 abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 {
+	private boolean round;
 	private int[] fade=new int[2];
 	private Handler handler;
 	private int index;
@@ -36,12 +38,22 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 			});
 		this.draw = draw;
 		this.engine = engine;
+		round=engine.getSharedPreferences().getBoolean("round",false);
 		anime=new ValueAnimator();
 		anime.setRepeatCount(0);
 		anime.setIntValues(0);
 		anime.setRepeatMode(ValueAnimator.RESTART);
 	}
 
+	@Override
+	final public void setRound(boolean round)
+	{
+		this.round=round;
+	}
+
+	public Paint.Cap getRound(){
+		return round?Paint.Cap.ROUND:Paint.Cap.SQUARE;
+	}
 	@Override
 	public float getDownSpeed()
 	{

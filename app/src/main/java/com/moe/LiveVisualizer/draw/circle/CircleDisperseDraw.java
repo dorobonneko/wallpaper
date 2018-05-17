@@ -24,6 +24,8 @@ public class CircleDisperseDraw extends RingDraw
 	public void onDraw(Canvas canvas, int color_mode)
 	{
 		Paint paint=getPaint();
+		paint.setStrokeCap(getRound());
+		paint.setStrokeWidth(getBorderWidth());
 		switch(color_mode){
 			case 0:
 				switch ( getEngine().getColorList().size() )
@@ -67,6 +69,7 @@ public class CircleDisperseDraw extends RingDraw
 				break;
 			case 1:
 			case 2:
+			case 4:
 				drawGraph(getFft(),canvas,color_mode,true);
 				break;
 			case 3:
@@ -77,6 +80,7 @@ public class CircleDisperseDraw extends RingDraw
 				paint.setShadowLayer(0, 0, 0, 0);
 				break;
 		}
+		paint.reset();
 		drawCircleImage(canvas);
 
 	}
@@ -90,23 +94,32 @@ public class CircleDisperseDraw extends RingDraw
 		Paint paint=getPaint();
 		if ( points == null || points.length != size() )
 			points = new float[size()];
-		int colorStep=0;
+		int color_step=0;
 		float degress_step=360f / size();
 		canvas.save();
 		final PointF center=getPointF();
 		canvas.rotate(degress_step / 2f, center.x, center.y);
 		for ( int i=0;i < size();i ++ )
 		{
-			if ( useMode )
-				if ( color_mode == 1 )
-				{
-					paint.setColor(getEngine().getColorList().get(colorStep));
-					colorStep++;
-					if ( colorStep >= getEngine().getColorList().size() )colorStep = 0;
-				}
-				else if ( color_mode == 2 )
-				{
-					paint.setColor(0xff000000 | (int)(Math.random() * 0xffffff));
+			if(useMode)
+				switch ( color_mode){
+					case 1:
+						paint.setColor(getEngine().getColorList().get(color_step));
+						color_step++;
+						if ( color_step >= getEngine().getColorList().size() )
+							color_step = 0;
+						break;
+					case 2:
+						paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
+						break;
+					case 4:
+						int color=getEngine().getColorList().get(color_step);
+						paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+						color_step++;
+						if ( color_step >= getEngine().getColorList().size() )
+							color_step = 0;
+						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
+						break;
 				}
 			float height=(float) (buffer[i] / 127d * radialHeight);
 			if ( height > points[i] )
@@ -118,7 +131,7 @@ public class CircleDisperseDraw extends RingDraw
 			if(paint.getStrokeCap()==Paint.Cap.ROUND)
 				canvas.drawLine(point.x,point.y-radius+(getDirection()==OUTSIDE?- height:height), point.x, point.y -radius+(getDirection()==OUTSIDE?- height:height), paint);
 			else
-				canvas.drawRect(point.x-paint.getStrokeWidth()/2,  point.y -radius+(getDirection()==OUTSIDE?- height:height), point.x + paint.getStrokeWidth()/2, point.y -radius+(getDirection()==OUTSIDE?- height-paint.getStrokeWidth():height+paint.getStrokeWidth()), paint);
+				canvas.drawRect(point.x-getBorderWidth()/2,  point.y -radius+(getDirection()==OUTSIDE?- height:height), point.x + getBorderWidth()/2, point.y -radius+(getDirection()==OUTSIDE?- height-getBorderWidth():height+getBorderWidth()), paint);
 			canvas.rotate(degress_step, center.x, center.y);
 			//degress+=degress_step;
 		}

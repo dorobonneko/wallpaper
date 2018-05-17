@@ -17,20 +17,11 @@ import com.moe.LiveVisualizer.draw.CircleDraw;
 public class CenterRadialDraw extends CircleDraw
 {
 
-	@Override
-	public void setRound(boolean round)
-	{
-		paint.setStrokeCap(round?Paint.Cap.ROUND:Paint.Cap.SQUARE);
-	}
-
-
-	
-	
 	private int size,spaceWidth;
 	private float[] points;
 	private Shader shader;
 	private Bitmap shaderBuffer;
-	private float degress,borderHeight;
+	private float degress,borderHeight,borderWidth;
 	private Paint paint;
 	//private float radius;
 	public CenterRadialDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
@@ -41,7 +32,8 @@ public class CenterRadialDraw extends CircleDraw
 		paint.setDither(true);
 		paint.setColor(0xff39c5bb);
 		paint.setStyle(Paint.Style.FILL);
-		paint.setStrokeWidth(engine.getSharedPreferences().getInt("borderWidth",30));
+		borderWidth=(engine.getSharedPreferences().getInt("borderWidth",30));
+		//borderWidth=paint.getStrokeWidth();
 		//radius=engine.getSharedPreferences().getInt("circleRadius",Math.min(engine.getWidth(),engine.getHeight())/6);
 		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
 		spaceWidth=engine.getSharedPreferences().getInt("spaceWidth",20);
@@ -63,6 +55,8 @@ public class CenterRadialDraw extends CircleDraw
 	public void onDraw(Canvas canvas, int color_mode)
 	{
 		Paint paint=this.paint;
+		paint.setStrokeCap(getRound());
+		paint.setStrokeWidth(borderWidth);
 		switch(color_mode){
 			case 0:
 				switch ( getEngine().getColorList().size() )
@@ -105,21 +99,24 @@ public class CenterRadialDraw extends CircleDraw
 				break;
 			case 1:
 			case 2:
+			case 4:
 				drawGraph(getFft(),canvas,color_mode,true);
 				break;
 			case 3:
 				int color=getColor();
 				paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
-				paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
+				paint.setShadowLayer(borderWidth,0,0,color);
 				drawGraph(getFft(),canvas,color_mode,false);
 				paint.setShadowLayer(0,0,0,0);
 				break;
 		}
+		paint.reset();
 	}
 
 	@Override
 	public void onBorderWidthChanged(int width)
 	{
+		borderWidth=width;
 		paint.setStrokeWidth(width);
 		onSizeChanged();
 	}
@@ -139,7 +136,7 @@ public class CenterRadialDraw extends CircleDraw
 	}
 	private void onSizeChanged(){
 		try{
-			size=(int)((borderHeight*2*Math.PI-spaceWidth)/(paint.getStrokeWidth()+spaceWidth));
+			size=(int)((borderHeight*2*Math.PI-spaceWidth)/(borderWidth+spaceWidth));
 			}catch(Exception e){}
 			try{
 				size=size>getEngine().getFftSize()?getEngine().getFftSize():size;
@@ -161,20 +158,29 @@ public class CenterRadialDraw extends CircleDraw
 			points=new float[size];
 		Paint paint=this.paint;
 		canvas.save();
-		int colorStep=0;
+		int color_step=0;
 		PointF point=getPointF();
 		canvas.rotate(-90,point.x,point.y);
 		for(int i=0;i<size;i++){
-			if ( useMode )
-				if ( color_mode == 1 )
-				{
-					paint.setColor(getEngine().getColorList().get(colorStep));
-					colorStep++;
-					if ( colorStep >= getEngine().getColorList().size() )colorStep = 0;
-				}
-				else if ( color_mode == 2 )
-				{
-					paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
+			if(useMode)
+				switch ( color_mode){
+					case 1:
+						paint.setColor(getEngine().getColorList().get(color_step));
+						color_step++;
+						if ( color_step >= getEngine().getColorList().size() )
+							color_step = 0;
+						break;
+					case 2:
+						paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
+						break;
+					case 4:
+						int color=getEngine().getColorList().get(color_step);
+						paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+						color_step++;
+						if ( color_step >= getEngine().getColorList().size() )
+							color_step = 0;
+						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
+						break;
 				}
 			float height=(float)(buffer[i]/127d*borderHeight);
 			if(height<points[i])
@@ -184,7 +190,7 @@ public class CenterRadialDraw extends CircleDraw
 			if(paint.getStrokeCap()==Paint.Cap.ROUND)
 				canvas.drawLine(point.x,point.y-height,point.x,point.y,paint);
 			else
-				canvas.drawRect(point.x-paint.getStrokeWidth()/2,point.y-height,point.x+paint.getStrokeWidth()/2,point.y,paint);
+				canvas.drawRect(point.x-borderWidth/2,point.y-height,point.x+borderWidth/2,point.y,paint);
 			canvas.rotate(degress,point.x,point.y);
 		}
 		canvas.restore();

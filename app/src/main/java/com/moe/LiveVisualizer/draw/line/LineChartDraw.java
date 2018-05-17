@@ -37,24 +37,22 @@ public class LineChartDraw extends LineDraw
 				default:
 					paint.setShader(getShader());
 					drawGraph(getFft(), canvas,color_mode,false);
-					paint.setShader(null);
-				break;
+					break;
 			}
 				break;
 			case 1://间隔
-				drawGraph(getFft(),canvas,color_mode,true);
-				break;
-			case 2://随机
+			case 2:
+			case 4:
 				drawGraph(getFft(),canvas,color_mode,true);
 				break;
 			case 3://霓虹灯
-				int color=getColor();
+			int color=getColor();
 				paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
 				paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 				drawGraph(getFft(),canvas,color_mode,false);
-				paint.setShadowLayer(0,0,0,0);
 				break;
 		}
+		paint.reset();
 	}
 
 	@Override
@@ -63,12 +61,12 @@ public class LineChartDraw extends LineDraw
 		return getWave();
 	}
 	@Override
-	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
+	public void drawGraph(byte[] buffer, Canvas canvas,final int color_mode, boolean useMode)
 	{
 		Paint paint=getPaint();
 		float offsetX=0;
 		float[] tmpData=new float[8];
-		int color=0;
+		int color_step=0;
 		for ( int i=0;i < buffer.length-1;i+=2 )
 		{
 			float height=((byte)(buffer[i]+128))*getBorderHeight()/256;
@@ -90,19 +88,27 @@ public class LineChartDraw extends LineDraw
 			height=((byte)(buffer[i+2]+128))*getBorderHeight()/256;
 			tmpData[6]=offsetX+=getSpaceWidth()+getBorderWidth();
 			tmpData[7]=getDrawHeight()-height;
-			if(useMode){
-				if ( color_mode == 1 )
-				{
-					paint.setColor(getEngine().getColorList().get(color));
-					color++;
-					if ( color >= getEngine().getColorList().size() )
-						color = 0;
-				}
-				else if ( color_mode == 2 )
-				{
+			if(useMode)
+				switch ( color_mode){
+					case 1:
+						paint.setColor(getEngine().getColorList().get(color_step));
+						color_step++;
+						if ( color_step >= getEngine().getColorList().size() )
+							color_step = 0;
+					break;
+				case 2:
 					paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
+				break;
+				case 4:
+						int color=getEngine().getColorList().get(color_step);
+						paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+						color_step++;
+						if ( color_step >= getEngine().getColorList().size() )
+							color_step = 0;
+					paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
+					break;
 				}
-			}
+			
 			canvas.drawLines(tmpData, paint);
 		}
 	}

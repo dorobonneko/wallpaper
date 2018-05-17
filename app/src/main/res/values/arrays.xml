@@ -5,6 +5,7 @@
 			<item>间隔取色</item>
 			<item>随机颜色</item>
 			<item>霓虹灯</item>
+			<item>霓虹灯组</item>
 			</string-array>
 		<string-array name="visualizer_mode">
 			<item>柱形图</item>

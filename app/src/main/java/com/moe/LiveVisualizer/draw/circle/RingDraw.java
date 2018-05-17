@@ -26,7 +26,7 @@ public abstract class RingDraw extends CircleDraw
 	private Shader shader;
 	private Bitmap shaderBuffer;
 	private int borderHeight,size;
-	private float spaceWidth;
+	private float spaceWidth,borderWidth;
 	
 	public RingDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		super(draw,engine);
@@ -40,7 +40,7 @@ public abstract class RingDraw extends CircleDraw
 		paint.setDither(true);
 		paint.setColor(0xff39c5bb);
 		paint.setStyle(Paint.Style.FILL);
-		paint.setStrokeWidth(engine.getSharedPreferences().getInt("borderWidth",30));
+		borderWidth=(engine.getSharedPreferences().getInt("borderWidth",30));
 		radius=engine.getSharedPreferences().getInt("circleRadius",Math.min(engine.getDisplayWidth(),engine.getDisplayHeight())/6);
 		cutCenterImage=engine.getSharedPreferences().getBoolean("cutImage",true);
 		degress_step=engine.getSharedPreferences().getInt("degress",10)/100f*10;
@@ -99,7 +99,7 @@ public abstract class RingDraw extends CircleDraw
 		final double length=Math.min(getEngine().getDisplayWidth(),getEngine().getDisplayHeight()) / 3 * Math.PI;
 		try
 		{
-			size = (int)((length - spaceWidth) / (getPaint().getStrokeWidth() + spaceWidth));
+			size = (int)((length - spaceWidth) / (borderWidth + spaceWidth));
 		}
 		catch (Exception e)
 		{}
@@ -115,10 +115,12 @@ public abstract class RingDraw extends CircleDraw
 	@Override
 	public void onBorderWidthChanged(int width)
 	{
-		getPaint().setStrokeWidth(width);
+		this.borderWidth=width;
 		onSizeChanged();
 	}
-	
+	public float getBorderWidth(){
+		return borderWidth;
+	}
 	public void setShader(Shader shader)
 	{
 		this.shader = shader;
@@ -163,12 +165,6 @@ public abstract class RingDraw extends CircleDraw
 	}
 	final public Paint getPaint(){
 		return paint;
-	}
-	@Override
-	final public void setRound(boolean round)
-	{
-		if(getPaint()!=null)
-			paint.setStrokeCap(round?Paint.Cap.ROUND:Paint.Cap.SQUARE);
 	}
 	public void drawCircleImage(Canvas canvas){
 		PointF point=getPointF();
