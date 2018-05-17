@@ -9,6 +9,8 @@ import com.moe.LiveVisualizer.R;
 import android.widget.TextView;
 import android.widget.SeekBar;
 import android.content.res.TypedArray;
+import android.os.Parcelable;
+import android.os.Parcel;
 
 public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarChangeListener
 {
@@ -29,7 +31,8 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 	protected View onCreateView(ViewGroup parent)
 	{
 		// TODO: Implement this method
-		return LayoutInflater.from(getContext()).inflate(R.layout.seekbar_preference,parent,false);
+		View view =LayoutInflater.from(getContext()).inflate(R.layout.seekbar_preference,parent,false);
+		return view;
 	}
 
 	@Override
@@ -37,10 +40,28 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 	{
 		super.onBindView(view);
 		seekbar=(SeekBar)view.findViewById(R.id.seekbar);
-		seekbar.setMax(max);
-		seekbar.setProgress(progress);
 		seekbar.setOnSeekBarChangeListener(this);
 		tips=(TextView)view.findViewById(R.id.tips);
+		view.findViewById(R.id.plus).setOnClickListener(new View.OnClickListener(){
+
+				@Override
+				public void onClick(View p1)
+				{
+					seekbar.setProgress(seekbar.getProgress()+1);
+					onStopTrackingTouch(seekbar);
+				}
+			});
+		view.findViewById(R.id.minus).setOnClickListener(new View.OnClickListener(){
+
+				@Override
+				public void onClick(View p1)
+				{
+					seekbar.setProgress(seekbar.getProgress()-1);
+					onStopTrackingTouch(seekbar);
+				}
+			});
+		seekbar.setMax(max);
+		seekbar.setProgress(progress);
 		tips.setText(seekbar.getProgress()+(unit!=null?unit.toString():""));
 	}
 	public void setMax(int max){
@@ -50,7 +71,6 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 	@Override
 	public void onProgressChanged(SeekBar p1, int p2, boolean p3)
 	{
-		this.progress=p2;
 		tips.setText(p2+(unit!=null?unit.toString():""));
 	}
 
@@ -68,7 +88,10 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 	public void onStopTrackingTouch(SeekBar p1)
 	{
 		if(callChangeListener(p1.getProgress())){
-			if(shouldPersist())persistInt(p1.getProgress());
+			if(shouldPersist()){
+				progress=p1.getProgress();
+				persistInt(p1.getProgress());
+				}
 		}
 	}
 
@@ -93,8 +116,45 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 	{
 		if(!init)
 			progress=defaultValue==null?progress:(int)defaultValue;
+	}
+
+	@Override
+	protected Parcelable onSaveInstanceState()
+	{
+		return new  SavedState(super.onSaveInstanceState());
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Parcelable state)
+	{
+		SavedState save=(SeekBarPreference.SavedState) state;
+		super.onRestoreInstanceState(save);
+		max=save.max;
+		progress=save.progress;
+		unit=save.unit;
 		
-			
 	}
 	
+	class SavedState extends BaseSavedState{
+		int max,progress;
+		CharSequence unit;
+		public SavedState(Parcelable parcel){
+			super(parcel);
+		}
+		public SavedState(Parcel parcel){
+			super(parcel);
+			max=parcel.readInt();
+			progress=parcel.readInt();
+			unit=(CharSequence)parcel.readValue(CharSequence.class.getClassLoader());
+		}
+		@Override
+		public void writeToParcel(Parcel dest, int flags)
+		{
+			// TODO: Implement this method
+			super.writeToParcel(dest, flags);
+			dest.writeInt(seekbar.getMax());
+			dest.writeInt(seekbar.getProgress());
+			dest.writeValue(unit);
+		}
+	}
 }
