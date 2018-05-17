@@ -56,9 +56,15 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 	}
 
 	@Override
-	public double[] getFft()
+	public byte[] getFft()
 	{
 		return draw.getFft();
+	}
+
+	@Override
+	public byte[] getWave()
+	{
+		return draw.getWave();
 	}
 
 	@Override

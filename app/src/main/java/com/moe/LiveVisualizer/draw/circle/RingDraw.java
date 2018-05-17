@@ -1,4 +1,4 @@
-package com.moe.LiveVisualizer.draw;
+package com.moe.LiveVisualizer.draw.circle;
 import com.moe.LiveVisualizer.internal.ImageDraw;
 import com.moe.LiveVisualizer.LiveWallpaper;
 import android.graphics.Paint;
@@ -11,6 +11,7 @@ import android.graphics.PorterDuff;
 import com.moe.LiveVisualizer.internal.OnColorSizeChangedListener;
 import android.graphics.Shader;
 import android.util.TypedValue;
+import com.moe.LiveVisualizer.draw.CircleDraw;
 
 public abstract class RingDraw extends CircleDraw
 {

@@ -1,26 +1,12 @@
 package com.moe.LiveVisualizer.internal;
-import com.moe.LiveVisualizer.LiveWallpaper;
+import android.graphics.*;
+
 import android.content.SharedPreferences;
-import android.os.Looper;
-import android.os.Handler;
-import android.os.Message;
-import android.view.SurfaceHolder;
-import android.graphics.Canvas;
 import android.util.TypedValue;
-import android.graphics.Rect;
-import android.graphics.Paint;
-import android.graphics.Shader;
-import android.graphics.Bitmap;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.PorterDuff;
-import android.graphics.LinearGradient;
-import android.graphics.Matrix;
-import android.graphics.Movie;
-import com.bumptech.glide.gifdecoder.GifDecoder;
+import android.view.SurfaceHolder;
+import com.moe.LiveVisualizer.LiveWallpaper;
+import com.moe.LiveVisualizer.draw.circle.RingDraw;
 import com.moe.LiveVisualizer.inter.Draw;
-import android.animation.ValueAnimator;
-import android.animation.ObjectAnimator;
-import com.moe.LiveVisualizer.draw.RingDraw;
 
 public class WallpaperThread extends Thread implements SharedPreferences.OnSharedPreferenceChangeListener
 {
@@ -28,8 +14,6 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 	private LiveWallpaper.WallpaperEngine engine;
 	private ImageDraw imageDraw;
 	private long oldTime;
-	private double[] buffer;
-	private byte[] fft;
 	private Paint paint=new Paint();
 	private int fpsDelay=33;
 	private Matrix wallpaperMatrix;//缩放壁纸用
@@ -71,7 +55,7 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 				break;
 			case "borderHeight"://100dp
 			if(imageDraw!=null)
-				imageDraw.setBorderHeight((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,p1.getInt(p2,100),engine.getContext().getResources().getDisplayMetrics()));
+				imageDraw.setBorderHeight(p1.getInt(p2,100));
 			break;
 			case "spaceWidth"://20px
 			if(imageDraw!=null)
@@ -175,20 +159,7 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 						if ( imageDraw != null &&engine.getVisualizer()!=null)
 						{
 							try{
-							if(fft==null)
-								fft=new byte[engine.getCaptureSize()];
-								engine.getVisualizer().getFft(fft);
-							if(buffer==null)
-								buffer = new double[engine.getFftSize()];    
-							//model[0] =(byte)(fft[0]&0x7f);  
-
-							for (int n = 1; n < buffer.length;n++)    
-							{    
-								//第k个点频率 getSamplingRate() * k /(getCaptureSize()/2)  
-								int k=2*n;
-								buffer[n-1] = Math.hypot(fft[k]==-1?0:fft[k], fft[k + 1]==-1?0:fft[k+1]);   
-							}
-							Draw draw=imageDraw.lockData(buffer);
+							Draw draw=imageDraw.lockData();
 							if ( draw != null )
 								draw.draw(canvas);
 							}catch(Exception e){}

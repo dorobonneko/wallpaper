@@ -49,7 +49,7 @@ public class CropView extends View implements GestureDetector.OnGestureListener,
 	{
 		super(context, attrs);
 		shadow = new Paint();
-		shadow.setColor(0x50000000);
+		shadow.setColor(0xa0000000);
 		shadow.setStyle(Paint.Style.FILL);
 		paint = new Paint();
 		paint.setColor(0xffffffff);

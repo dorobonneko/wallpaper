@@ -8,7 +8,9 @@ public interface Draw
 {
 	void draw(Canvas canvas);
 	void onDraw(Canvas canvas,int color_mode);
-	double[] getFft();
+	void drawGraph(byte[] buffer,Canvas canvas,int color_mode,boolean useMode);
+	byte[] getFft();
+	byte[] getWave();
 	float getDownSpeed();
 	
 	LiveWallpaper.WallpaperEngine getEngine();
