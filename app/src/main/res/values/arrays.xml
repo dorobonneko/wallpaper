@@ -17,6 +17,7 @@
 			<item>水波纹</item>
 			<item>圆环离散点</item>
 			<item>山坡线</item>
+			<item>方块</item>
 		</string-array>
 		<string-array name="color_mode_v">
 			<item>0</item>
@@ -35,6 +36,7 @@
 			<item>6</item>
 			<item>7</item>
 			<item>8</item>
+			<item>9</item>
 		</string-array>
 		<string-array name="direction">
 			<item>向外</item>

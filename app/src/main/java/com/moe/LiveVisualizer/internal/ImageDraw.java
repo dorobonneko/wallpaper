@@ -12,7 +12,7 @@ public class ImageDraw implements OnColorSizeChangedListener
 	private LiveWallpaper.WallpaperEngine engine;
 	private byte[] fftbuffer;
 	private byte[] fft,wave;
-	private Draw[] drawList=new Draw[9];
+	private Draw[] drawList=new Draw[10];
 	private Shader shader;
 	private float downSpeed;
 	private Matrix centerImageMatrix;
@@ -179,6 +179,8 @@ public class ImageDraw implements OnColorSizeChangedListener
 				return drawList[7] == null ?drawList[7] = new CircleDisperseDraw(this, engine): drawList[7];
 			case "8"://山坡线
 				return drawList[8] == null ?drawList[8] = new YamaLineDraw(this, engine): drawList[8];
+			case "9"://方块
+			return drawList[9]==null?drawList[9]=new SquareDraw(this,engine):drawList[9];
 		}
 		return null;
 	}
