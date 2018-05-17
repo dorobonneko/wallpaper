@@ -15,8 +15,6 @@ import android.os.Parcel;
 public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarChangeListener
 {
 	private CharSequence unit;
-	private TextView tips;
-	private SeekBar seekbar;
 	private int progress,max=100;
 	private boolean init;
 	public SeekBarPreference(Context context,AttributeSet attrs){
@@ -39,9 +37,10 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 	protected void onBindView(View view)
 	{
 		super.onBindView(view);
-		seekbar=(SeekBar)view.findViewById(R.id.seekbar);
+		final SeekBar seekbar=(SeekBar)view.findViewById(R.id.seekbar);
 		seekbar.setOnSeekBarChangeListener(this);
-		tips=(TextView)view.findViewById(R.id.tips);
+		TextView tips=(TextView)view.findViewById(R.id.tips);
+		seekbar.setTag(tips);
 		view.findViewById(R.id.plus).setOnClickListener(new View.OnClickListener(){
 
 				@Override
@@ -71,7 +70,8 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 	@Override
 	public void onProgressChanged(SeekBar p1, int p2, boolean p3)
 	{
-		tips.setText(p2+(unit!=null?unit.toString():""));
+		if(p1.getTag()!=null)
+			((TextView)p1.getTag()).setText(p2+(unit!=null?unit.toString():""));
 	}
 
 	@Override
@@ -152,8 +152,8 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 		{
 			// TODO: Implement this method
 			super.writeToParcel(dest, flags);
-			dest.writeInt(seekbar.getMax());
-			dest.writeInt(seekbar.getProgress());
+			dest.writeInt(max);
+			dest.writeInt(progress);
 			dest.writeValue(unit);
 		}
 	}

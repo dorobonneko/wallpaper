@@ -204,8 +204,8 @@ public class RadialDraw extends Draw
 			else
 			{
 				//paint.setStrokeWidth(borderWidth);
-				canvas.drawLine(x += halfWidth, drawHeight - height, x, drawHeight, paint);
-				canvas.drawLine(x, drawHeight + height + borderWidth, x, drawHeight + borderWidth, paint);
+				canvas.drawLine(x += halfWidth, drawHeight - height-halfWidth, x, drawHeight-halfWidth, paint);
+				canvas.drawLine(x, drawHeight + height + halfWidth, x, drawHeight + halfWidth, paint);
 				x += halfWidth + spaceWidth;
 			}
 

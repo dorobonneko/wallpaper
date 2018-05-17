@@ -43,7 +43,7 @@
 		android:key="height"
 		app:unit="%"
 		android:defaultValue="10"
-		android:max="50"/>
+		/>
 	<com.moe.LiveVisualizer.preference.SeekBarPreference
 		android:title="线条宽度"
 		app:unit="px"

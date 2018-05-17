@@ -57,8 +57,8 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 		{
 			case "color_mode":
 				try{
-				color_mode.setSummary(color_mode.getEntries()[Arrays.binarySearch(color_mode.getEntryValues(),p2.toString())]);
-				}catch(Exception e){}
+				color_mode.setSummary(color_mode.getEntries()[Integer.parseInt(p2.toString())]);
+				}catch(ArrayIndexOutOfBoundsException e){}
 				break;
 			case "visualizer_mode":
 				visualizer_mode.setSummary(visualizer_mode.getEntries()[Integer.parseInt(p2.toString())]);
