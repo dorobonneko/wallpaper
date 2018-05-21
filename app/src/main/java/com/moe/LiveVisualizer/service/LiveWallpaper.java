@@ -1,4 +1,4 @@
-package com.moe.LiveVisualizer;
+package com.moe.LiveVisualizer.service;
 import android.content.*;
 import android.graphics.*;
 import android.view.*;

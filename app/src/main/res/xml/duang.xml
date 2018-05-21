@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:fitsSystemWindows="true"
+>
+	<SwitchPreference
+		android:title="屏幕特效开关"
+		android:key="duang"
+	/>
+	<ListPreference
+		android:title="屏幕特效"
+		android:key="duang_screen"
+		android:defaultValue="0"
+		android:entries="@array/duang"
+		android:entryValues="@array/duang_v"/>
+	<com.moe.LiveVisualizer.preference.SeekBarPreference
+		android:title="最大尺寸"
+		app:unit="px"
+		android:max="100"
+		android:defaultValue="50"
+		android:key="duang_maxSize"/>
+	<com.moe.LiveVisualizer.preference.SeekBarPreference
+		android:title="最小尺寸"
+		app:unit="px"
+		android:max="50"
+		android:defaultValue="10"
+		android:key="duang_minSize"/>
+	<com.moe.LiveVisualizer.preference.SeekBarPreference
+		android:title="特效数量"
+		app:unit="个"
+		android:max="200"
+		android:key="duang_size"
+		android:defaultValue="50"/>
+	<com.moe.LiveVisualizer.preference.SeekBarPreference
+		android:title="动画速度"
+		app:unit="%"
+		android:max="100"
+		android:defaultValue="30"
+		android:key="duang_speed"/>
+	<com.moe.LiveVisualizer.preference.SeekBarPreference
+		android:title="风力"
+		android:summary="仅对部分特效有效"
+		app:unit="级"
+		android:max="5"
+		android:defaultValue="2"
+		android:key="duang_wind"/>
+</PreferenceScreen>

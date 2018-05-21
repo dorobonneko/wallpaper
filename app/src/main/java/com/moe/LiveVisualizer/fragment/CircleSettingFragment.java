@@ -1,4 +1,4 @@
-package com.moe.LiveVisualizer;
+package com.moe.LiveVisualizer.fragment;
 import android.preference.PreferenceActivity;
 import android.os.PersistableBundle;
 import android.os.Bundle;
@@ -27,6 +27,8 @@ import android.util.DisplayMetrics;
 import android.view.WindowManager;
 import android.app.Service;
 import com.moe.LiveVisualizer.preference.SeekBarPreference;
+import com.moe.LiveVisualizer.R;
+import com.moe.LiveVisualizer.activity.CropActivity;
 
 public class CircleSettingFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener
 {

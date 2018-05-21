@@ -1,7 +1,7 @@
 package com.moe.LiveVisualizer.inter;
 import android.graphics.Canvas;
 import android.graphics.Shader;
-import com.moe.LiveVisualizer.LiveWallpaper;
+import com.moe.LiveVisualizer.service.LiveWallpaper;
 import android.graphics.Matrix;
 
 public interface Draw

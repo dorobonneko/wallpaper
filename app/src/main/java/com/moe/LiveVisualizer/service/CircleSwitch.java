@@ -1,4 +1,4 @@
-package com.moe.LiveVisualizer;
+package com.moe.LiveVisualizer.service;
 import android.service.quicksettings.TileService;
 import android.content.SharedPreferences;
 import android.service.quicksettings.Tile;

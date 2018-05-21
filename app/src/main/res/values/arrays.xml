@@ -68,4 +68,10 @@
 			<item>6</item>
 			<item>7</item>
 		</string-array>
+		<string-array name="duang">
+			<item>雪花</item>
+		</string-array>
+		<string-array name="duang_v">
+			<item>0</item>
+		</string-array>
 		</resources>

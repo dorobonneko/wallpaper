@@ -4,19 +4,20 @@ import android.graphics.*;
 import android.content.SharedPreferences;
 import android.util.TypedValue;
 import android.view.SurfaceHolder;
-import com.moe.LiveVisualizer.LiveWallpaper;
+import com.moe.LiveVisualizer.service.LiveWallpaper;
 import com.moe.LiveVisualizer.draw.circle.RingDraw;
 import com.moe.LiveVisualizer.inter.Draw;
+import com.moe.LiveVisualizer.duang.Engine;
 
 public class WallpaperThread extends Thread implements SharedPreferences.OnSharedPreferenceChangeListener
 {
-
 	private LiveWallpaper.WallpaperEngine engine;
 	private ImageDraw imageDraw;
 	private long oldTime;
 	private Paint paint=new Paint();
 	private int fpsDelay=33;
 	private Matrix wallpaperMatrix;//缩放壁纸用
+	private Engine mDuangEngine;//屏幕特效引擎
 	public WallpaperThread(LiveWallpaper.WallpaperEngine engine)
 	{
 		this.engine = engine;
@@ -29,7 +30,7 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 		onSharedPreferenceChanged(engine.getSharedPreferences(), "downspeed");
 		//if(engine.getColorList()!=null)
 		onSharedPreferenceChanged(engine.getSharedPreferences(), "scaleImage");
-		//onSharedPreferenceChanged(engine.getSharedPreferences(),"scaleIamge");
+		onSharedPreferenceChanged(engine.getSharedPreferences(),"duang");
 		//onSharedPreferenceChanged(engine.getSharedPreferences(),"cutImage");
 	}
 
@@ -38,6 +39,8 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 		if (imageDraw != null)
 			imageDraw.notifySizeChanged();
 		onSharedPreferenceChanged(engine.getSharedPreferences(), "height");
+		if(mDuangEngine!=null)
+			mDuangEngine.changed();
 	}
 
 	@Override
@@ -111,6 +114,35 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 				if (imageDraw != null)
 					imageDraw.setShader(null);
 				break;
+			case "duang":
+				if(p1.getBoolean(p2,false)){
+					mDuangEngine=Engine.init(engine);
+					}else if(mDuangEngine!=null)
+					{
+						mDuangEngine.reset();
+						mDuangEngine=null;
+					}
+				break;
+			case "duang_size":
+				if(mDuangEngine!=null)
+					mDuangEngine.setSizeChanged(p1.getInt(p2,50));
+				break;
+			case "duang_minSize":
+				if(mDuangEngine!=null)
+					mDuangEngine.setMinSize(p1.getInt(p2,10));
+				break;
+			case "duang_maxSize":
+				if(mDuangEngine!=null)
+					mDuangEngine.setMaxSize(p1.getInt(p2,50));
+				break;
+			case "duang_speed":
+				if(mDuangEngine!=null)
+					mDuangEngine.setMaxSpeed(p1.getInt(p2,30));
+				break;
+			case "duang_wind":
+				if(mDuangEngine!=null)
+					mDuangEngine.setWind(p1.getInt(p2,2));
+				break;
 		}
 	}
 
@@ -118,6 +150,8 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 	{
 		imageDraw = null;
 		engine.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+		if(mDuangEngine!=null)
+		mDuangEngine.reset();
 	}
 
 	@Override
@@ -176,6 +210,8 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 							catch (Exception e)
 							{}
 						}
+						if(mDuangEngine!=null)
+							mDuangEngine.draw(canvas);
 						try
 						{
 							sh.unlockCanvasAndPost(canvas);

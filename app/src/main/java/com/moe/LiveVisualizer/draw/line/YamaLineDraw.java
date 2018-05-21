@@ -2,7 +2,7 @@ package com.moe.LiveVisualizer.draw.line;
 import android.graphics.*;
 
 import android.util.TypedValue;
-import com.moe.LiveVisualizer.LiveWallpaper;
+import com.moe.LiveVisualizer.service.LiveWallpaper;
 import com.moe.LiveVisualizer.draw.LineDraw;
 import com.moe.LiveVisualizer.internal.ImageDraw;
 

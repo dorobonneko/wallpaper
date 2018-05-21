@@ -3,7 +3,7 @@ import android.graphics.Shader;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import com.moe.LiveVisualizer.internal.ImageDraw;
-import com.moe.LiveVisualizer.LiveWallpaper;
+import com.moe.LiveVisualizer.service.LiveWallpaper;
 import android.util.TypedValue;
 import com.moe.LiveVisualizer.internal.OnColorSizeChangedListener;
 import android.graphics.Canvas;

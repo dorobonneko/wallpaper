@@ -21,7 +21,7 @@
 		<service
 			android:label="@string/app_name"
 			android:icon="@drawable/ic_icon"
-			android:name="com.moe.LiveVisualizer.LiveWallpaper"
+			android:name=".service.LiveWallpaper"
 			android:permission="android.permission.BIND_WALLPAPER"
 			android:enabled="false">
 			<intent-filter>
@@ -33,7 +33,7 @@
 		</service>
 		<activity
 			android:enabled="true"
-			android:name="com.moe.LiveVisualizer.CrashActivity"
+			android:name=".activity.CrashActivity"
 			android:exported="true">
 			<!--<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
@@ -42,7 +42,7 @@
 		</activity>
 		<activity
 			android:enabled="true"
-			android:name=".SettingActivity"
+			android:name=".activity.SettingActivity"
 			android:exported="true"
 			>
 			<intent-filter>
@@ -51,8 +51,8 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="com.moe.LiveVisualizer.ColorListActivity"/>
-		<service
+			android:name=".activity.ColorListActivity"/>
+		<!--<service
 			android:name="com.moe.LiveVisualizer.NotifycationListener"
 			android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
 			android:enabled="false">
@@ -60,7 +60,7 @@
 				<action android:name="android.service.notification.NotificationListenerService"/>
 			</intent-filter>
 		</service>
-		<!--<provider
+		<provider
 			android:name="android.support.v4.content.FileProvider"
 			android:authorities="com.moe.LiveVisualizer.provider"
 			android:exported="false"
@@ -70,7 +70,7 @@
 				android:resource="@xml/provider_paths"/>
 		</provider>-->
 		<service
-			android:name=".CircleSwitch"
+			android:name=".service.CircleSwitch"
 			android:label="旋转开关"
 			android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
 			<intent-filter>
@@ -78,7 +78,7 @@
 			</intent-filter>
 		</service>
 		<activity
-			android:name=".CropActivity"/>
+			android:name=".activity.CropActivity"/>
 		</application>
 	
 </manifest>

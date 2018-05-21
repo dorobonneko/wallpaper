@@ -1,4 +1,4 @@
-package com.moe.LiveVisualizer;
+package com.moe.LiveVisualizer.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.content.ComponentName;
@@ -10,6 +10,7 @@ import android.app.WallpaperManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import com.moe.LiveVisualizer.service.LiveWallpaper;
 
 public class WelcomeActivity extends Activity
 {

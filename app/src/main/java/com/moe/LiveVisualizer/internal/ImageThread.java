@@ -1,5 +1,5 @@
 package com.moe.LiveVisualizer.internal;
-import com.moe.LiveVisualizer.LiveWallpaper;
+import com.moe.LiveVisualizer.service.LiveWallpaper;
 import android.os.Looper;
 import android.os.Handler;
 import android.os.Message;

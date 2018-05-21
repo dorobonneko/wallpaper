@@ -8,7 +8,7 @@ import android.content.res.Resources;
 import java.lang.reflect.InvocationHandler;
 import com.moe.LiveVisualizer.R;
 import android.content.Intent;
-import com.moe.LiveVisualizer.CrashActivity;
+import com.moe.LiveVisualizer.activity.CrashActivity;
 
 public class Application extends android.app.Application implements Thread.UncaughtExceptionHandler
 {

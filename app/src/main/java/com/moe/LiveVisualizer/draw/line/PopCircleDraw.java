@@ -1,5 +1,5 @@
 package com.moe.LiveVisualizer.draw.line;
-import com.moe.LiveVisualizer.LiveWallpaper;
+import com.moe.LiveVisualizer.service.LiveWallpaper;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.TypedValue;

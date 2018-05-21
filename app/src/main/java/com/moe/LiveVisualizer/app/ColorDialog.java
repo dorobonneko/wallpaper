@@ -1,4 +1,4 @@
-package com.moe.LiveVisualizer;
+package com.moe.LiveVisualizer.app;
 import android.app.DialogFragment;
 import android.view.View;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import com.moe.LiveVisualizer.widget.ColorPickerView;
 import android.view.WindowManager;
 import android.view.Window;
 import android.app.Dialog;
+import com.moe.LiveVisualizer.R;
 
 public class ColorDialog extends DialogFragment implements ColorPickerView.OnColorCheckedListener
 {

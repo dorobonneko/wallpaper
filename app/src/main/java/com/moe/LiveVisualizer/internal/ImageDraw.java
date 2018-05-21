@@ -4,7 +4,7 @@ import com.moe.LiveVisualizer.draw.*;
 import com.moe.LiveVisualizer.draw.circle.*;
 import com.moe.LiveVisualizer.draw.line.*;
 
-import com.moe.LiveVisualizer.LiveWallpaper;
+import com.moe.LiveVisualizer.service.LiveWallpaper;
 import com.moe.LiveVisualizer.inter.Draw;
 
 public class ImageDraw implements OnColorSizeChangedListener

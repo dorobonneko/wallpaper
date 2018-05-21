@@ -2,7 +2,7 @@ package com.moe.LiveVisualizer.draw.line;
 import android.graphics.Canvas;
 import android.content.SharedPreferences;
 import com.moe.LiveVisualizer.utils.ColorList;
-import com.moe.LiveVisualizer.LiveWallpaper;
+import com.moe.LiveVisualizer.service.LiveWallpaper;
 import android.graphics.Paint;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuffXfermode;

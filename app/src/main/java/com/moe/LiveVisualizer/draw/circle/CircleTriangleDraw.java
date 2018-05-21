@@ -1,6 +1,6 @@
 package com.moe.LiveVisualizer.draw.circle;
 import com.moe.LiveVisualizer.internal.ImageDraw;
-import com.moe.LiveVisualizer.LiveWallpaper;
+import com.moe.LiveVisualizer.service.LiveWallpaper;
 import android.graphics.Canvas;
 import android.graphics.Shader;
 import android.graphics.Bitmap;

@@ -1,4 +1,4 @@
-package com.moe.LiveVisualizer;
+package com.moe.LiveVisualizer.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -34,6 +34,7 @@ import android.content.Intent;
 import android.widget.EditText;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import com.moe.LiveVisualizer.app.ColorDialog;
 
 public class ColorListActivity extends Activity implements ColorPickerView.OnColorCheckedListener,ListView.OnItemClickListener,View.OnClickListener
 {

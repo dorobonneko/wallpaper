@@ -1,9 +1,9 @@
 package com.moe.LiveVisualizer.draw;
 import com.moe.LiveVisualizer.internal.ImageDraw;
-import com.moe.LiveVisualizer.LiveWallpaper;
+import com.moe.LiveVisualizer.service.LiveWallpaper;
 import android.graphics.Canvas;
 import android.graphics.Shader;
-import com.moe.LiveVisualizer.LiveWallpaper.WallpaperEngine;
+import com.moe.LiveVisualizer.service.LiveWallpaper.WallpaperEngine;
 import android.graphics.Color;
 import android.animation.ValueAnimator;
 import android.animation.ObjectAnimator;

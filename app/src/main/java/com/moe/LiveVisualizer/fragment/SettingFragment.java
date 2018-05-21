@@ -1,4 +1,4 @@
-package com.moe.LiveVisualizer;
+package com.moe.LiveVisualizer.fragment;
 import android.app.*;
 import android.content.*;
 import android.os.*;
@@ -16,6 +16,8 @@ import java.lang.ref.WeakReference;
 import java.lang.ref.SoftReference;
 import android.widget.Toast;
 import java.util.Arrays;
+import com.moe.LiveVisualizer.R;
+import com.moe.LiveVisualizer.activity.CropActivity;
 
 public class SettingFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,Preference.OnPreferenceChangeListener
 {

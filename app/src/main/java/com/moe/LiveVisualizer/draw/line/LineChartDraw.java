@@ -1,6 +1,6 @@
 package com.moe.LiveVisualizer.draw.line;
 import android.graphics.Paint;
-import com.moe.LiveVisualizer.LiveWallpaper;
+import com.moe.LiveVisualizer.service.LiveWallpaper;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.Bitmap;
