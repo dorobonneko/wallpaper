@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
+    <style name="AppTheme" parent="BaseTheme">
+	</style>
+	<style name="BaseTheme">
+		<item name="android:colorPrimaryDark">@android:color/transparent</item>
+		<item name="android:colorAccent">#FF4081</item>
+		<item name="android:colorPrimary">@android:color/transparent</item>
+		<item name="android:windowActionBar">true</item>
+		<item name="android:windowNoTitle">false</item>
+		<item name="android:windowBackground">@color/background</item>
+		<item name="android:windowShowWallpaper">true</item>
+		<item name="android:textAppearanceListItem">@style/title</item>
+		<item name="android:textAppearanceListItemSecondary">@style/summary</item>
+		<item name="android:textColorSecondary">#ffdddddd</item>
+		</style>
+		<style name="title" parent="shadow">
+			<item name="android:textSize">16sp</item>
+			<item name="android:textColor">#ffffffff</item>
+		</style>
+	<style name="summary" parent="shadow">
+		<item name="android:textSize">14sp</item>
+		<item name="android:textColor">#ffdddddd</item>
+	</style>
+	<style name="shadow">
+		<item name="android:shadowRadius">1</item>
+		<item name="android:shadowColor">#ff000000</item>
 	</style>
 </resources>

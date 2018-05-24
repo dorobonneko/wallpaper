@@ -58,15 +58,13 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 		switch ( p1.getKey() )
 		{
 			case "color_mode":
-				try{
-				color_mode.setSummary(color_mode.getEntries()[Integer.parseInt(p2.toString())]);
-				}catch(ArrayIndexOutOfBoundsException e){}
+				color_mode.setSummary(color_mode.getEntries()[color_mode.findIndexOfValue(p2.toString())]);
 				break;
 			case "visualizer_mode":
-				visualizer_mode.setSummary(visualizer_mode.getEntries()[Integer.parseInt(p2.toString())]);
+				visualizer_mode.setSummary(visualizer_mode.getEntries()[visualizer_mode.findIndexOfValue(p2.toString())]);
 				break;
 			case "color_direction":
-				color_direction.setSummary(color_direction.getEntries()[Integer.parseInt(p2.toString())]);
+				color_direction.setSummary(color_direction.getEntries()[color_direction.findIndexOfValue(p2.toString())]);
 				break;
 		} 
 		return true;
@@ -221,7 +219,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 									}.start();
 								}
 							});
-							gif_dialog.setButton(ProgressDialog.BUTTON2,"GIF", new DialogInterface.OnClickListener(){
+							gif_dialog.setButton(ProgressDialog.BUTTON2,"原图", new DialogInterface.OnClickListener(){
 
 								@Override
 								public void onClick(DialogInterface p1, int p2)

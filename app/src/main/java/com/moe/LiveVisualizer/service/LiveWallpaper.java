@@ -11,6 +11,7 @@ import android.service.wallpaper.WallpaperService;
 import android.util.DisplayMetrics;
 import com.bumptech.glide.gifdecoder.GifDecoder;
 import com.moe.LiveVisualizer.utils.ColorList;
+import android.app.WallpaperManager;
 
 public class LiveWallpaper extends WallpaperService
 {

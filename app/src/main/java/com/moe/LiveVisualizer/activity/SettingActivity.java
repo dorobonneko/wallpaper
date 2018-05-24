@@ -101,8 +101,10 @@ public class SettingActivity extends Activity
 					else
 						getFragmentManager().beginTransaction().add(R.id.setting_view, setting, "setting").commit();
 				}
+				if(getActionBar()!=null){
 				getActionBar().setDisplayHomeAsUpEnabled(true);
 				getActionBar().setHomeButtonEnabled(true);
+				}
 			}
 		}
 		else

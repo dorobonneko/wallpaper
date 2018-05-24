@@ -18,7 +18,6 @@ public class Snow extends Duang
 		paint=new Paint();
 		paint.setColor(0xffffffff);
 		path=new Path();
-		reset(true);
 	}
 
 	@Override
@@ -30,20 +29,21 @@ public class Snow extends Duang
 			}
 		if(getOffsetY()>0){
 			setOffsetX(getOffsetX()+(wind?windSpeed:-windSpeed));
-			
 			path.offset(wind?windSpeed:-windSpeed,speed);
+			canvas.drawPath(path,paint);
 			}else
 			path.offset(0,speed);
-		canvas.drawPath(path,paint);
 	}
 
 	@Override
 	public void random(Random random)
 	{
-		setOffsetX(random.nextInt(getMaxWidth()));
-		setSize(random.nextFloat()*(getMaxSize()-getMinSize())+getMinSize());
-		setOffsetY(-random.nextInt(getMaxHeight()));
-		float scale=getSize()/24;
+		setOffsetX(random.nextInt((int)(getMaxWidth()-getSize())));
+		//setSize(random.nextFloat()*(getMaxSize()-getMinSize())+getMinSize());
+		if(isFirst())
+			setOffsetY(-random.nextInt(getMaxHeight()));
+		else
+			setOffsetY(-getSize());float scale=getSize()/24;
 		matrix.setScale(scale,scale);
 		resetPath();
 		//随机生成风向

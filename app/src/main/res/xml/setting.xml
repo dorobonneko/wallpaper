@@ -17,7 +17,7 @@
 	   android:key="color_range">
 	   <intent
 		   android:targetPackage="com.moe.LiveVisualizer"
-		   android:targetClass="com.moe.LiveVisualizer.ColorListActivity"/>
+		   android:targetClass="com.moe.LiveVisualizer.activity.ColorListActivity"/>
 	   </Preference>
    <ListPreference
 	   android:title="色彩模式"
@@ -63,6 +63,7 @@
 	<SwitchPreference
 		android:title="高帧率模式"
 		android:key="highfps"
+		android:summary="开启后动画速度提升两倍"
 		/>
 	<com.moe.LiveVisualizer.preference.SeekBarPreference
 		android:title="动画速度"

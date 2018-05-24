@@ -198,7 +198,7 @@ public class CircleSettingFragment extends PreferenceFragment implements Prefere
 									}.start();
 								}
 							});
-						circle_dialog.setButton(ProgressDialog.BUTTON2,"GIF", new DialogInterface.OnClickListener(){
+						circle_dialog.setButton(ProgressDialog.BUTTON2,"原图", new DialogInterface.OnClickListener(){
 
 								@Override
 								public void onClick(DialogInterface p1, int p2)
@@ -246,7 +246,7 @@ public class CircleSettingFragment extends PreferenceFragment implements Prefere
 									}.start();
 								}
 							});
-						circle_dialog.setButton(ProgressDialog.BUTTON3,"取消",handler.obtainMessage(CIRCLE_SUCCESS));
+						circle_dialog.setButton(ProgressDialog.BUTTON3,"取消",handler.obtainMessage(CIRCLE_DISMISS));
 						circle_dialog.setCanceledOnTouchOutside(false);
 					}
 					circle_dialog.show();

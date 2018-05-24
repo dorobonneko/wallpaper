@@ -143,6 +143,10 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 				if(mDuangEngine!=null)
 					mDuangEngine.setWind(p1.getInt(p2,2));
 				break;
+			case "duang_screen":
+				if(mDuangEngine!=null)
+					mDuangEngine.setDuang(Integer.parseInt(p1.getString(p2,"0")));
+				break;
 		}
 	}
 

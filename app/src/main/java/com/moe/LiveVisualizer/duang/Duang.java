@@ -12,6 +12,8 @@ public abstract class Duang
 	private Random random;
 	private DisplayMetrics display;
 	private int mWind,maxSize,minSize;
+	private Engine engine;
+	private boolean first=true;
 	public Duang(DisplayMetrics display,int maxSize,int minSize,int wind,int speed){
 		this.display=display;
 		random=new Random(System.currentTimeMillis());
@@ -19,6 +21,17 @@ public abstract class Duang
 		this.maxSize=maxSize;
 		this.mWind=wind;
 		this.speed=speed;
+	}
+	public boolean isFirst(){
+		boolean flag=first;
+		first=false;
+		return flag;
+	}
+	final void setEngine(Engine engine){
+		this.engine=engine;
+	}
+	public Engine getEngine(){
+		return engine;
 	}
 	public void setMinSize(int size){
 		this.minSize=size;
@@ -98,9 +111,10 @@ public abstract class Duang
 	public abstract void draw(Canvas canvas);
 	public abstract void random(Random random);
 	public void reset(boolean random){
-		if(random)
+		if(random){
+			setSize(this.random.nextFloat()*(getMaxSize()-getMinSize())+getMinSize());
 			random(this.random);
-			else
+			}else
 			{
 				offsetX=0;
 				offsetY=0;
@@ -111,6 +125,7 @@ public abstract class Duang
 	}
 	public void release(){
 		reset(false);
+		engine=null;
 		try
 		{
 			finalize();
@@ -118,4 +133,6 @@ public abstract class Duang
 		catch (Throwable e)
 		{}
 	}
-	}
+
+	
+}

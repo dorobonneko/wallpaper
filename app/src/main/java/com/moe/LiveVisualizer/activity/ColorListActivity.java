@@ -52,6 +52,7 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 		listview=new ListView(this);
 		listview.setAdapter(new ColorAdapter(colorList));
 		listview.setOnItemClickListener(this);
+		listview.setFitsSystemWindows(true);
 		setContentView(listview);
 		setTitle("色彩组");
 		getActionBar().setDisplayHomeAsUpEnabled(true);

@@ -11,6 +11,7 @@ import android.widget.SeekBar;
 import android.content.res.TypedArray;
 import android.os.Parcelable;
 import android.os.Parcel;
+import android.os.Build;
 
 public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarChangeListener
 {
@@ -29,7 +30,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 	protected View onCreateView(ViewGroup parent)
 	{
 		// TODO: Implement this method
-		View view =LayoutInflater.from(getContext()).inflate(R.layout.seekbar_preference,parent,false);
+		View view =LayoutInflater.from(getContext()).inflate(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP?R.layout.seekbar_preference_material:R.layout.seekbar_preference,parent,false);
 		return view;
 	}
 
