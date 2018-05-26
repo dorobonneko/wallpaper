@@ -18,6 +18,9 @@ import android.widget.Toast;
 import java.util.Arrays;
 import com.moe.LiveVisualizer.R;
 import com.moe.LiveVisualizer.activity.CropActivity;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.provider.DocumentsContract;
 
 public class SettingFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,Preference.OnPreferenceChangeListener
 {
@@ -83,7 +86,8 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 				 startActivityForResult(intent,GET_IMAGE);*/
 				final File wallpaper=new File(getActivity().getExternalFilesDir(null), "wallpaper");
 				final File wallpaper_p=new File(getActivity().getExternalFilesDir(null),"wallpaper_p");
-				if ( wallpaper.exists() )
+				final File video=new File(getActivity().getExternalFilesDir(null),"video");
+				if ( wallpaper.exists()||video.exists() )
 				{
 					if ( delete == null )
 					{
@@ -92,9 +96,12 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 								@Override
 								public void onClick(DialogInterface p1, int p2)
 								{
+									if(video.exists())
+										video.delete();
+										else{
 									wallpaper.delete();
 									wallpaper_p.delete();
-									getActivity().sendBroadcast(new Intent("wallpaper_changed"));
+									}getActivity().sendBroadcast(new Intent("wallpaper_changed"));
 
 								}
 							}).create();
@@ -104,7 +111,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 				else
 				{
 					Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-					intent.setType("image/*");
+					intent.setType("*/*");
 					/*intent.putExtra("crop", "true");
 					 //width:height
 					 Display display=getActivity().getWindowManager().getDefaultDisplay();
@@ -139,7 +146,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 					if ( gif_dialog == null )
 					{
 						gif_dialog = new ProgressDialog(getActivity());
-						gif_dialog.setMessage("如何处理图片");
+						gif_dialog.setMessage("如何处理");
 						gif_dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 						gif_dialog.setButton(ProgressDialog.BUTTON1,"裁剪", new DialogInterface.OnClickListener(){
 
@@ -147,6 +154,9 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 								public void onClick(DialogInterface p1, int p2)
 								{
 									try{
+										Field show=Dialog.class.getDeclaredField("mShowing");
+										show.setAccessible(true);
+										show.setBoolean(gif_dialog,false);
 										Field progressBar=gif_dialog.getClass().getDeclaredField("mProgress");
 										progressBar.setAccessible(true);
 										((ProgressBar)progressBar.get(gif_dialog)).setVisibility(ProgressBar.VISIBLE);
@@ -225,6 +235,9 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 								public void onClick(DialogInterface p1, int p2)
 								{
 									try{
+										Field show=Dialog.class.getDeclaredField("mShowing");
+										show.setAccessible(true);
+										show.setBoolean(gif_dialog,false);
 									Field progressBar=gif_dialog.getClass().getDeclaredField("mProgress");
 									progressBar.setAccessible(true);
 									((ProgressBar)progressBar.get(gif_dialog)).setVisibility(ProgressBar.VISIBLE);
@@ -267,8 +280,27 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 									}.start();
 								}
 							});
-							gif_dialog.setButton(ProgressDialog.BUTTON3,"取消",handler.obtainMessage(WALLPAPER_DISMISS));
-							gif_dialog.setCanceledOnTouchOutside(false);
+						gif_dialog.setButton(ProgressDialog.BUTTON3, "视频第一帧", new DialogInterface.OnClickListener(){
+
+								@Override
+								public void onClick(DialogInterface p1, int p2)
+								{
+									try{
+										Field show=Dialog.class.getDeclaredField("mShowing");
+										show.setAccessible(true);
+										show.setBoolean(gif_dialog,false);
+										Field progressBar=gif_dialog.getClass().getDeclaredField("mProgress");
+										progressBar.setAccessible(true);
+										((ProgressBar)progressBar.get(gif_dialog)).setVisibility(ProgressBar.VISIBLE);
+									}catch(Exception e){}
+									if(Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1&&getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
+										requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},593);
+									}else{
+										loadVideo();
+									}
+								}
+							});
+							gif_dialog.setCanceledOnTouchOutside(true);
 					}
 					gif_dialog.show();
 					try
@@ -276,9 +308,6 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 						Field progressBar=gif_dialog.getClass().getDeclaredField("mProgress");
 						progressBar.setAccessible(true);
 						((ProgressBar)progressBar.get(gif_dialog)).setVisibility(ProgressBar.GONE);
-						Field show=Dialog.class.getDeclaredField("mShowing");
-						show.setAccessible(true);
-						show.setBoolean(gif_dialog,false);
 					}
 					catch (Exception e)
 					{}
@@ -293,6 +322,8 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 					break;
 				
 			}
+		final File tmp=new File(getActivity().getExternalFilesDir(null),"tmpImage");
+		if(tmp.exists())tmp.delete();
 	}
 
 	private Handler handler=new Handler(){
@@ -315,5 +346,55 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 			}
 		}
 	
-};
+	};
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+	{
+		// TODO: Implement this method
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		if(requestCode==593&&grantResults[0]==PackageManager.PERMISSION_GRANTED){
+			loadVideo();
+			}else
+			Toast.makeText(getActivity(),"设置失败，没有权限",Toast.LENGTH_SHORT).show();
+	}
+private void loadVideo(){
+	
+	new Thread(){
+		public void run(){
+			final File tmp=new File(getActivity().getExternalFilesDir(null), "video");
+			FileOutputStream fos=null;
+			InputStream is=null;
+			try
+			{
+				fos = new FileOutputStream(tmp);
+				is = getActivity().getContentResolver().openInputStream(weak.get());
+				byte[] buffer=new byte[16*1024];
+				int len;
+				while ( (len = is.read(buffer)) != -1 )
+					fos.write(buffer, 0, len);
+				fos.flush();
+			}
+			catch (Exception e)
+			{}
+			finally
+			{
+				try
+				{
+					if ( fos != null )fos.close();
+				}
+				catch (IOException e)
+				{}
+				try
+				{
+					if ( is != null )is.close();
+				}
+				catch (IOException e)
+				{}
+			}
+			getActivity().sendBroadcast(new Intent("wallpaper_changed"));
+			handler.obtainMessage(WALLPAPER_DISMISS).sendToTarget();
+		}
+	}.start();
+}
 }

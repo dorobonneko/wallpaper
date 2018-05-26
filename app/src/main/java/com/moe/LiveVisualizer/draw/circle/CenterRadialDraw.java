@@ -27,16 +27,16 @@ public class CenterRadialDraw extends CircleDraw
 	public CenterRadialDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		super(draw,engine);
 		paint = new Paint();
-		paint.setStrokeCap(getEngine().getSharedPreferences().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
+		paint.setStrokeCap(getEngine().getPreference().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
 		paint.setAntiAlias(true);
 		paint.setDither(true);
 		paint.setColor(0xff39c5bb);
 		paint.setStyle(Paint.Style.FILL);
-		borderWidth=(engine.getSharedPreferences().getInt("borderWidth",30));
+		borderWidth=(engine.getPreference().getInt("borderWidth",30));
 		//borderWidth=paint.getStrokeWidth();
 		//radius=engine.getSharedPreferences().getInt("circleRadius",Math.min(engine.getWidth(),engine.getHeight())/6);
-		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
-		spaceWidth=engine.getSharedPreferences().getInt("spaceWidth",20);
+		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getPreference().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
+		spaceWidth=engine.getPreference().getInt("spaceWidth",20);
 		
 		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
 
@@ -104,7 +104,7 @@ public class CenterRadialDraw extends CircleDraw
 				break;
 			case 3:
 				int color=getColor();
-				paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+				paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 				paint.setShadowLayer(borderWidth,0,0,color);
 				drawGraph(getFft(),canvas,color_mode,false);
 				paint.setShadowLayer(0,0,0,0);
@@ -175,7 +175,7 @@ public class CenterRadialDraw extends CircleDraw
 						break;
 					case 4:
 						int color=getEngine().getColorList().get(color_step);
-						paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+						paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 						color_step++;
 						if ( color_step >= getEngine().getColorList().size() )
 							color_step = 0;

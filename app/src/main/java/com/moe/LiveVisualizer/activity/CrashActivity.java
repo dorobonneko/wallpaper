@@ -8,6 +8,9 @@ import android.content.Intent;
 import android.text.method.ArrowKeyMovementMethod;
 import android.net.Uri;
 import android.content.ClipboardManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.PackageManager;
+import android.os.Build;
 
 public class CrashActivity extends Activity
 {
@@ -22,6 +25,7 @@ public class CrashActivity extends Activity
 		sb= new StringBuffer(tv.getText());
 		tv.setMovementMethod(new ArrowKeyMovementMethod());
 		tv.setFitsSystemWindows(true);
+		tv.setTextColor(0xffffffff);
 		setContentView(tv);
 	}
 
@@ -36,7 +40,7 @@ public class CrashActivity extends Activity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		((ClipboardManager)getSystemService(CLIPBOARD_SERVICE)).setText(sb.insert(0,"@千羽樱 ").toString());
+		((ClipboardManager)getSystemService(CLIPBOARD_SERVICE)).setText(sb.insert(0, "@千羽樱 ").toString());
 		Intent intent=new Intent(Intent.ACTION_VIEW);
 		intent.setData(Uri.parse("https://www.coolapk.com/apk/com.moe.LiveVisualizer"));
 		startActivity(intent);

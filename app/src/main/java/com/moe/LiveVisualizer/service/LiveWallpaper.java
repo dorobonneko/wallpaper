@@ -12,15 +12,19 @@ import android.util.DisplayMetrics;
 import com.bumptech.glide.gifdecoder.GifDecoder;
 import com.moe.LiveVisualizer.utils.ColorList;
 import android.app.WallpaperManager;
-
+import android.net.Uri;
+import android.provider.DocumentsContract;
+import android.media.MediaPlayer;
+import android.content.SharedPreferences;
+import com.moe.LiveVisualizer.utils.PreferencesUtils;
 public class LiveWallpaper extends WallpaperService
 {
 	private ColorList colorList;
 	private ChangedReceiver changed;
 	private SharedPreferences moe;
 	private ImageThread background,centerImage,background_h;
-
-
+	private VideoThread video;
+	private File videoFile;
 	@Override
 	public void onCreate()
 	{
@@ -33,12 +37,26 @@ public class LiveWallpaper extends WallpaperService
 		filter.addAction("color_changed");
 		registerReceiver(changed = new ChangedReceiver(), filter);
 		loadColor();
-		background = new ImageThread(this, new File(getExternalFilesDir(null), "wallpaper"));
-		background.start();
+		videoFile=new File(getExternalFilesDir(null),"video");
+		if(videoFile.exists()){
+			try
+			{
+				video = new VideoThread(videoFile.getAbsolutePath());
+				video.start();
+			}
+			catch (Exception e)
+			{}
+			
+		}else{
+			background = new ImageThread(this, new File(getExternalFilesDir(null), "wallpaper"));
+			background.start();
+			background_h=new ImageThread(this,new File(getExternalFilesDir(null),"wallpaper_p"));
+			background_h.start();
+		}
 		centerImage = new ImageThread(this, new File(getExternalFilesDir(null), "circle"));
 		centerImage.start();
-		background_h=new ImageThread(this,new File(getExternalFilesDir(null),"wallpaper_p"));
-		background_h.start();
+		
+		
 	}
 
 	public SharedPreferences getSharedPreferences()
@@ -49,7 +67,7 @@ public class LiveWallpaper extends WallpaperService
 
 	public Bitmap getWallpaperBitmap(int direction)
 	{
-		return direction==0?(background != null ?background.getImage(): null):(background!=null&&background.isGif()?background.getImage():background_h!=null?background_h.getImage():null);
+		return video!=null?video.getImage():(direction==0?(background != null ?background.getImage(): null):(background!=null&&background.isGif()?background.getImage():background_h!=null?background_h.getImage():null));
 	}
 	public Bitmap getCenterCircleImage()
 	{
@@ -63,7 +81,6 @@ public class LiveWallpaper extends WallpaperService
 	public WallpaperService.Engine onCreateEngine()
 	{
 		return new WallpaperEngine(this);
-
 	}
 	
 	private synchronized void loadColor()
@@ -111,6 +128,14 @@ public class LiveWallpaper extends WallpaperService
 		super.onDestroy();
 		if ( changed != null )
 			unregisterReceiver(changed);
+			if(video!=null)
+				video.release();
+			if(background!=null)
+				background.close();
+			if(background_h!=null)
+				background_h.close();
+			if(centerImage!=null)
+				centerImage.close();
 	}
 
 	class ChangedReceiver extends BroadcastReceiver
@@ -122,10 +147,35 @@ public class LiveWallpaper extends WallpaperService
 			switch ( p2.getAction() )
 			{
 				case "wallpaper_changed":
-					if ( background != null )
-						background.loadImage();
-					if(background_h!=null)
-						background_h.loadImage();
+					if(!videoFile.exists()){
+						if(video!=null){video.release();video=null;}
+						if(background==null){
+							background = new ImageThread(LiveWallpaper.this, new File(getExternalFilesDir(null), "wallpaper"));
+							background.start();
+							}else{
+								background.loadImage();
+							}
+						if(background_h==null){
+							background_h=new ImageThread(LiveWallpaper.this,new File(getExternalFilesDir(null),"wallpaper_p"));
+							background_h.start();
+						}else{
+							background_h.loadImage();
+						}
+					}else{
+						if(video!=null)
+							video.release();
+							video = new VideoThread(videoFile.getAbsolutePath());
+							video.start();
+						if ( background != null ){
+							background.close();
+							background=null;
+							}
+						if(background_h!=null){
+							background_h.close();
+							background_h=null;
+							}
+					}
+					
 					break;
 				case "color_changed":
 					loadColor();
@@ -143,6 +193,7 @@ public class LiveWallpaper extends WallpaperService
 
 	public class WallpaperEngine extends WallpaperService.Engine
 	{
+		private PreferencesUtils utils;
 		private int direction,width,height;
 		private Color colorReceiver;
 		private WallpaperThread refresh=null;
@@ -151,6 +202,7 @@ public class LiveWallpaper extends WallpaperService
 		private LiveWallpaper live;
 		public WallpaperEngine(LiveWallpaper live)
 		{
+			utils=new PreferencesUtils(live);
 			this.live = live;
 		}
 		public int getCaptureSize()
@@ -220,19 +272,21 @@ public class LiveWallpaper extends WallpaperService
 			mVisualizer.setDaemon(true);
 			mVisualizer.start();
 		}
-
-		public SharedPreferences getSharedPreferences()
+		
+		public PreferencesUtils getPreference()
 		{
-			return live.getSharedPreferences();
+			return utils;
 		}
 		@Override
 		public void onVisibilityChanged(boolean visible)
 		{
 			mVisualizer.check();
 			if ( background != null )
-				background.notiftVisiableChanged(visible);
+				background.notifyVisiableChanged(visible);
 			if ( centerImage != null )
-				centerImage.notiftVisiableChanged(visible);
+				centerImage.notifyVisiableChanged(visible);
+				if(video!=null)
+					video.notifyVisiableChanged(visible);
 			//super.onVisibilityChanged(visible);
 		}
 		@Override
@@ -249,6 +303,8 @@ public class LiveWallpaper extends WallpaperService
 			sizeListener = null;
 			if(colorReceiver!=null)
 				unregisterReceiver(colorReceiver);
+			if(utils!=null)
+				utils.close();
 		}
 		public int getDisplayWidth()
 		{
@@ -269,11 +325,13 @@ public class LiveWallpaper extends WallpaperService
 		@Override
 		public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height)
 		{
-			direction=width<height?0:1;
+			direction = width < height ?0: 1;
 			this.width=width;
 			this.height=height;
 			if(refresh!=null)
 				refresh.onSizeChanged();
+			if(video!=null)
+				video.onSizeChanged();
 		}
 		public int getDirection(){
 			return direction;

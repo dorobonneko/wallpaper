@@ -16,12 +16,23 @@ public class ImageDraw implements OnColorSizeChangedListener
 	private Shader shader;
 	private float downSpeed;
 	private Matrix centerImageMatrix;
+	private String mode,color_mode;
 	public ImageDraw(LiveWallpaper.WallpaperEngine engine)
 	{
 		this.engine = engine;
+		mode=engine.getPreference().getString("visualizer_mode","0");
+		color_mode=engine.getPreference().getString("color_mode","0");
 		engine.registerColorSizeChangedListener(this);
 	}
-
+	public void setMode(String mode){
+		this.mode=mode;
+	}
+	public void setColorMode(String mode){
+		this.color_mode=mode;
+	}
+	public String getColorMode(){
+		return color_mode;
+	}
 	public void notifySizeChanged()
 	{
 		shader = null;
@@ -159,7 +170,7 @@ public class ImageDraw implements OnColorSizeChangedListener
 	
 	private Draw get()
 	{
-		switch (engine.getSharedPreferences().getString("visualizer_mode", "0"))
+		switch (mode)
 		{
 			case "0"://柱形图
 				return drawList[0] == null ?drawList[0] = new RadialDraw(this, engine): drawList[0];
@@ -194,7 +205,7 @@ public class ImageDraw implements OnColorSizeChangedListener
 	{
 		if (shader == null)
 		{
-			switch (engine.getSharedPreferences().getString("color_direction", "0"))
+			switch (engine.getPreference().getString("color_direction", "0"))
 			{
 				case "0"://lefttoright
 					shader = new LinearGradient(0, 0, engine.getDisplayWidth(), 0, engine.getColorList().toArray(), null, LinearGradient.TileMode.CLAMP);

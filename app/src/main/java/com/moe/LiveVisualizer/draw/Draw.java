@@ -38,7 +38,7 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 			});
 		this.draw = draw;
 		this.engine = engine;
-		round=engine.getSharedPreferences().getBoolean("round",false);
+		round=engine.getPreference().getBoolean("round",false);
 		anime=new ValueAnimator();
 		anime.setRepeatCount(0);
 		anime.setIntValues(0);
@@ -112,7 +112,7 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 					readyIndex=0;
 					fade[0]=engine.getColorList().get(index);
 					fade[1]=engine.getColorList().get(readyIndex);
-					anime.setDuration(getEngine().getSharedPreferences().getInt("nenofade",2)*1000);
+					anime.setDuration(getEngine().getPreference().getInt("nenofade",2)*1000);
 					isInterval=false;
 					handler.sendEmptyMessage(0);
 					
@@ -122,7 +122,7 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 					index=0;
 				fade[0]=(engine.getColorList().get(index));
 				isInterval=true;
-				anime.setDuration(getEngine().getSharedPreferences().getInt("nenointerval",5)*1000);
+				anime.setDuration(getEngine().getPreference().getInt("nenointerval",5)*1000);
 				handler.sendEmptyMessage(0);
 			}
 			return fade[0];
@@ -138,7 +138,7 @@ private int getMiddleColor(int c1,int c2){
 
 	public void draw(Canvas canvas)
 	{
-		onDraw(canvas, Integer.parseInt(getEngine().getSharedPreferences().getString("color_mode", "0")));
+		onDraw(canvas, Integer.parseInt(draw.getColorMode()));
 	}
 
 	public Integer evaluate(float fraction,int... n)

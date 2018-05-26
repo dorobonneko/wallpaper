@@ -23,13 +23,13 @@ public class Engine
 	private Bitmap buffer;
 	private Engine(LiveWallpaper.WallpaperEngine engine){
 		this.engine=engine;
-		wind=engine.getSharedPreferences().getInt("duang_wind",2);
-		speed=engine.getSharedPreferences().getInt("duang_speed",30);
-		maxSize=engine.getSharedPreferences().getInt("duang_maxSize",50);
-		minSize=engine.getSharedPreferences().getInt("duang_minSize",10);
+		wind=engine.getPreference().getInt("duang_wind",2);
+		speed=engine.getPreference().getInt("duang_speed",30);
+		maxSize=engine.getPreference().getInt("duang_maxSize",50);
+		minSize=engine.getPreference().getInt("duang_minSize",10);
 		changed();
 		list=new ArrayList<>();
-		setDuang(Integer.parseInt(engine.getSharedPreferences().getString("duang_screen","0")));
+		setDuang(Integer.parseInt(engine.getPreference().getString("duang_screen","0")));
 	}
 
 	
@@ -113,7 +113,7 @@ public class Engine
 			buffer.recycle();
 			buffer=null;
 			}
-		int size=engine.getSharedPreferences().getInt("duang_size",50);
+		int size=engine.getPreference().getInt("duang_size",50);
 		Class class_=null;
 		switch(mode){
 			case 0:
@@ -127,6 +127,10 @@ public class Engine
 			case 2:
 				buffer=BitmapFactory.decodeResource(engine.getContext().getResources(),com.moe.LiveVisualizer.R.raw.sakura_leave);
 				class_=Sakura.class;
+				break;
+			case 3:
+				buffer=BitmapFactory.decodeResource(engine.getContext().getResources(),com.moe.LiveVisualizer.R.raw.bubble_mould);
+				class_=Bubble.class;
 				break;
 		}
 		try

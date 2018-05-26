@@ -7,17 +7,17 @@ import android.graphics.Canvas;
 public abstract class LineDraw extends Draw
 {
 	private int size;
-	private float spaceWidth,borderHeight,borderWidth,drawHeight;
+	private float spaceWidth,borderHeight,borderWidth,drawHeight,sourceSpace;
 	private Paint paint;
 	public LineDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		super(draw,engine);
 		paint=new Paint();
 		paint.setStyle(Paint.Style.FILL);
-		paint.setStrokeCap(getEngine().getSharedPreferences().getBoolean("round", true) ?Paint.Cap.ROUND: Paint.Cap.SQUARE);
-		borderHeight = engine.getSharedPreferences().getInt("borderHeight", 100);
-		spaceWidth = engine.getSharedPreferences().getInt("spaceWidth", 20);
-		drawHeight = engine.getDisplayHeight() - engine.getSharedPreferences().getInt("height", 10) / 100.0f * engine.getDisplayHeight();
-		borderWidth = engine.getSharedPreferences().getInt("borderWidth", 30);
+		paint.setStrokeCap(getEngine().getPreference().getBoolean("round", true) ?Paint.Cap.ROUND: Paint.Cap.SQUARE);
+		borderHeight = engine.getPreference().getInt("borderHeight", 100);
+		sourceSpace = engine.getPreference().getInt("spaceWidth", 20);
+		drawHeight = engine.getDisplayHeight() - engine.getPreference().getInt("height", 10) / 100.0f * engine.getDisplayHeight();
+		borderWidth = engine.getPreference().getInt("borderWidth", 30);
 		paint.setStrokeWidth(borderWidth);
 		notifySizeChanged();
 	}
@@ -71,7 +71,7 @@ public abstract class LineDraw extends Draw
 	@Override
 	final public void onSpaceWidthChanged(int space)
 	{
-		this.spaceWidth=space;
+		sourceSpace=space;
 		notifySizeChanged();
 	}
 	@Override
@@ -83,10 +83,9 @@ public abstract class LineDraw extends Draw
 	@Override
 	public void notifySizeChanged()
 	{
-		spaceWidth=getEngine().getSharedPreferences().getInt("spaceWidth", 20);
 		try
 		{
-			size = (int)((getEngine().getDisplayWidth() - spaceWidth) / (borderWidth + spaceWidth));
+			size = (int)((getEngine().getDisplayWidth() - sourceSpace) / (borderWidth + sourceSpace));
 		}
 		catch (Exception e)
 		{}

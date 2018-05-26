@@ -49,7 +49,7 @@ public class PopCircleDraw extends LineDraw
 				break;
 			case 3:
 				int color=getColor();
-				paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+				paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 				paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 				drawGraph(getFft(),canvas,color_mode,false);
 				paint.setShadowLayer(0,0,0,0);
@@ -69,7 +69,7 @@ public class PopCircleDraw extends LineDraw
 			points=new float[size()];
 		float radius=getBorderWidth()/2.0f;
 		float x=radius;//起始像素
-		float y=canvas.getHeight() - getEngine().getSharedPreferences().getInt("height", 10) / 100.0f * canvas.getHeight();
+		float y=canvas.getHeight() - getEngine().getPreference().getInt("height", 10) / 100.0f * canvas.getHeight();
 		int color_step=0;
 		canvas.drawLine(0,y,canvas.getWidth(),y,paint);
 		for ( int i=0;i < size();i ++ )
@@ -87,7 +87,7 @@ public class PopCircleDraw extends LineDraw
 						break;
 					case 4:
 						int color=getEngine().getColorList().get(color_step);
-						paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+						paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 						color_step++;
 						if ( color_step >= getEngine().getColorList().size() )
 							color_step = 0;

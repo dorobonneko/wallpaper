@@ -31,19 +31,19 @@ public abstract class RingDraw extends CircleDraw
 	public RingDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		super(draw,engine);
 		this.draw=draw;
-		borderHeight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, engine.getSharedPreferences().getInt("borderHeight", 100), engine.getContext().getResources().getDisplayMetrics());
-		spaceWidth = engine.getSharedPreferences().getInt("spaceWidth", 20);
-		direction=Integer.parseInt(engine.getSharedPreferences().getString("direction",OUTSIDE+""));
+		borderHeight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, engine.getPreference().getInt("borderHeight", 100), engine.getContext().getResources().getDisplayMetrics());
+		spaceWidth = engine.getPreference().getInt("spaceWidth", 20);
+		direction=Integer.parseInt(engine.getPreference().getString("direction",OUTSIDE+""));
 		paint = new Paint();
-		paint.setStrokeCap(getEngine().getSharedPreferences().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
+		paint.setStrokeCap(getEngine().getPreference().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
 		paint.setAntiAlias(true);
 		paint.setDither(true);
 		paint.setColor(0xff39c5bb);
 		paint.setStyle(Paint.Style.FILL);
-		borderWidth=(engine.getSharedPreferences().getInt("borderWidth",30));
-		radius=engine.getSharedPreferences().getInt("circleRadius",Math.min(engine.getDisplayWidth(),engine.getDisplayHeight())/6);
-		cutCenterImage=engine.getSharedPreferences().getBoolean("cutImage",true);
-		degress_step=engine.getSharedPreferences().getInt("degress",10)/100f*10;
+		borderWidth=(engine.getPreference().getInt("borderWidth",30));
+		radius=engine.getPreference().getInt("circleRadius",Math.min(engine.getDisplayWidth(),engine.getDisplayHeight())/6);
+		cutCenterImage=engine.getPreference().getBoolean("cutImage",true);
+		degress_step=engine.getPreference().getInt("degress",10)/100f*10;
 		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
 
 				@Override
@@ -171,7 +171,7 @@ public abstract class RingDraw extends CircleDraw
 		if(getEngine().getCircleImage()!=null){
 			final int layer=canvas.saveLayer(0,0,canvas.getWidth(),canvas.getHeight(),null,canvas.ALL_SAVE_FLAG);
 			//canvas.drawColor(0xffffffff);
-			if(getEngine().getSharedPreferences().getBoolean("circleSwitch",true)){
+			if(getEngine().getPreference().getBoolean("circleSwitch",true)){
 				canvas.rotate(degress,point.x,point.y);
 				degress+=degress_step;
 				if ( degress >= 360 )degress = 0;

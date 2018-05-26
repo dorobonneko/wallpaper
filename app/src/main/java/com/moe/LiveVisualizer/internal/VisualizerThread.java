@@ -42,14 +42,15 @@ public class VisualizerThread extends Thread
 							try
 							{
 								mVisualizer = new Visualizer(0);
-								mVisualizer.setEnabled(false);
+								if(!mVisualizer.getEnabled()){
 								mVisualizer.setCaptureSize(engine.getCaptureSize());
 								//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
 								mVisualizer.setEnabled(engine.isVisible());
+								}
 							}
 							catch (Exception e)
 							{
-								//error_msg=e.getMessage();
+								mVisualizer=null;
 								new Handler(Looper.getMainLooper()).post(new Runnable(){
 
 										@Override
@@ -67,7 +68,7 @@ public class VisualizerThread extends Thread
 											}
 											catch (Exception e)
 											{
-												
+												mVisualizer=null;
 												error_msg=e.getMessage();
 											}
 										}

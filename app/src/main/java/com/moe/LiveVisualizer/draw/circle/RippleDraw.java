@@ -24,14 +24,14 @@ public class RippleDraw extends CircleDraw
 	public RippleDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		super(draw,engine);
 		paint = new Paint();
-		paint.setStrokeCap(getEngine().getSharedPreferences().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
+		paint.setStrokeCap(getEngine().getPreference().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
 		paint.setAntiAlias(true);
 		paint.setDither(true);
 		paint.setColor(0xff39c5bb);
 		paint.setStyle(Paint.Style.FILL);
-		borderWidth=(engine.getSharedPreferences().getInt("borderWidth",30));
+		borderWidth=(engine.getPreference().getInt("borderWidth",30));
 		//borderWidth=paint.getStrokeWidth();
-		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getSharedPreferences().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
+		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getPreference().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
 		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
 
 				@Override
@@ -102,7 +102,7 @@ public class RippleDraw extends CircleDraw
 				break;
 			case 3:
 				int color=getColor();
-				paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+				paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 				paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 				drawGraph(getFft(),canvas,color_mode,false);
 				paint.setShadowLayer(0,0,0,0);
@@ -159,7 +159,7 @@ public class RippleDraw extends CircleDraw
 						break;
 					case 4:
 						int color=getEngine().getColorList().get(color_step);
-						paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+						paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 						color_step++;
 						if ( color_step >= getEngine().getColorList().size() )
 							color_step = 0;

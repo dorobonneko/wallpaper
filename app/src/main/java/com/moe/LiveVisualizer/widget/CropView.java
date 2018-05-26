@@ -499,7 +499,7 @@ public class CropView extends View implements GestureDetector.OnGestureListener,
 	}
 	private void checkPosition()
 	{
-		if ( isScale )return;
+		if ( isScale||bit==null )return;
 		float[] trans=getTranslation();
 		float[] translate=new float[4];
 		translate[0] = trans[0];
@@ -667,6 +667,7 @@ public class CropView extends View implements GestureDetector.OnGestureListener,
 	}
 	private void rect()
 	{
+		if(bit==null)return;
 		if ( aspectX<= 0 || aspectY<= 0 || bit == null )return;
 		float aspect=aspectX/aspectY;
 		float width,height;
@@ -718,6 +719,10 @@ public class CropView extends View implements GestureDetector.OnGestureListener,
 			callback.success(null,null);
 	}
 	private void doCrop(final CropCallback call){
+		if(bit==null){
+			if(call!=null)
+				call.success(null,null);
+			return;}
 		RectF image=getImageRect();
 		float scale=getScale();
 		Rect vCrop=new Rect();
@@ -776,6 +781,7 @@ public class CropView extends View implements GestureDetector.OnGestureListener,
 		TOPLEFT,TOPRIGHT,BOTTOMLEFT,BOTTOMRIGHT,NONE,TOP,RIGHT,BOTTOM,LEFT;
 	}
 	private RectF getImageRect(){
+		if(bit==null)return null;
 		float scale=getScale();
 		float[] trans=getTranslation();
 		float imageWidth=bit.getWidth() * scale;

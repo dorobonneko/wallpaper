@@ -149,9 +149,9 @@ public class CropActivity extends Activity implements CropView.CropCallback
 	private Bitmap scale(Bitmap src,float width,float height){
 		if(src==null)return null;
 		if(width<1||height<1)return src;
-		Matrix matrix=new Matrix();
-		matrix.setScale(width/src.getWidth(),height/src.getHeight());
-		Bitmap bit=Bitmap.createBitmap(src,0,0,src.getWidth(),src.getHeight(),matrix,false);
+		float scaleX=width/src.getWidth();
+		float scaleY=height/src.getHeight();
+		Bitmap bit=Bitmap.createScaledBitmap(src,(int)(src.getWidth()*scaleX),(int)(src.getHeight()*scaleY),true);
 		if(bit!=src)
 			src.recycle();
 			return bit;

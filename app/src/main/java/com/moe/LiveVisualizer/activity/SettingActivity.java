@@ -23,8 +23,10 @@ import com.moe.LiveVisualizer.service.LiveWallpaper;
 import com.moe.LiveVisualizer.fragment.SettingFragment;
 import com.moe.LiveVisualizer.fragment.CircleSettingFragment;
 import com.moe.LiveVisualizer.fragment.DuangSettingFragment;
+import android.content.SharedPreferences;
+import android.content.ContentValues;
 
-public class SettingActivity extends Activity
+public class SettingActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener
 {
 	private MenuItem centerCircle,duang;
 	@Override
@@ -105,6 +107,7 @@ public class SettingActivity extends Activity
 				getActionBar().setDisplayHomeAsUpEnabled(true);
 				getActionBar().setHomeButtonEnabled(true);
 				}
+				getSharedPreferences("moe",0).registerOnSharedPreferenceChangeListener(this);
 			}
 		}
 		else
@@ -211,6 +214,23 @@ public class SettingActivity extends Activity
 			super.onBackPressed();
 	}
 
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences p1, String p2)
+	{
+		Uri.Builder build=new Uri.Builder();
+		build.scheme("content").authority("moe").path("moe").appendQueryParameter("key",p2).appendQueryParameter("value",p1.getAll().get(p2)+"");
+		getContentResolver().update(build.build(),new ContentValues(),null,null);
+	}
+
+	@Override
+	public void finish()
+	{
+		// TODO: Implement this method
+		super.finish();
+		getSharedPreferences("moe",0).unregisterOnSharedPreferenceChangeListener(this);
+	}
+
+
 	/*private void gotoNotificationAccessSetting()
 	 {  
 	 try
@@ -247,4 +267,5 @@ public class SettingActivity extends Activity
 	 }  
 	 return enable;  
 	 }  */
+	 
 }

@@ -102,7 +102,7 @@ public class CircleTriangleDraw extends RingDraw
 				break;
 			case 3:
 				int color=getColor();
-				paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+				paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 				paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 				drawGraph(getFft(), canvas, color_mode,false);
 				paint.setShadowLayer(0, 0, 0, 0);
@@ -146,7 +146,7 @@ public class CircleTriangleDraw extends RingDraw
 						break;
 					case 4:
 						int color=getEngine().getColorList().get(color_step);
-						paint.setColor(getEngine().getSharedPreferences().getBoolean("nenosync",false)?color:0xffffffff);
+						paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 						color_step++;
 						if ( color_step >= getEngine().getColorList().size() )
 							color_step = 0;

@@ -9,6 +9,9 @@ import java.lang.reflect.InvocationHandler;
 import com.moe.LiveVisualizer.R;
 import android.content.Intent;
 import com.moe.LiveVisualizer.activity.CrashActivity;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.PackageManager;
+import android.os.Build;
 
 public class Application extends android.app.Application implements Thread.UncaughtExceptionHandler
 {
@@ -17,12 +20,19 @@ public class Application extends android.app.Application implements Thread.Uncau
 	public void uncaughtException(Thread p1, Throwable p2)
 	{
 		StringBuffer sb=new StringBuffer(p2.getMessage());
-		for(StackTraceElement element:p2.getStackTrace())
+		try
+		{
+			sb.append("\n").append(getPackageManager().getPackageInfo(getPackageName(), 0).versionName).append("\n").append(Build.MODEL).append(" ").append(Build.VERSION.RELEASE).append("\n");
+		}
+		catch (PackageManager.NameNotFoundException e)
+		{}
+		for (StackTraceElement element:p2.getStackTrace())
 		sb.append("\n").append(element.toString());
 		Intent intent=new Intent(this,CrashActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.putExtra(Intent.EXTRA_TEXT,sb.toString());
 		startActivity(intent);
+		if(p1.getName().equals("main"))
 		Runtime.getRuntime().exit(1);
 		//android.os.Process.killProcess(android.os.Process.myPid());
 	}

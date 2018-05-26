@@ -39,7 +39,7 @@ public class ImageThread extends Thread implements Handler.Callback
 		if ( handler != null )
 			handler.obtainMessage(0).sendToTarget();
 	}
-	public void notiftVisiableChanged(boolean visiable){
+	public void notifyVisiableChanged(boolean visiable){
 		if(visiable&&gifDecoder!=null&&handler!=null)
 			handler.sendEmptyMessage(1);
 			

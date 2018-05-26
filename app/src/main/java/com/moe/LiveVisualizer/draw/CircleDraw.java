@@ -15,8 +15,8 @@ public abstract class CircleDraw extends Draw
 	public CircleDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
 		super(draw,engine);
 		point=new PointF();
-		point.x=engine.getSharedPreferences().getInt("offsetX",Math.min(engine.getDisplayWidth(),engine.getDisplayHeight())/2);
-		point.y=engine.getSharedPreferences().getInt("offsetY",Math.max(engine.getDisplayHeight(),engine.getDisplayWidth())/2);
+		point.x=engine.getPreference().getInt("offsetX",Math.min(engine.getDisplayWidth(),engine.getDisplayHeight())/2);
+		point.y=engine.getPreference().getInt("offsetY",Math.max(engine.getDisplayHeight(),engine.getDisplayWidth())/2);
 		if(engine.getDisplayWidth()>engine.getDisplayHeight()){
 			float x=point.x;
 			point.x=point.y;
@@ -27,8 +27,8 @@ public abstract class CircleDraw extends Draw
 	@Override
 	public void notifySizeChanged()
 	{
-		point.x=getEngine().getSharedPreferences().getInt("offsetX",Math.min(getEngine().getDisplayWidth(),getEngine().getDisplayHeight())/2);
-		point.y=getEngine().getSharedPreferences().getInt("offsetY",Math.max(getEngine().getDisplayHeight(),getEngine().getDisplayWidth())/2);
+		point.x=getEngine().getPreference().getInt("offsetX",Math.min(getEngine().getDisplayWidth(),getEngine().getDisplayHeight())/2);
+		point.y=getEngine().getPreference().getInt("offsetY",Math.max(getEngine().getDisplayHeight(),getEngine().getDisplayWidth())/2);
 		if(getEngine().getDisplayWidth()>getEngine().getDisplayHeight()){
 			float x=point.x;
 			point.x=point.y;
