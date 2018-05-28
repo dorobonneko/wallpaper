@@ -28,9 +28,11 @@ public class PreferencesUtils
 		String value=buffer.get(key);
 		if(value!=null)return value;
 		Cursor cursor=context.getContentResolver().query(getUriBuilder().appendQueryParameter("key",key).build(),null,null,null,null,null);
+		if(cursor!=null){
 		if(cursor.moveToFirst())
 			value=cursor.getString(1);
 		cursor.close();
+		}
 		if(value==null)
 			value=defaultVlue;
 			buffer.put(key,value);

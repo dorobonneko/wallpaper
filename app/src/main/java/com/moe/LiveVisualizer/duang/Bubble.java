@@ -22,14 +22,17 @@ public class Bubble extends Duang
 		//paint.setColor(0x00000000);
 		//paint.setStrokeWidth(0);
 		matrix=new Matrix();
-		paint.setAlpha(0x7f);
+		//paint.setAlpha(0x7f);
 	}
 	@Override
 	public void draw(Canvas canvas)
 	{
-		if(getOffsetX()<-getSize()||getOffsetX()>getMaxWidth()||getOffsetY()<-getSize())
-			reset(true);
-		else if(getOffsetY()<getMaxHeight()){
+		if(getOffsetX()<-getSize()||getOffsetX()>getMaxWidth()||getOffsetY()<-getSize()){
+			matrix.postTranslate(-getOffsetX(),-getOffsetY());
+			setOffsetY(getMaxHeight());
+			setOffsetX(getRandom().nextInt(getMaxWidth())-getSize());
+			matrix.postTranslate(getOffsetX(),getOffsetY());
+		}else if(getOffsetY()<getMaxHeight()){
 			float offset=(direction&&getOffsetY()>height?wind:-wind);
 			setOffsetX(getOffsetX()+offset);
 			setOffsetY(getOffsetY()-speed);
@@ -50,7 +53,7 @@ public class Bubble extends Duang
 		setOffsetY(random.nextInt(getMaxHeight())+getMaxHeight());
 		else
 		setOffsetY(getMaxHeight());
-		speed=getSize()/getMaxSize()*getSpeed()/5;
+		speed=getSize()/getMaxSize()*getSpeed()/5+1;
 		wind=random.nextFloat()*getWind();
 		if(getEngine().getBuffer()!=null)
 		matrix.setScale(getSize()/getEngine().getBuffer().getWidth(),getSize()/getEngine().getBuffer().getHeight());

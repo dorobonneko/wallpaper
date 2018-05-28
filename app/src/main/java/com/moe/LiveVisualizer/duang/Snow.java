@@ -25,9 +25,12 @@ public class Snow extends Duang
 	{
 		setOffsetY(getOffsetY()+speed);
 		if(getOffsetX()<-getSize()||getOffsetX()>getMaxWidth()||getOffsetY()>getMaxHeight()){
-			reset(true);
+			path.offset(-getOffsetX(),-getOffsetY());
+			setOffsetY(-getSize());
+			setOffsetX(getRandom().nextInt(getMaxWidth())-getSize());
+			path.offset(getOffsetX(),getOffsetY());
 			}
-		if(getOffsetY()>0){
+		else if(getOffsetY()>-getSize()){
 			setOffsetX(getOffsetX()+(wind?windSpeed:-windSpeed));
 			path.offset(wind?windSpeed:-windSpeed,speed);
 			canvas.drawPath(path,paint);
@@ -43,7 +46,8 @@ public class Snow extends Duang
 		if(isFirst())
 			setOffsetY(-random.nextInt(getMaxHeight()));
 		else
-			setOffsetY(-getSize());float scale=getSize()/24;
+			setOffsetY(-getSize());
+		float scale=getSize()/24;
 		matrix.setScale(scale,scale);
 		resetPath();
 		//随机生成风向
@@ -52,7 +56,7 @@ public class Snow extends Duang
 		windSpeed=random.nextFloat()*getWind();
 		//windSpeed=getSize()/getMaxSize()*getWind();
 		//根据尺寸计算下降速度
-		speed=getSize()/getMaxSize()*getSpeed()/10;
+		speed=getSize()/getMaxSize()*getSpeed()/10+1;
 		}
 	private void resetPath(){
 		path.reset();

@@ -16,11 +16,14 @@ public abstract class Duang
 	private boolean first=true;
 	public Duang(DisplayMetrics display,int maxSize,int minSize,int wind,int speed){
 		this.display=display;
-		random=new Random(System.currentTimeMillis());
+		random=new Random(System.nanoTime());
 		this.minSize=minSize;
 		this.maxSize=maxSize;
 		this.mWind=wind;
 		this.speed=speed;
+	}
+	public Random getRandom(){
+		return random;
 	}
 	public boolean isFirst(){
 		boolean flag=first;

@@ -30,6 +30,7 @@ public class Engine
 		changed();
 		list=new ArrayList<>();
 		setDuang(Integer.parseInt(engine.getPreference().getString("duang_screen","0")));
+	
 	}
 
 	
@@ -86,20 +87,22 @@ public class Engine
 		}
 	}
 	public void setMaxSize(int size){
-		Iterator<Duang> iterator=list.iterator();
+		maxSize=size;
+		/*Iterator<Duang> iterator=list.iterator();
 		while(iterator.hasNext())
-			iterator.next().setMaxSize(size);
+			iterator.next().setMaxSize(size);*/
 	}
 	public void setMinSize(int size){
-		Iterator<Duang> iterator=list.iterator();
+		minSize=size;
+		/*Iterator<Duang> iterator=list.iterator();
 		while(iterator.hasNext())
-			iterator.next().setMinSize(size);
+			iterator.next().setMinSize(size);*/
 	}
 	public void setMaxSpeed(int speed){
 		this.speed=speed;
-		Iterator<Duang> iterator=list.iterator();
+		/*Iterator<Duang> iterator=list.iterator();
 		while(iterator.hasNext())
-			iterator.next().setSpeed(speed);
+			iterator.next().setSpeed(speed);*/
 	}
 	public void setWind(int wind){
 		this.wind=wind;

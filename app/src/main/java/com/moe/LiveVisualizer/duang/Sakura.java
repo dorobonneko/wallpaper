@@ -22,7 +22,10 @@ public class Sakura extends Duang
 	public void draw(Canvas canvas)
 	{
 		if(getOffsetX()>getMaxWidth()+getSize()||getOffsetY()>getMaxHeight()+getSize()){
-			reset(true);
+			matrix.postTranslate(-getOffsetX(),-getOffsetY());
+			setOffsetX(getRandom().nextInt((int)(getMaxWidth()-getSize())));
+			setOffsetY(-getSize());
+			matrix.postTranslate(getOffsetX(),getOffsetY());
 		}else if(getOffsetY()>-getSize()){
 			setOffsetX(getOffsetX()+wind);
 			setOffsetY(getOffsetY()+speed);
@@ -42,12 +45,12 @@ public class Sakura extends Duang
 		setOffsetY(-random.nextInt(getMaxHeight()));
 		else
 		setOffsetY(-getSize());
-		speed=getSize()/getMaxSize()*getSpeed()/5;
+		speed=getSize()/getMaxSize()*getSpeed()/5+1;
 		wind=random.nextFloat()*getWind();
 		camera.save();
-		camera.rotateX(random.nextInt(180));
-		camera.rotateY(random.nextInt(180));
-		camera.rotateZ(random.nextInt(180));
+		camera.rotateX(random.nextInt(360));
+		camera.rotateY(random.nextInt(360));
+		camera.rotateZ(random.nextInt(360));
 		camera.getMatrix(matrix);
 		camera.restore();
 		Bitmap bitmap=getEngine().getBuffer();

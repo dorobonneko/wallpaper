@@ -19,9 +19,11 @@ public class Rain extends Duang
 	@Override
 	public void draw(Canvas canvas)
 	{
-		if(getOffsetY()>getMaxHeight()||getOffsetX()<-getSize()||getOffsetX()>getMaxWidth())
-			reset(true);
-		if(getOffsetY()<0){
+		if(getOffsetY()>getMaxHeight()||getOffsetX()<=0||getOffsetX()>getMaxWidth())
+		{
+			setOffsetX(getRandom().nextInt(getMaxWidth()));
+			setOffsetY(-getSize());
+		}else if(getOffsetY()<0){
 			setOffsetY(getOffsetY()+speed);
 		}else{
 			setOffsetY(getOffsetY()+speed);
@@ -40,7 +42,7 @@ public class Rain extends Duang
 			setOffsetY(-random.nextInt(getMaxHeight()));
 		else
 			setOffsetY(-getSize());
-			speed=getSize()/getMaxSize()*getSpeed();
+			speed=getSize()/getMaxSize()*getSpeed()+1;
 		
 	}
 
