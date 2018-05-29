@@ -25,6 +25,7 @@ import com.moe.LiveVisualizer.fragment.CircleSettingFragment;
 import com.moe.LiveVisualizer.fragment.DuangSettingFragment;
 import android.content.SharedPreferences;
 import android.content.ContentValues;
+import android.widget.FrameLayout;
 
 public class SettingActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener
 {
@@ -92,8 +93,10 @@ public class SettingActivity extends Activity implements SharedPreferences.OnSha
 			}
 			else
 			{
-				setContentView(R.layout.setting_view);
-
+				FrameLayout frame=new FrameLayout(this);
+				frame.setFitsSystemWindows(true);
+				frame.setId(android.R.id.widget_frame);
+				((FrameLayout)findViewById(android.R.id.content)).addView(frame);
 				Fragment setting=getFragmentManager().findFragmentByTag("setting");
 				if (setting == null)
 				{setting = new SettingFragment();
@@ -101,7 +104,7 @@ public class SettingActivity extends Activity implements SharedPreferences.OnSha
 					if (setting.isAdded())
 						getFragmentManager().beginTransaction().show(setting).commit();
 					else
-						getFragmentManager().beginTransaction().add(R.id.setting_view, setting, "setting").commit();
+						getFragmentManager().beginTransaction().add(android.R.id.widget_frame, setting, "setting").commit();
 				}
 				if(getActionBar()!=null){
 				getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -177,7 +180,7 @@ public class SettingActivity extends Activity implements SharedPreferences.OnSha
 				if (circle_setting.isAdded())
 					getFragmentManager().beginTransaction().hide(getFragmentManager().findFragmentByTag("setting")).show(circle_setting).commit();
 				else
-					getFragmentManager().beginTransaction().hide(getFragmentManager().findFragmentByTag("setting")).add(R.id.setting_view, circle_setting, "circle_setting").commit();
+					getFragmentManager().beginTransaction().hide(getFragmentManager().findFragmentByTag("setting")).add(android.R.id.widget_frame, circle_setting, "circle_setting").commit();
 
 				return true;
 			case 1:
@@ -188,7 +191,7 @@ public class SettingActivity extends Activity implements SharedPreferences.OnSha
 				if (duang_setting.isAdded())
 					getFragmentManager().beginTransaction().hide(getFragmentManager().findFragmentByTag("setting")).show(duang_setting).commit();
 				else
-					getFragmentManager().beginTransaction().hide(getFragmentManager().findFragmentByTag("setting")).add(R.id.setting_view, duang_setting, "duang_setting").commit();
+					getFragmentManager().beginTransaction().hide(getFragmentManager().findFragmentByTag("setting")).add(android.R.id.widget_frame, duang_setting, "duang_setting").commit();
 				
 				break;
 		}

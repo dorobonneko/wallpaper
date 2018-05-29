@@ -369,6 +369,8 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 						{}
 					}
 				}
+			}else{
+				engine.onSurfaceRedrawNeeded(sh);
 			}
 			long blank=(System.nanoTime() - oldTime) / 1000000;
 			try
