@@ -48,9 +48,11 @@ public class PreferencesUtils
 		if(context!=null){
 		String value=null;
 		Cursor cursor=context.getContentResolver().query(uri,null,null,null,null,null);
+		if(cursor!=null){
 		if(cursor.moveToFirst())
 			value=cursor.getString(1);
 			cursor.close();
+			}
 		return value;
 		}
 		return uri.getQueryParameter("value");
