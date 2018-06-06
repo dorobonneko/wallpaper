@@ -75,11 +75,13 @@
 			<item>雨滴</item>
 			<item>樱花</item>
 			<item>气泡</item>
+			<item>图片</item>
 		</string-array>
 		<string-array name="duang_v">
 			<item>0</item>
 			<item>1</item>
 			<item>2</item>
 			<item>3</item>
+			<item>4</item>
 		</string-array>
 		</resources>

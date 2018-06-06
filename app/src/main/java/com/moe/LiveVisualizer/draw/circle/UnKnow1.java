@@ -56,7 +56,7 @@ public class UnKnow1 extends RingDraw
 			path.cubicTo(center.x+getRadius()/2+points[i*4],center.y-getRadius()-points[i*4],center.x+getRadius()+points[i*4],center.y-getRadius()/2-points[i*4],center.x+getRadius(),center.y);
 			path.cubicTo(center.x+getRadius()+points[i*4+1],center.y+getRadius()/2+points[i*4+1],center.x+getRadius()/2+points[i*4+1],center.y+getRadius()+points[i*4+1],center.x,center.y+getRadius());
 			path.cubicTo(center.x-getRadius()/2-points[i*4+2],center.y+getRadius()+points[i*4+2],center.x-getRadius()-points[i*4+2],center.y+getRadius()/2+points[i*4+2],center.x-getRadius(),center.y);
-			path.cubicTo(center.x-getRadius()-points[i*4+3],center.y-getRadius()/2-points[i*4+3],center.x-getRadius()/2+points[i*4+3],center.y-getRadius()-points[i*4+3],center.x,center.y-getRadius());
+			path.cubicTo(center.x-getRadius()-points[i*4+3],center.y-getRadius()/2-points[i*4+3],center.x-getRadius()/2-points[i*4+3],center.y-getRadius()-points[i*4+3],center.x,center.y-getRadius());
 			path.addCircle(center.x,center.y,getRadius(),Path.Direction.CCW);
 			path.close();
 			canvas.drawPath(path,paint);

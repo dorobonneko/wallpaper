@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import java.io.File;
 
 public class Engine
 {
@@ -134,6 +135,10 @@ public class Engine
 			case 3:
 				buffer=BitmapFactory.decodeResource(engine.getContext().getResources(),com.moe.LiveVisualizer.R.raw.bubble_mould);
 				class_=Bubble.class;
+				break;
+			case 4:
+				buffer=BitmapFactory.decodeFile(new File(engine.getContext().getExternalFilesDir(null),"duang").getAbsolutePath());
+				class_=Image.class;
 				break;
 		}
 		try
