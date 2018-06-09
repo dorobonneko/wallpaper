@@ -136,7 +136,7 @@ public class CenterRadialDraw extends CircleDraw
 	}
 	private void onSizeChanged(){
 		try{
-			size=(int)((borderHeight*2*Math.PI-spaceWidth)/(borderWidth+spaceWidth));
+			size=(int)(borderHeight*2*Math.PI/spaceWidth);
 			}catch(Exception e){}
 			try{
 				size=size>getEngine().getFftSize()?getEngine().getFftSize():size;

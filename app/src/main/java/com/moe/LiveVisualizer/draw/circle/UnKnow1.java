@@ -52,11 +52,11 @@ public class UnKnow1 extends RingDraw
 			}
 			canvas.rotate(i*15,center.x,center.y);
 			Path path=new Path();
-			path.moveTo(center.x,center.y-getRadius());
-			path.cubicTo(center.x+getRadius()/2+points[i*4],center.y-getRadius()-points[i*4],center.x+getRadius()+points[i*4],center.y-getRadius()/2-points[i*4],center.x+getRadius(),center.y);
-			path.cubicTo(center.x+getRadius()+points[i*4+1],center.y+getRadius()/2+points[i*4+1],center.x+getRadius()/2+points[i*4+1],center.y+getRadius()+points[i*4+1],center.x,center.y+getRadius());
-			path.cubicTo(center.x-getRadius()/2-points[i*4+2],center.y+getRadius()+points[i*4+2],center.x-getRadius()-points[i*4+2],center.y+getRadius()/2+points[i*4+2],center.x-getRadius(),center.y);
-			path.cubicTo(center.x-getRadius()-points[i*4+3],center.y-getRadius()/2-points[i*4+3],center.x-getRadius()/2-points[i*4+3],center.y-getRadius()-points[i*4+3],center.x,center.y-getRadius());
+			path.moveTo(center.x,center.y-getRadius()-Math.abs((points[i*4+3]-points[i*4])/2));
+			path.cubicTo(center.x+getRadius()/2+points[i*4],center.y-getRadius()-points[i*4],center.x+getRadius()+points[i*4],center.y-getRadius()/2-points[i*4],center.x+getRadius()+Math.abs((points[i*4]-points[i*4+1])/2),center.y);
+			path.cubicTo(center.x+getRadius()+points[i*4+1],center.y+getRadius()/2+points[i*4+1],center.x+getRadius()/2+points[i*4+1],center.y+getRadius()+points[i*4+1],center.x,center.y+getRadius()+Math.abs((points[i*4+1]-points[i*4+2])/2));
+			path.cubicTo(center.x-getRadius()/2-points[i*4+2],center.y+getRadius()+points[i*4+2],center.x-getRadius()-points[i*4+2],center.y+getRadius()/2+points[i*4+2],center.x-getRadius()-Math.abs((points[i*4+2]-points[i*4+3])/2),center.y);
+			path.cubicTo(center.x-getRadius()-points[i*4+3],center.y-getRadius()/2-points[i*4+3],center.x-getRadius()/2-points[i*4+3],center.y-getRadius()-points[i*4+3],center.x,center.y-getRadius()-Math.abs((points[i*4+3]-points[i*4])/2));
 			path.addCircle(center.x,center.y,getRadius(),Path.Direction.CCW);
 			path.close();
 			canvas.drawPath(path,paint);

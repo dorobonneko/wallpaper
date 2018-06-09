@@ -117,6 +117,7 @@ public class CircleSettingFragment extends PreferenceFragment implements Prefere
 			switch ( requestCode )
 			{
 				case CIRCLE:
+					if(data.getData()==null)break;
 					weak=new SoftReference<Uri>(data.getData());
 					if ( circle_dialog == null )
 					{

@@ -71,7 +71,7 @@ public class PopCircleDraw extends LineDraw
 		float x=radius;//起始像素
 		float y=canvas.getHeight() - getEngine().getPreference().getInt("height", 10) / 100.0f * canvas.getHeight();
 		int color_step=0;
-		canvas.drawLine(0,y,canvas.getWidth(),y,paint);
+		//canvas.drawLine(0,y,canvas.getWidth(),y,paint);
 		for ( int i=0;i < size();i ++ )
 		{
 			if(useMode)
@@ -102,7 +102,7 @@ public class PopCircleDraw extends LineDraw
 			if(height<0)height=0;
 			points[i]=height;
 			canvas.drawCircle(x,y-height-radius,radius,paint);
-			x+=(getSpaceWidth()+getBorderWidth());
+			x+=getSpaceWidth();
 		}
 	}
 

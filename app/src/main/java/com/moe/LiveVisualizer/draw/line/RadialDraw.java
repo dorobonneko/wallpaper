@@ -20,7 +20,6 @@ public class RadialDraw extends LineDraw
 	public RadialDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
 	{
 		super(draw, engine);
-
 	}
 
 	@Override
@@ -102,8 +101,8 @@ public class RadialDraw extends LineDraw
 			points[i] = height;
 			if ( paint.getStrokeCap() != Paint.Cap.ROUND )
 			{
-				canvas.drawRect(x, getDrawHeight() - height, x += getBorderWidth() , getDrawHeight(), paint);
-				canvas.drawRect(x -= getBorderWidth(), getDrawHeight() + height, x += getBorderWidth(), getDrawHeight(), paint);
+				canvas.drawRect(x, getDrawHeight() - height, x + getBorderWidth() , getDrawHeight(), paint);
+				canvas.drawRect(x, getDrawHeight() + height, x + getBorderWidth(), getDrawHeight(), paint);
 				x += getSpaceWidth();
 			}
 			else

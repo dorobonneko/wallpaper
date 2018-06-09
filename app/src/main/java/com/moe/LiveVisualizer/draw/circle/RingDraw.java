@@ -99,7 +99,7 @@ public abstract class RingDraw extends CircleDraw
 		final double length=Math.min(getEngine().getDisplayWidth(),getEngine().getDisplayHeight()) / 3 * Math.PI;
 		try
 		{
-			size = (int)((length - spaceWidth) / (borderWidth + spaceWidth));
+			size = (int)(length/spaceWidth);
 		}
 		catch (Exception e)
 		{}

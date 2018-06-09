@@ -53,7 +53,9 @@ public class SquareDraw extends LineDraw
 		}
 		paint.reset();
 	}
-
+	private int squareSize(){
+		return (int)(getBorderHeight()/getBorderWidth());
+	}
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
@@ -85,7 +87,7 @@ public class SquareDraw extends LineDraw
 						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 						break;
 				}
-			int height=(int)(buffer[i] / 127d * size());
+			int height=(int)(buffer[i] / 127d * squareSize());
 			if ( height > points[i] )
 				points[i] = height;
 			else
@@ -93,7 +95,7 @@ public class SquareDraw extends LineDraw
 			if ( height < 0 )height = 0;
 			points[i] = height;
 			float offsetLeft=x;
-			float offsetRight=x+=getBorderWidth();
+			float offsetRight=x+getBorderWidth();
 			x+=getSpaceWidth();
 			for(int n=0;n<height;n++){
 				if ( paint.getStrokeCap() != Paint.Cap.ROUND )

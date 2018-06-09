@@ -138,10 +138,11 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, final Intent data)
 	{
-		if ( resultCode == Activity.RESULT_OK )
+		if ( resultCode == Activity.RESULT_OK)
 			switch ( requestCode )
 			{
 				case WALLPAPER:
+					if(data.getData()==null)break;
 					weak=new SoftReference<Uri>(data.getData());
 					if ( gif_dialog == null )
 					{

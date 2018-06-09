@@ -70,23 +70,14 @@ public class LineChartDraw extends LineDraw
 		for ( int i=0;i < buffer.length-1;i+=2 )
 		{
 			float height=((byte)(buffer[i]+128))*getBorderHeight()/256;
-			/*if(height<anime[i])
-				height=anime[i]-(anime[i]-height)*getDownSpeed();
-			anime[i]=height;*/
-			
 				tmpData[0] = offsetX;
 				tmpData[1] = getDrawHeight() -height ;
-			/*}
-			else
-			{
-				System.arraycopy(tmpData, 2, tmpData, 0, 2);
-			}*/
 			height=((byte)(buffer[i+1]+128))*getBorderHeight()/256;
 			tmpData[2] = (offsetX += getSpaceWidth()+getBorderWidth());
 			tmpData[3] = getDrawHeight() -height;
 			System.arraycopy(tmpData,2,tmpData,4,2);
 			height=((byte)(buffer[i+2]+128))*getBorderHeight()/256;
-			tmpData[6]=offsetX+=getSpaceWidth()+getBorderWidth();
+			tmpData[6]=(offsetX+=getSpaceWidth()+getBorderWidth());
 			tmpData[7]=getDrawHeight()-height;
 			if(useMode)
 				switch ( color_mode){

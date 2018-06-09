@@ -85,14 +85,14 @@ public abstract class LineDraw extends Draw
 	{
 		try
 		{
-			size = (int)((getEngine().getDisplayWidth() - sourceSpace) / (borderWidth + sourceSpace));
+			size = (int)(getEngine().getDisplayWidth()/sourceSpace);
 		}
 		catch (Exception e)
 		{}
 		try
 		{
 			size = size > getEngine().getFftSize() ?getEngine().getFftSize(): size;
-			spaceWidth = (getEngine().getDisplayWidth() - size * borderWidth) / ((float)size - 1);
+			spaceWidth = (float)getEngine().getDisplayWidth()/(size-1);
 
 		}
 		catch (Exception e)

@@ -285,8 +285,10 @@ public class LiveWallpaper extends WallpaperService
 				background.notifyVisiableChanged(visible);
 			if ( centerImage != null )
 				centerImage.notifyVisiableChanged(visible);
-				if(video!=null)
-					video.notifyVisiableChanged(visible);
+			if(video!=null)
+				video.notifyVisiableChanged(visible);
+			if(refresh!=null)
+				refresh.notifyVisiableChanged(visible);
 			//super.onVisibilityChanged(visible);
 		}
 		@Override
