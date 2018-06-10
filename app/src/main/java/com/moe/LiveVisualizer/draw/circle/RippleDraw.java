@@ -21,18 +21,18 @@ public class RippleDraw extends CircleDraw
 	private Bitmap shaderBuffer;
 	private float borderHeight,borderWidth;
 	private Paint paint;
-	public RippleDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
-		super(draw,engine);
+	public RippleDraw(ImageDraw draw){
+		super(draw);
 		paint = new Paint();
 		paint.setStrokeCap(getEngine().getPreference().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
 		paint.setAntiAlias(true);
 		paint.setDither(true);
 		paint.setColor(0xff39c5bb);
 		paint.setStyle(Paint.Style.FILL);
-		borderWidth=(engine.getPreference().getInt("borderWidth",30));
+		borderWidth=(getEngine().getPreference().getInt("borderWidth",30));
 		//borderWidth=paint.getStrokeWidth();
-		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getPreference().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
-		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
+		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,getEngine().getPreference().getInt("borderHeight",100),getEngine().getContext().getResources().getDisplayMetrics());
+		getEngine().registerColorSizeChangedListener(new OnColorSizeChangedListener(){
 
 				@Override
 				public void onColorSizeChanged()

@@ -20,9 +20,9 @@ import android.content.SharedPreferences;
 public class CircleRadialDraw extends RingDraw
 {
 	private float[] points;
-		public CircleRadialDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
+		public CircleRadialDraw(ImageDraw draw)
 	{
-		super(draw, engine);
+		super(draw);
 	}
 
 	@Override

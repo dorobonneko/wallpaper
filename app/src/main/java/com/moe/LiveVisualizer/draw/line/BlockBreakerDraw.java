@@ -10,9 +10,9 @@ import android.graphics.PorterDuffXfermode;
 public class BlockBreakerDraw extends LineDraw
 {
 	private float[] points,breaker;
-	public BlockBreakerDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
+	public BlockBreakerDraw(ImageDraw draw)
 	{
-		super(draw, engine);
+		super(draw);
 	}
 
 	@Override

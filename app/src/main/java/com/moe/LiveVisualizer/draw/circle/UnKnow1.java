@@ -10,8 +10,8 @@ import java.util.Random;
 public class UnKnow1 extends RingDraw
 {
 	private float[] points;
-	public UnKnow1(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
-		super(draw,engine);
+	public UnKnow1(ImageDraw draw){
+		super(draw);
 	}
 	@Override
 	public void onDraw(Canvas canvas, int color_mode)

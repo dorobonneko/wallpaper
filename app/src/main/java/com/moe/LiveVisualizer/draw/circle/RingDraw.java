@@ -28,8 +28,9 @@ public abstract class RingDraw extends CircleDraw
 	private int borderHeight,size;
 	private float spaceWidth,borderWidth;
 	
-	public RingDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
-		super(draw,engine);
+	public RingDraw(ImageDraw draw){
+		super(draw);
+		LiveWallpaper.WallpaperEngine engine=getEngine();
 		this.draw=draw;
 		borderHeight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, engine.getPreference().getInt("borderHeight", 100), engine.getContext().getResources().getDisplayMetrics());
 		spaceWidth = engine.getPreference().getInt("spaceWidth", 20);
@@ -172,10 +173,10 @@ public abstract class RingDraw extends CircleDraw
 			final int layer=canvas.saveLayer(0,0,canvas.getWidth(),canvas.getHeight(),null,canvas.ALL_SAVE_FLAG);
 			//canvas.drawColor(0xffffffff);
 			if(getEngine().getPreference().getBoolean("circleSwitch",true)){
-				canvas.rotate(degress,point.x,point.y);
 				degress+=degress_step;
 				if ( degress >= 360 )degress = 0;
 			}
+			canvas.rotate(degress,point.x,point.y);
 			final Bitmap circle=getEngine().getCircleImage();
 			if(getCenterScale()!=null){
 				Matrix matrix=getCenterScale();

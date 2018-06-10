@@ -17,9 +17,9 @@ import com.moe.LiveVisualizer.draw.LineDraw;
 public class RadialDraw extends LineDraw
 {
 	private float[] points;
-	public RadialDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
+	public RadialDraw(ImageDraw draw)
 	{
-		super(draw, engine);
+		super(draw);
 	}
 
 	@Override

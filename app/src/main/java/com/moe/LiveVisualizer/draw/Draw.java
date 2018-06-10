@@ -25,7 +25,7 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 	private ValueAnimator anime;
 	private LiveWallpaper.WallpaperEngine engine;
 	private boolean isInterval;
-	Draw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
+	Draw(ImageDraw draw)
 	{
 		handler = new Handler(Looper.getMainLooper(), new Handler.Callback(){
 
@@ -37,7 +37,7 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 				}
 			});
 		this.draw = draw;
-		this.engine = engine;
+		this.engine = draw.getEngine();
 		round=engine.getPreference().getBoolean("round",false);
 		anime=new ValueAnimator();
 		anime.setRepeatCount(0);

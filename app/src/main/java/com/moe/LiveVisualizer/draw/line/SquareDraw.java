@@ -11,8 +11,8 @@ import android.graphics.PorterDuffXfermode;
 public class SquareDraw extends LineDraw
 {
 	private int[] points;
-	public SquareDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
-		super(draw,engine);
+	public SquareDraw(ImageDraw draw){
+		super(draw);
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class SquareDraw extends LineDraw
 						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 						break;
 				}
-			int height=(int)(buffer[i] / 127d * squareSize());
+			int height=(int)Math.round(buffer[i] / 127d * squareSize());
 			if ( height > points[i] )
 				points[i] = height;
 			else

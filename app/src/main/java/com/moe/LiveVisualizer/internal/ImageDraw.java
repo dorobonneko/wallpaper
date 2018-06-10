@@ -6,6 +6,7 @@ import com.moe.LiveVisualizer.draw.line.*;
 
 import com.moe.LiveVisualizer.service.LiveWallpaper;
 import com.moe.LiveVisualizer.inter.Draw;
+import com.moe.LiveVisualizer.service.LiveWallpaper.WallpaperEngine;
 
 public class ImageDraw implements OnColorSizeChangedListener
 {
@@ -17,15 +18,24 @@ public class ImageDraw implements OnColorSizeChangedListener
 	private float downSpeed;
 	private Matrix centerImageMatrix;
 	private String mode,color_mode;
-	public ImageDraw(LiveWallpaper.WallpaperEngine engine)
+	private WallpaperThread wallpaper;
+	public ImageDraw(WallpaperThread wallpaper)
 	{
-		this.engine = engine;
+		this.engine = wallpaper.getEngine();
 		mode=engine.getPreference().getString("visualizer_mode","0");
 		color_mode=engine.getPreference().getString("color_mode","0");
 		engine.registerColorSizeChangedListener(this);
 	}
+
+	public LiveWallpaper.WallpaperEngine getEngine()
+	{
+		return engine;
+	}
 	public void setMode(String mode){
 		this.mode=mode;
+	}
+	public WallpaperThread getWallpaperThread(){
+		return wallpaper;
 	}
 	public void setColorMode(String mode){
 		this.color_mode=mode;
@@ -173,29 +183,29 @@ public class ImageDraw implements OnColorSizeChangedListener
 		switch (mode)
 		{
 			case "0"://柱形图
-				return drawList[0] == null ?drawList[0] = new RadialDraw(this, engine): drawList[0];
+				return drawList[0] == null ?drawList[0] = new RadialDraw(this): drawList[0];
 			case "1"://折线图
-				return drawList[1] == null ?drawList[1] = new LineChartDraw(this, engine): drawList[1];
+				return drawList[1] == null ?drawList[1] = new LineChartDraw(this): drawList[1];
 			case "2"://圆形射线
-				return drawList[2] == null ?drawList[2] = new CircleRadialDraw(this, engine): drawList[2];
+				return drawList[2] == null ?drawList[2] = new CircleRadialDraw(this): drawList[2];
 			case "3"://弹弹圈
-				return drawList[3] == null ?drawList[3] = new PopCircleDraw(this, engine): drawList[3];
+				return drawList[3] == null ?drawList[3] = new PopCircleDraw(this): drawList[3];
 			case "4"://圆环三角
-				return drawList[4] == null ?drawList[4] = new CircleTriangleDraw(this, engine): drawList[4];
+				return drawList[4] == null ?drawList[4] = new CircleTriangleDraw(this): drawList[4];
 			case "5"://射线
-				return drawList[5] == null ?drawList[5] = new CenterRadialDraw(this, engine): drawList[5];
+				return drawList[5] == null ?drawList[5] = new CenterRadialDraw(this): drawList[5];
 			case "6"://波纹
-				return drawList[6] == null ?drawList[6] = new RippleDraw(this, engine): drawList[6];
+				return drawList[6] == null ?drawList[6] = new RippleDraw(this): drawList[6];
 			case "7"://离散
-				return drawList[7] == null ?drawList[7] = new CircleDisperseDraw(this, engine): drawList[7];
+				return drawList[7] == null ?drawList[7] = new CircleDisperseDraw(this): drawList[7];
 			case "8"://山坡线
-				return drawList[8] == null ?drawList[8] = new YamaLineDraw(this, engine): drawList[8];
+				return drawList[8] == null ?drawList[8] = new YamaLineDraw(this): drawList[8];
 			case "9"://方块
-			return drawList[9]==null?drawList[9]=new SquareDraw(this,engine):drawList[9];
+			return drawList[9]==null?drawList[9]=new SquareDraw(this):drawList[9];
 			case "10"://打砖块
-			return drawList[10]==null?drawList[10]=new BlockBreakerDraw(this,engine):drawList[10];
+			return drawList[10]==null?drawList[10]=new BlockBreakerDraw(this):drawList[10];
 			case "11":
-				return drawList[11]==null?drawList[11]=new UnKnow1(this,engine):drawList[11];
+				return drawList[11]==null?drawList[11]=new UnKnow1(this):drawList[11];
 		}
 		return null;
 	}

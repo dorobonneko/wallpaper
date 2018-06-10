@@ -12,8 +12,9 @@ import android.graphics.Matrix;
 public abstract class CircleDraw extends Draw
 {
 	private PointF point;
-	public CircleDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
-		super(draw,engine);
+	public CircleDraw(ImageDraw draw){
+		super(draw);
+		LiveWallpaper.WallpaperEngine engine=draw.getEngine();
 		point=new PointF();
 		point.x=engine.getPreference().getInt("offsetX",Math.min(engine.getDisplayWidth(),engine.getDisplayHeight())/2);
 		point.y=engine.getPreference().getInt("offsetY",Math.max(engine.getDisplayHeight(),engine.getDisplayWidth())/2);

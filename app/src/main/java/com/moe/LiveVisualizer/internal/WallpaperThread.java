@@ -26,15 +26,17 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 	private Engine mDuangEngine;//屏幕特效引擎
 	private ContentObserver observer;
 	private Object locked=new Object();
+	private boolean rotate;
 	public WallpaperThread(final LiveWallpaper.WallpaperEngine engine)
 	{
 		this.engine = engine;
-		imageDraw = new ImageDraw(engine);
+		imageDraw = new ImageDraw(this);
 		paint.setTextAlign(Paint.Align.CENTER);
 		paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 18, engine.getContext().getResources().getDisplayMetrics()));
 		paint.setColor(0xff000000);
 		//engine.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 		fpsDelay = engine.getPreference().getBoolean("highfps", false) ?16: 33;
+		rotate = engine.getPreference().getBoolean("rotate", false);
 		if (imageDraw != null)imageDraw.setDownSpeed(engine.getPreference().getInt("downspeed", 15));
 		if (engine.getPreference().getBoolean("scaleImage", true))
 			wallpaperMatrix = new Matrix();
@@ -54,13 +56,24 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 																		 });
 	}
 
+	public LiveWallpaper.WallpaperEngine getEngine()
+	{
+		return engine;
+	}
+
+	public boolean isRotate()
+	{
+		return rotate;
+	}
 	public void notifyVisiableChanged(boolean visible)
 	{
-			if(visible){
-				synchronized(locked){
+		if (visible)
+		{
+			synchronized (locked)
+			{
 				locked.notify();
-				}
-				}
+			}
+		}
 	}
 
 	public void onSizeChanged()
@@ -185,6 +198,9 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 			case "color_mode":
 				if (imageDraw != null)
 					imageDraw.setColorMode(PreferencesUtils.getString(null, uri));
+				break;
+			case "rotate":
+				rotate = PreferencesUtils.getBoolean(null, uri, false);
 				break;
 		}
 	}
@@ -317,7 +333,8 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 		 {*/
 		while (imageDraw != null)
 		{
-			synchronized(locked){
+			synchronized (locked)
+			{
 				try
 				{
 					if (!engine.isVisible())
@@ -368,7 +385,16 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 				{
 					Draw draw=imageDraw.lockData();
 					if (draw != null)
+					{
+						if (rotate)
+						{
+							canvas.save();
+							canvas.rotate(180, canvas.getWidth() / 2, canvas.getHeight() / 2);
+						}
 						draw.draw(canvas);
+						if (rotate)
+							canvas.restore();
+					}
 				}
 				catch (Exception e)
 				{}

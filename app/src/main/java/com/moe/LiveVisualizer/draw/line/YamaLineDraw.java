@@ -9,9 +9,9 @@ import com.moe.LiveVisualizer.internal.ImageDraw;
 public class YamaLineDraw extends LineDraw
 {
 	private float[] points;
-	public YamaLineDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
+	public YamaLineDraw(ImageDraw draw)
 	{
-		super(draw, engine);
+		super(draw);
 		}
 	
 	@Override

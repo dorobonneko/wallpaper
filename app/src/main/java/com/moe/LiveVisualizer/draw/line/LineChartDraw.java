@@ -14,9 +14,9 @@ import com.moe.LiveVisualizer.draw.LineDraw;
 
 public class LineChartDraw extends LineDraw
 {
-	public LineChartDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine)
+	public LineChartDraw(ImageDraw draw)
 	{
-		super(draw,engine);
+		super(draw);
 		}
 
 	@Override

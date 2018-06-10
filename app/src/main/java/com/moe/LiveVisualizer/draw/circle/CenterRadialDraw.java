@@ -24,21 +24,21 @@ public class CenterRadialDraw extends CircleDraw
 	private float degress,borderHeight,borderWidth;
 	private Paint paint;
 	//private float radius;
-	public CenterRadialDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
-		super(draw,engine);
+	public CenterRadialDraw(ImageDraw draw){
+		super(draw);
 		paint = new Paint();
 		paint.setStrokeCap(getEngine().getPreference().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
 		paint.setAntiAlias(true);
 		paint.setDither(true);
 		paint.setColor(0xff39c5bb);
 		paint.setStyle(Paint.Style.FILL);
-		borderWidth=(engine.getPreference().getInt("borderWidth",30));
+		borderWidth=(getEngine().getPreference().getInt("borderWidth",30));
 		//borderWidth=paint.getStrokeWidth();
 		//radius=engine.getSharedPreferences().getInt("circleRadius",Math.min(engine.getWidth(),engine.getHeight())/6);
-		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,engine.getPreference().getInt("borderHeight",100),engine.getContext().getResources().getDisplayMetrics());
-		spaceWidth=engine.getPreference().getInt("spaceWidth",20);
+		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,getEngine().getPreference().getInt("borderHeight",100),getEngine().getContext().getResources().getDisplayMetrics());
+		spaceWidth=getEngine().getPreference().getInt("spaceWidth",20);
 		
-		engine.registerColorSizeChangedListener(new OnColorSizeChangedListener(){
+		getEngine().registerColorSizeChangedListener(new OnColorSizeChangedListener(){
 
 				@Override
 				public void onColorSizeChanged()

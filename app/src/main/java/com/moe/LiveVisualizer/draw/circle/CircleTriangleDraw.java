@@ -17,9 +17,9 @@ public class CircleTriangleDraw extends RingDraw
 
 	private float[] points;
 	private int size;
-	public CircleTriangleDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
+	public CircleTriangleDraw(ImageDraw draw)
 	{
-		super(draw, engine);
+		super(draw);
 	}
 
 	@Override

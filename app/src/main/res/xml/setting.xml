@@ -50,16 +50,16 @@
 		android:key="borderWidth"
 		android:defaultValue="30"/>
 	<com.moe.LiveVisualizer.preference.SeekBarPreference
+		android:title="线条间隔"
+		app:unit="px"
+		android:key="spaceWidth"
+		android:defaultValue="20"/>
+	<com.moe.LiveVisualizer.preference.SeekBarPreference
 		android:title="线条高度"
 		app:unit="px"
 		android:key="borderHeight"
 		android:defaultValue="100"
 		/>
-	<com.moe.LiveVisualizer.preference.SeekBarPreference
-		android:title="线条间隔"
-		app:unit="px"
-		android:key="spaceWidth"
-		android:defaultValue="20"/>
 	<SwitchPreference
 		android:title="高帧率模式"
 		android:key="highfps"
@@ -107,4 +107,7 @@
 		android:key="nenofade"
 		android:max="30"
 		android:defaultValue="2"/>
+	<SwitchPreference
+		android:title="频谱倒置"
+		android:key="rotate"/>
 </PreferenceScreen>

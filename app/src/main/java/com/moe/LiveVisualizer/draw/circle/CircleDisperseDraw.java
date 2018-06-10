@@ -15,9 +15,9 @@ public class CircleDisperseDraw extends RingDraw
 {
 	private float[] points;
 	
-	public CircleDisperseDraw(ImageDraw draw, LiveWallpaper.WallpaperEngine engine)
+	public CircleDisperseDraw(ImageDraw draw)
 	{
-		super(draw, engine);
+		super(draw);
 	}
 	
 	@Override

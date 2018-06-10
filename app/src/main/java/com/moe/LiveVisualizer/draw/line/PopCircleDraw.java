@@ -15,8 +15,8 @@ import com.moe.LiveVisualizer.draw.LineDraw;
 public class PopCircleDraw extends LineDraw
 {
 	private float[] points;
-	public PopCircleDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
-		super(draw,engine);
+	public PopCircleDraw(ImageDraw draw){
+		super(draw);
 		}
 
 	@Override

@@ -9,8 +9,9 @@ public abstract class LineDraw extends Draw
 	private int size;
 	private float spaceWidth,borderHeight,borderWidth,drawHeight,sourceSpace;
 	private Paint paint;
-	public LineDraw(ImageDraw draw,LiveWallpaper.WallpaperEngine engine){
-		super(draw,engine);
+	public LineDraw(ImageDraw draw){
+		super(draw);
+		LiveWallpaper.WallpaperEngine engine=getEngine();
 		paint=new Paint();
 		paint.setStyle(Paint.Style.FILL);
 		paint.setStrokeCap(getEngine().getPreference().getBoolean("round", true) ?Paint.Cap.ROUND: Paint.Cap.SQUARE);
