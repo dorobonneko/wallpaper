@@ -44,11 +44,10 @@ public class UnKnow1 extends RingDraw
 			//计算高度
 			for(int n=0;n<4;n++){
 			byte height=buffer[++count];
-			if(height>points[count])
-				points[count]=height;
-				else
-				points[count]=points[count]-(points[count]-height)*getDownSpeed();
-				if(points[count]<0)points[count]=0;
+			if(height<points[count])
+				height=(byte)(points[count]-(points[count]-height)*getInterpolator(1-(points[count]-height)/127f));
+			if(height<0)height=0;
+			points[count]=height;
 			}
 			canvas.rotate(i*15,center.x,center.y);
 			Path path=new Path();

@@ -12,8 +12,7 @@ public class Sakura extends Duang
 	private Matrix matrix;
 	private Camera camera;
 	private float speed,wind;
-	public Sakura(DisplayMetrics display,int max,int min,int wind,int speed){
-		super(display,max,min,wind,speed);
+	public Sakura(){
 		matrix=new Matrix();
 		camera=new Camera();
 	}

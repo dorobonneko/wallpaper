@@ -26,6 +26,7 @@ import com.moe.LiveVisualizer.fragment.DuangSettingFragment;
 import android.content.SharedPreferences;
 import android.content.ContentValues;
 import android.widget.FrameLayout;
+import android.view.Window;
 
 public class SettingActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener
 {
@@ -99,12 +100,12 @@ public class SettingActivity extends Activity implements SharedPreferences.OnSha
 				((FrameLayout)findViewById(android.R.id.content)).addView(frame);
 				Fragment setting=getFragmentManager().findFragmentByTag("setting");
 				if (setting == null)
-				{setting = new SettingFragment();
-
+				{
+					setting = new SettingFragment();
 					if (setting.isAdded())
 						getFragmentManager().beginTransaction().show(setting).commit();
 					else
-						getFragmentManager().beginTransaction().add(android.R.id.widget_frame, setting, "setting").commit();
+						getFragmentManager().beginTransaction().add(android.R.id.widget_frame, setting, "setting").show(setting).commit();
 				}
 				if(getActionBar()!=null){
 				getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -155,8 +156,8 @@ public class SettingActivity extends Activity implements SharedPreferences.OnSha
 		duang=menu.add(1,1,1,"屏幕特效");
 		duang.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		Fragment fragment=getFragmentManager().findFragmentByTag("setting");
-		centerCircle.setVisible(fragment != null && fragment.isVisible());
-		duang.setVisible(fragment!=null&&fragment.isVisible());
+		centerCircle.setVisible(fragment != null && !fragment.isHidden());
+		duang.setVisible(fragment!=null&&!fragment.isHidden());
 		return true;
 	}
 

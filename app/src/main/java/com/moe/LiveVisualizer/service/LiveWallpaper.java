@@ -17,7 +17,10 @@ import android.provider.DocumentsContract;
 import android.media.MediaPlayer;
 import android.content.SharedPreferences;
 import com.moe.LiveVisualizer.utils.PreferencesUtils;
-public class LiveWallpaper extends WallpaperService
+import android.content.pm.PackageManager;
+import com.moe.LiveVisualizer.activity.CrashActivity;
+import android.os.Build;
+public class LiveWallpaper extends WallpaperService implements Thread.UncaughtExceptionHandler
 {
 	private ColorList colorList;
 	private ChangedReceiver changed;
@@ -29,6 +32,7 @@ public class LiveWallpaper extends WallpaperService
 	public void onCreate()
 	{
 		super.onCreate();
+		Thread.setDefaultUncaughtExceptionHandler(this);
 		moe = getSharedPreferences("moe", 0);
 		colorList = new ColorList();
 		final IntentFilter filter=new IntentFilter();
@@ -58,7 +62,27 @@ public class LiveWallpaper extends WallpaperService
 		
 		
 	}
-
+	@Override
+	public void uncaughtException(Thread p1, Throwable p2)
+	{
+		StringBuffer sb=new StringBuffer(p2.getMessage());
+		try
+		{
+			sb.append("\n").append(getPackageManager().getPackageInfo(getPackageName(), 0).versionName).append("\n").append(Build.MODEL).append(" ").append(Build.VERSION.RELEASE).append("\n");
+		}
+		catch (PackageManager.NameNotFoundException e)
+		{}
+		for (StackTraceElement element:p2.getStackTrace())
+			sb.append("\n").append(element.toString());
+		Intent intent=new Intent(this,CrashActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra(Intent.EXTRA_TEXT,sb.toString());
+		startActivity(intent);
+		if(p1.getName().equals("main"))
+			Runtime.getRuntime().exit(1);
+		//android.os.Process.killProcess(android.os.Process.myPid());
+	}
+	
 	public SharedPreferences getSharedPreferences()
 	{
 		return moe;
@@ -198,12 +222,18 @@ public class LiveWallpaper extends WallpaperService
 		private Color colorReceiver;
 		private WallpaperThread refresh=null;
 		private List<OnColorSizeChangedListener> sizeListener;
-		private VisualizerThread mVisualizer;
+		//private VisualizerThread mVisualizer;
 		private LiveWallpaper live;
+		private boolean destroy;
 		public WallpaperEngine(LiveWallpaper live)
 		{
 			utils=new PreferencesUtils(live);
 			this.live = live;
+		}
+
+		public boolean isDestroy()
+		{
+			return destroy;
 		}
 		public int getCaptureSize()
 		{
@@ -213,7 +243,7 @@ public class LiveWallpaper extends WallpaperService
 		{
 			return getCaptureSize() / 4;
 		}
-		public String getError()
+		/*public String getError()
 		{
 			if ( mVisualizer != null )
 				return mVisualizer.getMessage();
@@ -224,7 +254,7 @@ public class LiveWallpaper extends WallpaperService
 			if ( mVisualizer != null )
 				return mVisualizer.isInit();
 			return false;
-		}
+		}*/
 		public void registerColorSizeChangedListener(OnColorSizeChangedListener l)
 		{
 			sizeListener.add(l);
@@ -248,11 +278,11 @@ public class LiveWallpaper extends WallpaperService
 		{
 			return live.getWallpaperBitmap(direction);
 		}
-		
+		/*
 		public Visualizer getVisualizer()
 		{
 			return mVisualizer != null ?mVisualizer.getVisualizer(): null;
-		}
+		}*/
 		@Override
 		public void onCreate(SurfaceHolder surfaceHolder)
 		{
@@ -261,16 +291,12 @@ public class LiveWallpaper extends WallpaperService
 			filter.addAction("color");
 			registerReceiver(colorReceiver = new Color(), filter);
 			sizeListener = new ArrayList<>();
+			if ( colorList != null )
+				notifyColorsChanged();
 			refresh = new WallpaperThread(this);
 			refresh.setName("wllpaper_daemon");
 			refresh.setDaemon(true);
 			refresh.start();
-			if ( colorList != null )
-				notifyColorsChanged();
-			mVisualizer = new VisualizerThread(this);
-			mVisualizer.setName("visualizerThread");
-			mVisualizer.setDaemon(true);
-			mVisualizer.start();
 		}
 		
 		public PreferencesUtils getPreference()
@@ -280,7 +306,7 @@ public class LiveWallpaper extends WallpaperService
 		@Override
 		public void onVisibilityChanged(boolean visible)
 		{
-			mVisualizer.check();
+			//mVisualizer.check();
 			if ( background != null )
 				background.notifyVisiableChanged(visible);
 			if ( centerImage != null )
@@ -295,18 +321,18 @@ public class LiveWallpaper extends WallpaperService
 		public void onDestroy()
 		{
 			super.onDestroy();
-			if ( mVisualizer != null )
-				mVisualizer.release();
-			if ( refresh != null )refresh.close();
+			/*if ( mVisualizer != null )
+				mVisualizer.release();*/
+			if ( refresh != null )refresh.destroy();
 			if ( sizeListener != null )
 				sizeListener.clear();
-			mVisualizer = null;
 			refresh = null;
 			sizeListener = null;
 			if(colorReceiver!=null)
 				unregisterReceiver(colorReceiver);
 			if(utils!=null)
 				utils.close();
+				destroy=true;
 		}
 		public int getDisplayWidth()
 		{
@@ -343,6 +369,7 @@ public class LiveWallpaper extends WallpaperService
 		{
 			holder.setType(moe.getBoolean("gpu",false)?holder.SURFACE_TYPE_PUSH_BUFFERS:holder.SURFACE_TYPE_GPU);
 			super.onSurfaceCreated(holder);
+			
 		}
 		class Color extends BroadcastReceiver
 		{

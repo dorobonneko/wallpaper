@@ -7,13 +7,12 @@ import com.moe.LiveVisualizer.draw.line.*;
 import com.moe.LiveVisualizer.service.LiveWallpaper;
 import com.moe.LiveVisualizer.inter.Draw;
 import com.moe.LiveVisualizer.service.LiveWallpaper.WallpaperEngine;
+import android.view.animation.AccelerateInterpolator;
 
 public class ImageDraw implements OnColorSizeChangedListener
 {
 	private LiveWallpaper.WallpaperEngine engine;
-	private byte[] fftbuffer;
-	private byte[] fft,wave;
-	private Draw[] drawList=new Draw[12];
+	private Draw[] drawList=new Draw[13];
 	private Shader shader;
 	private float downSpeed;
 	private Matrix centerImageMatrix;
@@ -21,26 +20,33 @@ public class ImageDraw implements OnColorSizeChangedListener
 	private WallpaperThread wallpaper;
 	public ImageDraw(WallpaperThread wallpaper)
 	{
+		this.wallpaper=wallpaper;
 		this.engine = wallpaper.getEngine();
-		mode=engine.getPreference().getString("visualizer_mode","0");
-		color_mode=engine.getPreference().getString("color_mode","0");
+		mode = engine.getPreference().getString("visualizer_mode", "0");
+		color_mode = engine.getPreference().getString("color_mode", "0");
 		engine.registerColorSizeChangedListener(this);
 	}
-
+	public float getInterpolation(float value){
+		return value*value*getDownSpeed();
+	}
 	public LiveWallpaper.WallpaperEngine getEngine()
 	{
 		return engine;
 	}
-	public void setMode(String mode){
-		this.mode=mode;
+	public void setMode(String mode)
+	{
+		this.mode = mode;
 	}
-	public WallpaperThread getWallpaperThread(){
+	public WallpaperThread getWallpaperThread()
+	{
 		return wallpaper;
 	}
-	public void setColorMode(String mode){
-		this.color_mode=mode;
+	public void setColorMode(String mode)
+	{
+		this.color_mode = mode;
 	}
-	public String getColorMode(){
+	public String getColorMode()
+	{
 		return color_mode;
 	}
 	public void notifySizeChanged()
@@ -110,9 +116,9 @@ public class ImageDraw implements OnColorSizeChangedListener
 
 	public void setDownSpeed(int speed)
 	{
-		downSpeed = speed / 50.0f;
+		downSpeed =speed/50f;
 	}
-	public float getDownSpeed()
+	private float getDownSpeed()
 	{
 		return downSpeed;
 	}
@@ -144,40 +150,21 @@ public class ImageDraw implements OnColorSizeChangedListener
 	{
 		shader = null;
 	}
-	public byte[] getWave(){
-		if(wave==null)
-			wave=new byte[engine.getCaptureSize()];
-			try{
-				engine.getVisualizer().getWaveForm(wave);
-			}catch(Exception e){}
-		return wave;
+	public byte[] getWave()
+	{
+		
+		return wallpaper.getWave();
 	}
 	public byte[] getFft()
 	{
-		if (fft == null)
-			fft = new byte[engine.getCaptureSize()];
-		if (fftbuffer == null)
-			fftbuffer = new byte[engine.getFftSize()];
-		try
-		{
-			engine.getVisualizer().getFft(fft);
-			for (int n = 1; n < fftbuffer.length;n++)    
-			{    
-				//第k个点频率 getSamplingRate() * k /(getCaptureSize()/2)  
-				int k=2 * n;
-				fftbuffer[n - 1] =(byte) ((int)Math.hypot(fft[k] == -1 ?0: fft[k], fft[k + 1] == -1 ?0: fft[k + 1])&0x7f);   
-			}
-		}
-		catch (Exception e)
-		{}
-		return fftbuffer;
+		return wallpaper.getFft();
 	}
-	
+
 	final public Draw lockData()
 	{
 		return get();
 	}
-	
+
 	private Draw get()
 	{
 		switch (mode)
@@ -201,17 +188,19 @@ public class ImageDraw implements OnColorSizeChangedListener
 			case "8"://山坡线
 				return drawList[8] == null ?drawList[8] = new YamaLineDraw(this): drawList[8];
 			case "9"://方块
-			return drawList[9]==null?drawList[9]=new SquareDraw(this):drawList[9];
+				return drawList[9] == null ?drawList[9] = new SquareDraw(this): drawList[9];
 			case "10"://打砖块
-			return drawList[10]==null?drawList[10]=new BlockBreakerDraw(this):drawList[10];
+				return drawList[10] == null ?drawList[10] = new BlockBreakerDraw(this): drawList[10];
 			case "11":
-				return drawList[11]==null?drawList[11]=new UnKnow1(this):drawList[11];
+				return drawList[11] == null ?drawList[11] = new UnKnow1(this): drawList[11];
+			case "12":
+				return drawList[12] == null ?drawList[12] = new UnKnow2(this): drawList[12];
 		}
 		return null;
 	}
-	public void setShader(Shader shader)
+	public void resetShader()
 	{
-		this.shader = shader;
+		this.shader = null;
 	}
 	public synchronized Shader getShader()
 	{

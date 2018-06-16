@@ -9,8 +9,7 @@ public class Rain extends Duang
 	private Paint paint;
 	private float[] point;
 	private float speed;
-	public Rain (DisplayMetrics display,int max,int min,int wind,int speed){
-		super(display,max,min,wind,speed);
+	public Rain (){
 		point=new float[4];
 		paint=new Paint();
 		paint.setColor(0xffffffff);

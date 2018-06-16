@@ -134,11 +134,9 @@ public class CircleRadialDraw extends RingDraw
 						break;
 				}
 			float height=(float) (buffer[i] / 127d * radialHeight);
-			if ( height > points[i] )
-				points[i] = height;
-			else
-				height = points[i] - (points[i] - height) * getDownSpeed();
-			if ( height < 0 )height = 0;
+			if ( height < points[i] )
+				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/radialHeight);
+				if ( height < 0 )height = 0;
 			points[i] = height;
 			if(paint.getStrokeCap()==Paint.Cap.ROUND)
 			canvas.drawLine(point.x,point.y-radius, point.x, point.y -radius+(getDirection()==OUTSIDE?- height:height), paint);

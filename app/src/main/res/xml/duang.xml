@@ -6,8 +6,7 @@
 	<SwitchPreference
 		android:title="屏幕特效开关"
 		android:key="duang"
-		android:summary="以下数据除了数量，其它更改后需要重启该功能以生效"
-	/>
+		/>
 	<ListPreference
 		android:title="屏幕特效"
 		android:key="duang_screen"

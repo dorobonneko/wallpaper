@@ -15,8 +15,7 @@ public class Bubble extends Duang
 	private Paint paint;
 	private Matrix matrix;
 	private boolean direction;
-	public Bubble(DisplayMetrics display,int max,int min,int wind,int speed){
-		super(display,max,min,wind,speed);
+	public Bubble(){
 		paint=new Paint();
 		//paint.setStyle(Paint.Style.STROKE);
 		//paint.setColor(0x00000000);

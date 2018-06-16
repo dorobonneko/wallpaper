@@ -110,4 +110,7 @@
 	<SwitchPreference
 		android:title="频谱倒置"
 		android:key="rotate"/>
+	<Preference
+		android:title="赞助开发"
+		android:key="pay"/>
 </PreferenceScreen>

@@ -92,19 +92,16 @@ public class BlockBreakerDraw extends LineDraw
 						break;
 				}
 			float height=(float)(buffer[i] / 127d * getBorderHeight());
-			if (height > points[i])
-				points[i] = height;
-			else
-				height = points[i] - (points[i] - height) * getDownSpeed();
+			if (height < points[i])
+				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getBorderHeight());
 			if (height < 0)height = 0;
-			if (height > breaker[i])
-				breaker[i] = height;
-			else
-				breaker[i] = breaker[i] - (breaker[i] - height) * getDownSpeed() * 0.35f;
-			if (breaker[i] < 0)
-				breaker[i] = 0;
-			points[i] = height;
-			canvas.drawRect(x, getDrawHeight() - height, x + getBorderWidth() , getDrawHeight(), paint);
+				points[i] = height;
+			if (height < breaker[i])
+				height =breaker[i]-(breaker[i]-height)*getInterpolator(1-(breaker[i]-height)/getBorderHeight())*0.35f;
+			if (height < 0)
+				height = 0;
+				breaker[i]=height;
+			canvas.drawRect(x, getDrawHeight() - points[i], x + getBorderWidth() , getDrawHeight(), paint);
 			canvas.drawRect(x, getDrawHeight() - breaker[i] - halfWidth, x + getBorderWidth() , getDrawHeight() - breaker[i], paint);
 			x += getSpaceWidth();
 		}

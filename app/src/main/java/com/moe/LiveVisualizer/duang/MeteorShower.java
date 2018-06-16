@@ -5,9 +5,7 @@ import java.util.Random;
 
 public class MeteorShower extends Duang
 {
-	public MeteorShower(DisplayMetrics display,int max,int min,int wind,int speed){
-		super(display,max,min,wind,speed);
-	}
+	
 
 	@Override
 	public void draw(Canvas canvas)

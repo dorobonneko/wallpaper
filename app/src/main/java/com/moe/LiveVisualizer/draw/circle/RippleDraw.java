@@ -168,14 +168,14 @@ public class RippleDraw extends CircleDraw
 				}
 			float height=(float)(buffer[i]/127d*borderHeight);
 			if(height<points[i])
-				height=points[i]-(points[i]-height)*getDownSpeed();
-			if(height<0)height=0;
+				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/borderHeight);
+				if(height<0)height=0;
 			points[i]=height;
 			//if(paint.getStrokeCap()==Paint.Cap.ROUND)
 			canvas.drawCircle(point.x,point.y,height,paint);
 			//else
 			//	canvas.drawRect(point.x-paint.getStrokeWidth()/2,point.y-height,point.x+paint.getStrokeWidth()/2,point.y,paint);
-			//canvas.rotate(degress,point.x,point.y);
+			//canvas.rotate(degress,point.x,point.y)
 		}
 
 		//paint.setStyle(Paint.Style.FILL);

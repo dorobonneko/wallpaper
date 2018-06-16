@@ -15,7 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import com.moe.LiveVisualizer.utils.PreferencesUtils;
 
-public class WallpaperThread extends Thread implements SharedPreferences.OnSharedPreferenceChangeListener
+public class WallpaperThread extends Thread
 {
 	private LiveWallpaper.WallpaperEngine engine;
 	private ImageDraw imageDraw;
@@ -27,6 +27,7 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 	private ContentObserver observer;
 	private Object locked=new Object();
 	private boolean rotate;
+	private FftThread fftThread;
 	public WallpaperThread(final LiveWallpaper.WallpaperEngine engine)
 	{
 		this.engine = engine;
@@ -54,8 +55,19 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 																				 onChanged(uri.getQueryParameter("key"), uri);
 																			 }
 																		 });
+		fftThread=new FftThread(engine);
+		fftThread.start();
 	}
-
+	public byte[] getWave(){
+		if(fftThread!=null)
+			return fftThread.getWave();
+			return null;
+	}
+	public byte[] getFft(){
+		if(fftThread!=null)
+			return fftThread.getFft();
+			return null;
+	}
 	public LiveWallpaper.WallpaperEngine getEngine()
 	{
 		return engine;
@@ -67,13 +79,14 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 	}
 	public void notifyVisiableChanged(boolean visible)
 	{
-		if (visible)
-		{
-			synchronized (locked)
+		synchronized (locked)
 			{
-				locked.notify();
+				if(fftThread!=null)
+					fftThread.notifyVisibleChanged(visible);
+					if (visible)
+						locked.notify();
+					
 			}
-		}
 	}
 
 	public void onSizeChanged()
@@ -154,7 +167,7 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 				break;
 			case "color_direction":
 				if (imageDraw != null)
-					imageDraw.setShader(null);
+					imageDraw.resetShader();
 				break;
 			case "duang":
 				if (PreferencesUtils.getBoolean(null, uri, false))
@@ -204,7 +217,15 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 				break;
 		}
 	}
+
 	@Override
+	public void destroy()
+	{
+		// TODO: Implement this method
+		super.destroy();
+		close();
+	}
+	/*@Override
 	public void onSharedPreferenceChanged(SharedPreferences p1, String p2)
 	{
 		switch (p2)
@@ -312,9 +333,12 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 				break;
 		}
 	}
+*/
 
-	public void close()
+	private void close()
 	{
+		if(fftThread!=null)
+			fftThread.destroy();
 		imageDraw = null;
 		//engine.getPreference().unregisterOnSharedPreferenceChangeListener(this);
 		if (mDuangEngine != null)
@@ -331,10 +355,9 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 		 handler = new Handler(){
 		 public void handleMessage(Message msg)
 		 {*/
-		while (imageDraw != null)
+		while (!engine.isDestroy())
 		{
-			synchronized (locked)
-			{
+			synchronized(locked){
 				try
 				{
 					if (!engine.isVisible())
@@ -354,10 +377,11 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 			}
 			long delay=0;
 			canvas.drawColor(0, PorterDuff.Mode.CLEAR);
-			if (!engine.isReady())
+			if (fftThread==null||!fftThread.isReady())
 			{//启动失败，蓝屏警告
 				canvas.drawColor(0xff0096ff);
-				canvas.drawText((engine.getError() == null ?"无法启动": engine.getError()), canvas.getWidth() / 2, (canvas.getHeight() - paint.descent() - paint.ascent()) / 2.0f, paint);
+				if(fftThread!=null)
+				canvas.drawText((fftThread.getError() == null ?"无法启动": fftThread.getError()), canvas.getWidth() / 2, (canvas.getHeight() - paint.descent() - paint.ascent()) / 2.0f, paint);
 			}
 			else
 			{
@@ -377,30 +401,27 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 						canvas.drawBitmap(bitmap, (canvas.getWidth() - bitmap.getWidth()) / 2f, (canvas.getHeight() - bitmap.getHeight()) / 2f, null);
 					}
 				}
+				if (imageDraw != null)
+				{
+					
+						Draw draw=imageDraw.lockData();
+						if (draw != null)
+						{
+							if (rotate)
+							{
+								canvas.save();
+								canvas.rotate(180, canvas.getWidth() / 2, canvas.getHeight() / 2);
+							}
+							draw.draw(canvas);
+							if (rotate)
+								canvas.restore();
+						}
+				}
+				if (mDuangEngine != null)
+					mDuangEngine.draw(canvas);
 			}
 			//背景
-			if (imageDraw != null && engine.getVisualizer() != null)
-			{
-				try
-				{
-					Draw draw=imageDraw.lockData();
-					if (draw != null)
-					{
-						if (rotate)
-						{
-							canvas.save();
-							canvas.rotate(180, canvas.getWidth() / 2, canvas.getHeight() / 2);
-						}
-						draw.draw(canvas);
-						if (rotate)
-							canvas.restore();
-					}
-				}
-				catch (Exception e)
-				{}
-			}
-			if (mDuangEngine != null)
-				mDuangEngine.draw(canvas);
+			
 			try
 			{
 				sh.unlockCanvasAndPost(canvas);
@@ -424,7 +445,6 @@ public class WallpaperThread extends Thread implements SharedPreferences.OnShare
 		 };
 		 Looper.loop();
 		 */
-
 	}
 
 }

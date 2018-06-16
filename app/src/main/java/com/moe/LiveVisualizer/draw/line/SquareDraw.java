@@ -88,11 +88,9 @@ public class SquareDraw extends LineDraw
 						break;
 				}
 			int height=(int)Math.round(buffer[i] / 127d * squareSize());
-			if ( height > points[i] )
-				points[i] = height;
-			else
-				height =(int)( points[i] - (points[i]-height)*getDownSpeed());
-			if ( height < 0 )height = 0;
+			if ( height < points[i] )
+				height=(int)(points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/squareSize()));
+				if ( height < 0 )height = 0;
 			points[i] = height;
 			float offsetLeft=x;
 			float offsetRight=x+getBorderWidth();

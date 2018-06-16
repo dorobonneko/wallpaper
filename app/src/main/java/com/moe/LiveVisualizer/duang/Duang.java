@@ -8,19 +8,12 @@ import android.util.DisplayMetrics;
 
 public abstract class Duang
 {
-	private float offsetX,offsetY,size,speed;
+	private float offsetX,offsetY,size;
 	private Random random;
-	private DisplayMetrics display;
-	private int mWind,maxSize,minSize;
 	private Engine engine;
 	private boolean first=true;
-	public Duang(DisplayMetrics display,int maxSize,int minSize,int wind,int speed){
-		this.display=display;
+	public Duang(){
 		random=new Random(System.nanoTime());
-		this.minSize=minSize;
-		this.maxSize=maxSize;
-		this.mWind=wind;
-		this.speed=speed;
 	}
 	public Random getRandom(){
 		return random;
@@ -36,40 +29,29 @@ public abstract class Duang
 	public Engine getEngine(){
 		return engine;
 	}
-	public void setMinSize(int size){
-		this.minSize=size;
-	}
-	public void setMaxSize(int size){
-		this.maxSize=size;
-	}
 	public int getMinSize(){
-		return minSize;
+		return engine.getMinSize();
 	}
 	public int getMaxSize(){
-		return maxSize;
+		return engine.getMxSize();
 	}
-	protected void setWind(int wind)
-	{
-		this.mWind = wind;
-	}
-
 	public int getWind()
 	{
-		return mWind;
+		return engine.getWind();
 	}
 
 	public int getMaxWidth()
 	{
-		return display.widthPixels;
+		return getDisplay().widthPixels;
 	}
 
 
 	public int getMaxHeight()
 	{
-		return display.heightPixels;
+		return getDisplay().heightPixels;
 	}
 	public DisplayMetrics getDisplay(){
-		return display;
+		return engine.getDisplay();
 	}
 	protected void setOffsetX(float offsetX)
 	{
@@ -101,14 +83,11 @@ public abstract class Duang
 		return size;
 	}
 
-	protected void setSpeed(float speed)
-	{
-		this.speed = speed;
-	}
+	
 
-	public float getSpeed()
+	public int getSpeed()
 	{
-		return speed;
+		return engine.getSpeed();
 	}
 
 	public abstract void draw(Canvas canvas);
@@ -122,8 +101,6 @@ public abstract class Duang
 				offsetX=0;
 				offsetY=0;
 				size=0;
-				speed=0;
-				mWind=0;
 			}
 	}
 	public void release(){

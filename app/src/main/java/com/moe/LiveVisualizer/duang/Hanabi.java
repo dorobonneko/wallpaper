@@ -5,9 +5,7 @@ import java.util.Random;
 
 public class Hanabi extends Duang
 {
-	public Hanabi(DisplayMetrics display,int max,int min,int wind,int speed){
-		super(display,max,min,wind,speed);
-	}
+	
 
 	@Override
 	public void draw(Canvas canvas)

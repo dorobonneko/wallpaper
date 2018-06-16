@@ -5,8 +5,9 @@ import android.os.Looper;
 import android.os.Message;
 import android.widget.Toast;
 import com.moe.LiveVisualizer.service.LiveWallpaper;
+import android.os.HandlerThread;
 
-public class VisualizerThread extends Thread
+public class VisualizerThread extends HandlerThread
 {
 	private Handler handler;
 	private Visualizer mVisualizer;
@@ -15,37 +16,44 @@ public class VisualizerThread extends Thread
 	private String error_msg;
 	public VisualizerThread(LiveWallpaper.WallpaperEngine engine)
 	{
+		super("visualizer");
 		this.engine = engine;
 	}
 	public Visualizer getVisualizer()
 	{
 		return mVisualizer;
 	}
-	public void release()
-	{
-		handler.obtainMessage(2).sendToTarget();
-	}
 
 	@Override
-	public void run()
+	public void destroy()
 	{
-		Looper.prepare();
+		// TODO: Implement this method
+		super.destroy();
+		quit();
+	}
+	
+
+	@Override
+	protected void onLooperPrepared()
+	{
+		// TODO: Implement this method
+		super.onLooperPrepared();
 		handler = new Handler(){
 			public void handleMessage(Message msg)
 			{
+				synchronized(locked){
 				switch ( msg.what )
 				{
 					case 0:
-						synchronized ( locked )
-						{
+						
 							if ( mVisualizer != null )break;
 							try
 							{
 								mVisualizer = new Visualizer(0);
 								if(!mVisualizer.getEnabled()){
-								mVisualizer.setCaptureSize(engine.getCaptureSize());
-								//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
-								mVisualizer.setEnabled(engine.isVisible());
+									mVisualizer.setCaptureSize(engine.getCaptureSize());
+									//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
+									mVisualizer.setEnabled(engine.isVisible());
 								}
 							}
 							catch (Exception e)
@@ -60,9 +68,9 @@ public class VisualizerThread extends Thread
 											{
 												mVisualizer = new Visualizer(0);
 												if(!mVisualizer.getEnabled()){
-												mVisualizer.setCaptureSize(engine.getCaptureSize());
-												//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
-												handler.obtainMessage(3).sendToTarget();
+													mVisualizer.setCaptureSize(engine.getCaptureSize());
+													//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
+													handler.obtainMessage(3).sendToTarget();
 												}
 												//mVisualizer.setEnabled(engine.isVisible());
 											}
@@ -74,7 +82,6 @@ public class VisualizerThread extends Thread
 										}
 									});
 							}
-						}
 						break;
 					case 1:
 						if ( mVisualizer != null )
@@ -86,7 +93,7 @@ public class VisualizerThread extends Thread
 									mVisualizer.release();
 									mVisualizer = null;
 									//msg.obj=0;
-									check();
+									//check();
 								}
 							}
 							catch (Exception e)
@@ -114,17 +121,19 @@ public class VisualizerThread extends Thread
 						}
 						break;
 				}
+				}
 			}
 		};
-		Looper.loop();
+		handler.obtainMessage(0).sendToTarget();
 	}
+	
 	public synchronized void check()
 	{
 		if ( handler != null )
 		{
-			if(mVisualizer==null)
-				handler.obtainMessage(0).sendToTarget();
-			else
+			//if(mVisualizer==null)
+			//	handler.obtainMessage(0).sendToTarget();
+		//	else
 				handler.obtainMessage(1).sendToTarget();
 		}
 

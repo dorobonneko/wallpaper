@@ -13,8 +13,7 @@ public class Snow extends Duang
 	private Matrix matrix=new Matrix();
 	private float windSpeed,speed;
 	private boolean wind;
-	public Snow(DisplayMetrics display,int maxSize,int minSize,int wind,int speed){
-		super(display,maxSize,minSize,wind,speed);
+	public Snow(){
 		paint=new Paint();
 		paint.setColor(0xffffffff);
 		path=new Path();

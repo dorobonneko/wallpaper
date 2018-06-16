@@ -55,12 +55,6 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 		return round?Paint.Cap.ROUND:Paint.Cap.SQUARE;
 	}
 	@Override
-	public float getDownSpeed()
-	{
-		// TODO: Implement this method
-		return draw.getDownSpeed();
-	}
-	@Override
 	public LiveWallpaper.WallpaperEngine getEngine()
 	{
 		// TODO: Implement this method
@@ -77,12 +71,6 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 	public byte[] getWave()
 	{
 		return draw.getWave();
-	}
-
-	@Override
-	public void setShader(Shader shader)
-	{
-		draw.setShader(shader);
 	}
 
 	@Override
@@ -128,12 +116,12 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 			return fade[0];
 			}
 	}
-/*
 
-private int getMiddleColor(int c1,int c2){
-	return Color.argb(Color.alpha(c1)+Color.alpha(c2)/2,Color.red(c1)+Color.red(c2)/2,Color.green(c1)+Color.green(c2)/2,Color.blue(c1)+Color.blue(c2)/2);
-}*/
-
+	@Override
+	public float getInterpolator(float interpolator)
+	{
+		return draw.getInterpolation(interpolator);
+	}
 
 
 	public void draw(Canvas canvas)

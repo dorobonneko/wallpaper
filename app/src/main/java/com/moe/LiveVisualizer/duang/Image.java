@@ -9,8 +9,7 @@ public class Image extends Duang
 {
 	private Matrix matrix;
 	private float speed,wind;
-	public Image(DisplayMetrics display,int max,int min,int wind,int speed){
-		super(display,max,min,wind,speed);
+	public Image(){
 		matrix=new Matrix();
 	}
 

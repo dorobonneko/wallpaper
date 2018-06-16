@@ -16,7 +16,7 @@ import java.io.File;
 
 public class Engine
 {
-	private Constructor duang;
+	private Class duang;
 	private int wind,speed,maxSize,minSize;
 	private List<Duang> list;
 	private LiveWallpaper.WallpaperEngine engine;
@@ -32,6 +32,36 @@ public class Engine
 		list=new ArrayList<>();
 		setDuang(Integer.parseInt(engine.getPreference().getString("duang_screen","0")));
 	
+	}
+
+	public int getSpeed()
+	{
+		// TODO: Implement this method
+		return speed;
+	}
+
+	public DisplayMetrics getDisplay()
+	{
+		// TODO: Implement this method
+		return display;
+	}
+
+	public int getWind()
+	{
+		// TODO: Implement this method
+		return wind;
+	}
+
+	public int getMxSize()
+	{
+		// TODO: Implement this method
+		return maxSize;
+	}
+
+	public int getMinSize()
+	{
+		// TODO: Implement this method
+		return minSize;
 	}
 
 	
@@ -66,13 +96,11 @@ public class Engine
 			for(int i=list.size();i<size;i++){
 				try
 				{
-					Duang duang_item=((Duang)duang.newInstance(new Object[]{ display, maxSize, minSize, wind, speed}));
+					Duang duang_item=(Duang)duang.newInstance();
 					duang_item.setEngine(this);
 					duang_item.reset(true);
 					list.add(duang_item);
 				}
-				catch (InvocationTargetException e)
-				{}
 				catch (InstantiationException e)
 				{}
 				catch (IllegalAccessException e)
@@ -89,27 +117,19 @@ public class Engine
 	}
 	public void setMaxSize(int size){
 		maxSize=size;
-		/*Iterator<Duang> iterator=list.iterator();
-		while(iterator.hasNext())
-			iterator.next().setMaxSize(size);*/
+		notifyChanged();
 	}
 	public void setMinSize(int size){
 		minSize=size;
-		/*Iterator<Duang> iterator=list.iterator();
-		while(iterator.hasNext())
-			iterator.next().setMinSize(size);*/
+		notifyChanged();
 	}
 	public void setMaxSpeed(int speed){
 		this.speed=speed;
-		/*Iterator<Duang> iterator=list.iterator();
-		while(iterator.hasNext())
-			iterator.next().setSpeed(speed);*/
+		notifyChanged();
 	}
 	public void setWind(int wind){
 		this.wind=wind;
-		Iterator<Duang> iterator=list.iterator();
-		while(iterator.hasNext())
-			iterator.next().setWind(wind);
+		notifyChanged();
 	}
 	public void setDuang(int mode){
 		clear();
@@ -140,11 +160,14 @@ public class Engine
 				buffer=BitmapFactory.decodeFile(new File(engine.getContext().getExternalFilesDir(null),"duang").getAbsolutePath());
 				class_=Image.class;
 				break;
+			case 5:
+				class_=Graph.class;
+				break;
 		}
 		try
 		{
-			duang = class_.getConstructors()[0];
-			//(DisplayMetrics.class, Integer.class, Integer.class, Integer.class, Integer.class);
+			duang = class_;
+			//(Displayclass_Metrics.class, Integer.class, Integer.class, Integer.class, Integer.class);
 		}
 		catch (SecurityException e)
 		{}
@@ -157,5 +180,10 @@ public class Engine
 		for(int i=0;i<size;i++)
 			list.remove(0).release();
 			}
+	}
+	private void notifyChanged(){
+		Iterator<Duang> iterator=list.iterator();
+		while(iterator.hasNext())
+			iterator.next().reset(true);
 	}
 }

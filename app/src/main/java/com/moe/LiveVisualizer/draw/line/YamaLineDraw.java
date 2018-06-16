@@ -86,11 +86,9 @@ public class YamaLineDraw extends LineDraw
 						break;
 				}
 			float height=(float)(buffer[i] / 127d * getBorderHeight());
-			if ( height > points[i] )
-				points[i] = height;
-			else
-				height = points[i] - (points[i] - height) * getDownSpeed();
-			if ( height < 0 )height = 0;
+			if ( height < points[i] )
+				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getBorderHeight());
+				if ( height < 0 )height = 0;
 			points[i] = height;
 			
 			canvas.drawLine(halfWidth, getDrawHeight(), x+=halfWidth, getDrawHeight()-height, paint);

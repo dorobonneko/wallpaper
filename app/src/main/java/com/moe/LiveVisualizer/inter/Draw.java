@@ -11,7 +11,7 @@ public interface Draw
 	void drawGraph(byte[] buffer,Canvas canvas,int color_mode,boolean useMode);
 	byte[] getFft();
 	byte[] getWave();
-	float getDownSpeed();
+	//float getDownSpeed();
 	
 	LiveWallpaper.WallpaperEngine getEngine();
 	void onBorderWidthChanged(int width);
@@ -20,7 +20,7 @@ public interface Draw
 	void onDrawHeightChanged(float height);
 	int size();
 	int getColor();
-	void setShader(Shader shader);
+	//void setShader(Shader shader);
 	Shader getShader();
 	void setRound(boolean round);
 	//void setCutImage(boolean cut);
@@ -28,4 +28,5 @@ public interface Draw
 	void setOffsetX(int x);
 	void setOffsetY(int y);
 	void notifySizeChanged();
+	float getInterpolator(float interpolator);
 }

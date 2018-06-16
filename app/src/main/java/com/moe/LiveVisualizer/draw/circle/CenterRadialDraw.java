@@ -184,8 +184,8 @@ public class CenterRadialDraw extends CircleDraw
 				}
 			float height=(float)(buffer[i]/127d*borderHeight);
 			if(height<points[i])
-				height=points[i]-(points[i]-height)*getDownSpeed();
-			if(height<0)height=0;
+				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/borderHeight);
+				if(height<0)height=0;
 			points[i]=height;
 			if(paint.getStrokeCap()==Paint.Cap.ROUND)
 				canvas.drawLine(point.x,point.y-height,point.x,point.y,paint);
