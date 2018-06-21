@@ -68,5 +68,12 @@ public abstract class CircleDraw extends Draw
 	public PointF getPointF(){
 		return point;
 	}
+
+	@Override
+	public void finalized()
+	{
+		// TODO: Implement this method
+		super.finalized();
+	}
 	
 }

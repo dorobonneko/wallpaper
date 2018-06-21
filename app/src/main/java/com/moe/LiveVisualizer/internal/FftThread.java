@@ -32,14 +32,6 @@ public class FftThread extends Thread
 			}catch(Exception e){}
 		return wave;
 	}
-	public boolean isReady(){
-		return visualizer!=null&&visualizer.isInit();
-	}
-	public String getError(){
-		if(isReady())
-			return visualizer.getMessage();
-			return "";
-	}
 	@Override
 	public void run()
 	{
@@ -60,7 +52,8 @@ public class FftThread extends Thread
 				{    
 					//第k个点频率 getSamplingRate() * k /(getCaptureSize()/2)  
 					int k=2 * n;
-					fft[n - 1] = (byte) ((int)Math.hypot(wave[k] == -1 ?0: wave[k], wave[k + 1] == -1 ?0: wave[k + 1]) & 0x7f);   
+					//fft[n - 1] = (byte) ((int)Math.hypot(wave[k] == -1 ?0: wave[k], wave[k + 1] == -1 ?0: wave[k + 1]) & 0x7f);   
+					fft[n-1]=(byte)Math.hypot(wave[k],wave[k+1]);
 				}
 				}catch(Exception e){}
 				try
@@ -76,10 +69,10 @@ public class FftThread extends Thread
 	@Override
 	public void destroy()
 	{
-		// TODO: Implement this method
-		super.destroy();
 		if(visualizer!=null)
 			visualizer.destroy();
+			fft=null;
+			wave=null;
 	}
 	
 }

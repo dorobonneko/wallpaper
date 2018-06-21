@@ -26,10 +26,13 @@ public class WallpaperThread extends Thread
 	private Engine mDuangEngine;//屏幕特效引擎
 	private ContentObserver observer;
 	private Object locked=new Object();
-	private boolean rotate;
+	private boolean rotateX,rotateY;
 	private FftThread fftThread;
+	private Camera camera;
+	private Matrix matrix=new Matrix();
 	public WallpaperThread(final LiveWallpaper.WallpaperEngine engine)
 	{
+		camera=new Camera();
 		this.engine = engine;
 		imageDraw = new ImageDraw(this);
 		paint.setTextAlign(Paint.Align.CENTER);
@@ -37,7 +40,10 @@ public class WallpaperThread extends Thread
 		paint.setColor(0xff000000);
 		//engine.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 		fpsDelay = engine.getPreference().getBoolean("highfps", false) ?16: 33;
-		rotate = engine.getPreference().getBoolean("rotate", false);
+		rotateX = engine.getPreference().getBoolean("rotateX", false);
+		rotateY=engine.getPreference().getBoolean("rotateY", false);
+		setMatrix();
+		engine.setTouchEventsEnabled(engine.getPreference().getBoolean("ripple",false));
 		if (imageDraw != null)imageDraw.setDownSpeed(engine.getPreference().getInt("downspeed", 15));
 		if (engine.getPreference().getBoolean("scaleImage", true))
 			wallpaperMatrix = new Matrix();
@@ -75,7 +81,7 @@ public class WallpaperThread extends Thread
 
 	public boolean isRotate()
 	{
-		return rotate;
+		return rotateX;
 	}
 	public void notifyVisiableChanged(boolean visible)
 	{
@@ -91,6 +97,7 @@ public class WallpaperThread extends Thread
 
 	public void onSizeChanged()
 	{
+		setMatrix();
 		if (imageDraw != null)
 			imageDraw.notifySizeChanged();
 		if (imageDraw != null)
@@ -212,18 +219,45 @@ public class WallpaperThread extends Thread
 				if (imageDraw != null)
 					imageDraw.setColorMode(PreferencesUtils.getString(null, uri));
 				break;
-			case "rotate":
-				rotate = PreferencesUtils.getBoolean(null, uri, false);
+			case "rotateX":
+				rotateX = PreferencesUtils.getBoolean(null, uri, false);
+				setMatrix();
+				break;
+			case "rotateY":
+				rotateY = PreferencesUtils.getBoolean(null, uri, false);
+				setMatrix();
+				break;
+			case "ripple":
+				engine.setTouchEventsEnabled(PreferencesUtils.getBoolean(null,uri,false));
 				break;
 		}
 	}
-
+	private void setMatrix(){
+		//matrix.reset();
+		//camera.restore();
+		camera.save();
+		if(rotateX)
+		camera.rotateX(180);
+		if(rotateY)
+		camera.rotateY(180);
+		camera.getMatrix(matrix);
+		camera.restore();
+		matrix.preTranslate(rotateY?-engine.getDisplayWidth()/2f:0,rotateX?-engine.getDisplayHeight()/2f:0);
+		matrix.postTranslate(rotateY?engine.getDisplayWidth()/2f:0,rotateX?engine.getDisplayHeight()/2f:0);
+	}
 	@Override
 	public void destroy()
 	{
-		// TODO: Implement this method
-		super.destroy();
-		close();
+		if(fftThread!=null)
+			fftThread.destroy();
+		imageDraw = null;
+		//engine.getPreference().unregisterOnSharedPreferenceChangeListener(this);
+		if (mDuangEngine != null)
+			mDuangEngine.reset();
+		if (observer != null)
+			engine.getContext().getContentResolver().unregisterContentObserver(observer);
+		engine=null;
+		
 	}
 	/*@Override
 	public void onSharedPreferenceChanged(SharedPreferences p1, String p2)
@@ -335,17 +369,7 @@ public class WallpaperThread extends Thread
 	}
 */
 
-	private void close()
-	{
-		if(fftThread!=null)
-			fftThread.destroy();
-		imageDraw = null;
-		//engine.getPreference().unregisterOnSharedPreferenceChangeListener(this);
-		if (mDuangEngine != null)
-			mDuangEngine.reset();
-		if (observer != null)
-			engine.getContext().getContentResolver().unregisterContentObserver(observer);
-	}
+	
 
 	@Override
 	public void run()
@@ -355,8 +379,9 @@ public class WallpaperThread extends Thread
 		 handler = new Handler(){
 		 public void handleMessage(Message msg)
 		 {*/
-		while (!engine.isDestroy())
+		while (engine!=null&&!engine.isDestroy())
 		{
+			LiveWallpaper.WallpaperEngine engine=this.engine;
 			synchronized(locked){
 				try
 				{
@@ -366,7 +391,7 @@ public class WallpaperThread extends Thread
 				catch (InterruptedException e)
 				{}
 			}
-			if (!engine.isVisible())continue;
+			//if (!engine.isVisible())continue;
 			SurfaceHolder sh=engine.getSurfaceHolder();
 			if (sh == null)continue;
 			final Canvas canvas=sh.lockCanvas();
@@ -377,28 +402,28 @@ public class WallpaperThread extends Thread
 			}
 			long delay=0;
 			canvas.drawColor(0, PorterDuff.Mode.CLEAR);
-			if (fftThread==null||!fftThread.isReady())
-			{//启动失败，蓝屏警告
-				canvas.drawColor(0xff0096ff);
-				if(fftThread!=null)
-				canvas.drawText((fftThread.getError() == null ?"无法启动": fftThread.getError()), canvas.getWidth() / 2, (canvas.getHeight() - paint.descent() - paint.ascent()) / 2.0f, paint);
-			}
-			else
-			{
 				//canvas.drawColor(0xff000000);//先涂黑
-				Bitmap bitmap=engine.getWallpaper();//获取背景
-				if (bitmap != null)
+				ImageThread wallpaper=engine.getWallpaper();//获取背景
+				if (wallpaper!=null)
 				{
+					if(wallpaper.getImageData()!=null)
+					{
+						canvas.drawBitmap(wallpaper.getImageData(),0,wallpaper.getWidth(),0,0,wallpaper.getWidth(),wallpaper.getHeight(),true, null);
+					}else if(wallpaper.getImage()!=null){
+					final Bitmap bitmap=wallpaper.getImage();
 					if (wallpaperMatrix != null)
 					{
 						float scale=Math.min((float)canvas.getWidth() / bitmap.getWidth(), (float)canvas.getHeight() / bitmap.getHeight());
 						wallpaperMatrix.setScale(scale, scale);
 						wallpaperMatrix.postTranslate((canvas.getWidth() - bitmap.getWidth() * scale) / 2, (canvas.getHeight() - bitmap.getHeight() * scale) / 2);
-						canvas.drawBitmap(bitmap, wallpaperMatrix, null);
+						canvas.drawBitmap(bitmap,wallpaperMatrix, null);
+						
 					}
 					else
 					{
-						canvas.drawBitmap(bitmap, (canvas.getWidth() - bitmap.getWidth()) / 2f, (canvas.getHeight() - bitmap.getHeight()) / 2f, null);
+						canvas.drawBitmap(bitmap,(canvas.getWidth() - bitmap.getWidth()) / 2f, (canvas.getHeight() - bitmap.getHeight()) / 2f, null);
+					}
+					//bitmap.recycle();
 					}
 				}
 				if (imageDraw != null)
@@ -407,20 +432,30 @@ public class WallpaperThread extends Thread
 						Draw draw=imageDraw.lockData();
 						if (draw != null)
 						{
-							if (rotate)
+							synchronized(draw){
+							/*if (rotateX)
 							{
 								canvas.save();
 								canvas.rotate(180, canvas.getWidth() / 2, canvas.getHeight() / 2);
-							}
+							}*/
+							int save=canvas.save();
+							//setMatrix();
+							/*if(rotateX)
+							matrix.postTranslate(0,canvas.getHeight());
+							if(rotateY)
+								matrix.postTranslate(canvas.getWidth(),0);*/
+							canvas.setMatrix(matrix);
 							draw.draw(canvas);
-							if (rotate)
-								canvas.restore();
+							
+							//canvas.setMatrix(null);
+							/*if (rotateX)*/
+							canvas.restoreToCount(save);
+							}
 						}
 				}
+				//特效
 				if (mDuangEngine != null)
 					mDuangEngine.draw(canvas);
-			}
-			//背景
 			
 			try
 			{

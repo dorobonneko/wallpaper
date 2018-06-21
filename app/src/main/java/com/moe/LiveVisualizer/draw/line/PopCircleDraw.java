@@ -11,6 +11,7 @@ import android.view.SurfaceHolder;
 import android.graphics.Shader;
 import com.moe.LiveVisualizer.internal.ImageDraw;
 import com.moe.LiveVisualizer.draw.LineDraw;
+import com.moe.LiveVisualizer.utils.ColorList;
 
 public class PopCircleDraw extends LineDraw
 {
@@ -19,7 +20,7 @@ public class PopCircleDraw extends LineDraw
 		super(draw);
 		}
 
-	@Override
+	/*@Override
 	public void onDraw(Canvas canvas, int color_mode)
 	{
 		Paint paint=getPaint();
@@ -58,10 +59,14 @@ public class PopCircleDraw extends LineDraw
 		paint.reset();
 		
 	}
-	
+	*/
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
+		final LiveWallpaper.WallpaperEngine engine=getEngine();
+		if(getEngine()==null)return;
+		final ColorList colorList=engine.getColorList();
+		if(colorList==null)return;
 		Paint paint=getPaint();
 		paint.setStrokeWidth(2);
 		paint.setStyle(Paint.Style.STROKE);
@@ -69,27 +74,27 @@ public class PopCircleDraw extends LineDraw
 			points=new float[size()];
 		float radius=getBorderWidth()/2.0f;
 		float x=radius;//起始像素
-		float y=canvas.getHeight() - getEngine().getPreference().getInt("height", 10) / 100.0f * canvas.getHeight();
+		float y=canvas.getHeight() - engine.getPreference().getInt("height", 10) / 100.0f * canvas.getHeight();
 		int color_step=0;
 		//canvas.drawLine(0,y,canvas.getWidth(),y,paint);
-		for ( int i=0;i < size();i ++ )
+		for ( int i=0;i < points.length;i ++ )
 		{
 			if(useMode)
 				switch ( color_mode){
 					case 1:
-						paint.setColor(getEngine().getColorList().get(color_step));
+						paint.setColor(colorList.get(color_step));
 						color_step++;
-						if ( color_step >= getEngine().getColorList().size() )
+						if ( color_step >= colorList.size() )
 							color_step = 0;
 						break;
 					case 2:
 						paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
 						break;
 					case 4:
-						int color=getEngine().getColorList().get(color_step);
-						paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
+						int color=colorList.get(color_step);
+						paint.setColor(engine.getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 						color_step++;
-						if ( color_step >= getEngine().getColorList().size() )
+						if ( color_step >= colorList.size() )
 							color_step = 0;
 						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 						break;

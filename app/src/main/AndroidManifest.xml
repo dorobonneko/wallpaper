@@ -25,7 +25,7 @@
 			android:name=".service.LiveWallpaper"
 			android:permission="android.permission.BIND_WALLPAPER"
 			android:enabled="false"
-			android:process=":Visualizer">
+			android:process="com.moe.LiveVisualizer.Visualizer">
 			<intent-filter>
 				<action android:name="android.service.wallpaper.WallpaperService"/>
 			</intent-filter>

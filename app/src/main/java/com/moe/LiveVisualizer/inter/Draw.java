@@ -6,9 +6,14 @@ import android.graphics.Matrix;
 
 public interface Draw
 {
+
+	boolean isFinalized();
+
+	void finalized();
+
 	void draw(Canvas canvas);
-	void onDraw(Canvas canvas,int color_mode);
-	void drawGraph(byte[] buffer,Canvas canvas,int color_mode,boolean useMode);
+	void onDraw(Canvas canvas,int color_mode)throws NullPointerException;
+	void drawGraph(byte[] buffer,Canvas canvas,int color_mode,boolean useMode)throws NullPointerException;
 	byte[] getFft();
 	byte[] getWave();
 	//float getDownSpeed();

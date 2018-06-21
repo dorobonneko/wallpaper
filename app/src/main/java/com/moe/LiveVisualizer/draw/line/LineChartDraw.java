@@ -11,6 +11,7 @@ import android.util.TypedValue;
 import android.graphics.Shader;
 import com.moe.LiveVisualizer.internal.ImageDraw;
 import com.moe.LiveVisualizer.draw.LineDraw;
+import com.moe.LiveVisualizer.utils.ColorList;
 
 public class LineChartDraw extends LineDraw
 {
@@ -19,7 +20,7 @@ public class LineChartDraw extends LineDraw
 		super(draw);
 		}
 
-	@Override
+	/*@Override
 	public void onDraw(Canvas canvas, int color_mode)
 	{
 		Paint paint=getPaint();
@@ -53,7 +54,7 @@ public class LineChartDraw extends LineDraw
 				break;
 		}
 		paint.reset();
-	}
+	}*/
 
 	@Override
 	public byte[] getFft()
@@ -63,11 +64,15 @@ public class LineChartDraw extends LineDraw
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas,final int color_mode, boolean useMode)
 	{
+		final LiveWallpaper.WallpaperEngine engine=getEngine();
+		if(getEngine()==null)return;
+		final ColorList colorList=engine.getColorList();
+		if(colorList==null)return;
 		Paint paint=getPaint();
 		float offsetX=0;
 		float[] tmpData=new float[8];
 		int color_step=0;
-		for ( int i=0;i < buffer.length-1;i+=2 )
+		for ( int i=0;i < buffer.length-2;i+=2 )
 		{
 			float height=((byte)(buffer[i]+128))*getBorderHeight()/256;
 				tmpData[0] = offsetX;
@@ -82,19 +87,19 @@ public class LineChartDraw extends LineDraw
 			if(useMode)
 				switch ( color_mode){
 					case 1:
-						paint.setColor(getEngine().getColorList().get(color_step));
+						paint.setColor(colorList.get(color_step));
 						color_step++;
-						if ( color_step >= getEngine().getColorList().size() )
+						if ( color_step >= colorList.size() )
 							color_step = 0;
 					break;
 				case 2:
 					paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
 				break;
 				case 4:
-						int color=getEngine().getColorList().get(color_step);
-						paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
+						int color=colorList.get(color_step);
+						paint.setColor(engine.getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 						color_step++;
-						if ( color_step >= getEngine().getColorList().size() )
+						if ( color_step >= colorList.size() )
 							color_step = 0;
 					paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 					break;

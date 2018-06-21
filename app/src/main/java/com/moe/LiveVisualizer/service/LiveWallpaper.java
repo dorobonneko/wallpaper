@@ -20,20 +20,27 @@ import com.moe.LiveVisualizer.utils.PreferencesUtils;
 import android.content.pm.PackageManager;
 import com.moe.LiveVisualizer.activity.CrashActivity;
 import android.os.Build;
+import android.util.Log;
+import com.moe.LiveVisualizer.draw.circle.RingDraw;
 public class LiveWallpaper extends WallpaperService implements Thread.UncaughtExceptionHandler
 {
 	private ColorList colorList;
 	private ChangedReceiver changed;
-	private SharedPreferences moe;
+	//private SharedPreferences moe;
 	private ImageThread background,centerImage,background_h;
 	private VideoThread video;
 	private File videoFile;
+	@Override
+	public WallpaperService.Engine onCreateEngine()
+	{
+		return new WallpaperEngine();
+	}
+	
 	@Override
 	public void onCreate()
 	{
 		super.onCreate();
 		Thread.setDefaultUncaughtExceptionHandler(this);
-		moe = getSharedPreferences("moe", 0);
 		colorList = new ColorList();
 		final IntentFilter filter=new IntentFilter();
 		filter.addAction("wallpaper_changed");
@@ -62,51 +69,57 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		
 		
 	}
+
 	@Override
-	public void uncaughtException(Thread p1, Throwable p2)
+	public int onStartCommand(Intent intent, int flags, int startId)
 	{
-		StringBuffer sb=new StringBuffer(p2.getMessage());
-		try
-		{
-			sb.append("\n").append(getPackageManager().getPackageInfo(getPackageName(), 0).versionName).append("\n").append(Build.MODEL).append(" ").append(Build.VERSION.RELEASE).append("\n");
-		}
-		catch (PackageManager.NameNotFoundException e)
-		{}
-		for (StackTraceElement element:p2.getStackTrace())
-			sb.append("\n").append(element.toString());
-		Intent intent=new Intent(this,CrashActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.putExtra(Intent.EXTRA_TEXT,sb.toString());
-		startActivity(intent);
-		if(p1.getName().equals("main"))
-			Runtime.getRuntime().exit(1);
-		//android.os.Process.killProcess(android.os.Process.myPid());
+		return START_NOT_STICKY;
 	}
 	
-	public SharedPreferences getSharedPreferences()
+	@Override
+	public void uncaughtException(final Thread p1,final Throwable p2)
 	{
-		return moe;
+		new Thread(){
+			public void run(){
+				if(p2==null)Runtime.getRuntime().exit(1);
+				StringBuffer sb=new StringBuffer(p2.getMessage());
+				try
+				{
+					sb.append("\n").append(getPackageManager().getPackageInfo(getPackageName(), 0).versionName).append("\n").append(Build.MODEL).append(" ").append(Build.VERSION.RELEASE).append("\n");
+				}
+				catch (PackageManager.NameNotFoundException e)
+				{}
+				for (StackTraceElement element:p2.getStackTrace())
+					sb.append("\n").append(element.toString());
+				Intent intent=new Intent(getApplicationContext(),CrashActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				intent.putExtra(Intent.EXTRA_TEXT,sb.toString());
+				startActivity(intent);
+			}
+		}.start();
+		try
+		{
+			Thread.sleep(3000);
+		}
+		catch (InterruptedException e)
+		{}
+		stopSelf();
+		android.os.Process.killProcess(android.os.Process.myPid());
 	}
-
-
-	public Bitmap getWallpaperBitmap(int direction)
+	public ImageThread getWallpaper(int direction)
 	{
-		return video!=null?video.getImage():(direction==0?(background != null ?background.getImage(): null):(background!=null&&background.isGif()?background.getImage():background_h!=null?background_h.getImage():null));
+		return direction==0?background:background!=null&&background.isGif()?background:background_h;
 	}
-	public Bitmap getCenterCircleImage()
+	public ImageThread getCenterCircleImage()
 	{
-		return centerImage != null ?centerImage.getImage(): null;
+		return centerImage;
 	}
 	public ColorList getColorList()
 	{
+		if(colorList==null)
+			colorList=new ColorList();
 		return colorList;
 	}
-	@Override
-	public WallpaperService.Engine onCreateEngine()
-	{
-		return new WallpaperEngine(this);
-	}
-	
 	private synchronized void loadColor()
 	{
 		new Thread("init_thread"){
@@ -153,13 +166,13 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		if ( changed != null )
 			unregisterReceiver(changed);
 			if(video!=null)
-				video.release();
+				video.destroy();
 			if(background!=null)
-				background.close();
+				background.destroy();
 			if(background_h!=null)
-				background_h.close();
+				background_h.destroy();
 			if(centerImage!=null)
-				centerImage.close();
+				centerImage.destroy();
 	}
 
 	class ChangedReceiver extends BroadcastReceiver
@@ -172,30 +185,30 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 			{
 				case "wallpaper_changed":
 					if(!videoFile.exists()){
-						if(video!=null){video.release();video=null;}
+						if(video!=null){video.destroy();video=null;}
 						if(background==null){
 							background = new ImageThread(LiveWallpaper.this, new File(getExternalFilesDir(null), "wallpaper"));
 							background.start();
 							}else{
-								background.loadImage();
+								background.reLoad();
 							}
 						if(background_h==null){
 							background_h=new ImageThread(LiveWallpaper.this,new File(getExternalFilesDir(null),"wallpaper_p"));
 							background_h.start();
 						}else{
-							background_h.loadImage();
+							background_h.reLoad();
 						}
 					}else{
 						if(video!=null)
-							video.release();
+							video.destroy();
 							video = new VideoThread(videoFile.getAbsolutePath());
 							video.start();
 						if ( background != null ){
-							background.close();
+							background.destroy();
 							background=null;
 							}
 						if(background_h!=null){
-							background_h.close();
+							background_h.destroy();
 							background_h=null;
 							}
 					}
@@ -206,7 +219,7 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 					break;
 				case "circle_changed":
 					if ( centerImage != null )
-						centerImage.loadImage();
+						centerImage.reLoad();
 					break;
 			}
 
@@ -221,14 +234,23 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		private int direction,width,height;
 		private Color colorReceiver;
 		private WallpaperThread refresh=null;
-		private List<OnColorSizeChangedListener> sizeListener;
+		private List<OnColorSizeChangedListener> sizeListener=new ArrayList<>();
 		//private VisualizerThread mVisualizer;
-		private LiveWallpaper live;
 		private boolean destroy;
-		public WallpaperEngine(LiveWallpaper live)
+		private boolean touchEvent;
+		public WallpaperEngine()
 		{
-			utils=new PreferencesUtils(live);
-			this.live = live;
+			Log.d(toString(),"init");
+			utils=new PreferencesUtils(getApplicationContext());
+			refresh = new WallpaperThread(this);
+			refresh.setName("wllpaper_daemon");
+			refresh.setPriority(Thread.MAX_PRIORITY);
+		}
+
+		public void unRegisterOnColorSizeChanged(OnColorSizeChangedListener p0)
+		{
+			if(sizeListener!=null)
+				sizeListener.remove(p0);
 		}
 
 		public boolean isDestroy()
@@ -260,23 +282,23 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 			sizeListener.add(l);
 		}
 
-		public Bitmap getCircleImage()
+		public ImageThread getCircleImage()
 		{
-			return live.getCenterCircleImage();
+			return LiveWallpaper.this.getCenterCircleImage();
 		}
 
 
 		public ColorList getColorList()
 		{
-			return live.getColorList();
+			return LiveWallpaper.this.getColorList();
 		}
 		public Context getContext()
 		{
-			return live;
+			return getApplicationContext();
 		}
-		public Bitmap getWallpaper()
+		public ImageThread getWallpaper()
 		{
-			return live.getWallpaperBitmap(direction);
+			return LiveWallpaper.this.getWallpaper(direction);
 		}
 		/*
 		public Visualizer getVisualizer()
@@ -286,17 +308,39 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		@Override
 		public void onCreate(SurfaceHolder surfaceHolder)
 		{
-			super.onCreate(surfaceHolder);
-			IntentFilter filter=new IntentFilter();
-			filter.addAction("color");
-			registerReceiver(colorReceiver = new Color(), filter);
-			sizeListener = new ArrayList<>();
-			if ( colorList != null )
-				notifyColorsChanged();
-			refresh = new WallpaperThread(this);
-			refresh.setName("wllpaper_daemon");
-			refresh.setDaemon(true);
+			Log.d(toString(),"onCreate");
+			//super.onCreate(surfaceHolder);
+			registerReceiver(colorReceiver = new Color(), new IntentFilter("color"));
+			//sizeListener = new ArrayList<>();
+			//if ( colorList != null )
+			//	notifyColorsChanged();
 			refresh.start();
+		}
+		@Override
+		public void onTouchEvent(MotionEvent event)
+		{
+			if(!touchEvent)return;
+			switch(direction){
+				case 0:
+					if(background!=null)
+						background.onTouchEvent(event);
+				break;
+				case 1:
+					if(background_h!=null)
+						background_h.onTouchEvent(event);
+					break;
+			}
+		}
+
+		@Override
+		public void setTouchEventsEnabled(boolean enabled)
+		{
+			touchEvent=enabled;
+			if(background!=null)
+				background.setRipple(enabled);
+			if(background_h!=null)
+				background_h.setRipple(enabled);
+			super.setTouchEventsEnabled(enabled);
 		}
 		
 		public PreferencesUtils getPreference()
@@ -306,13 +350,15 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		@Override
 		public void onVisibilityChanged(boolean visible)
 		{
+			System.gc();
+			Log.d(toString(),"visiable");
 			//mVisualizer.check();
 			if ( background != null )
 				background.notifyVisiableChanged(visible);
 			if ( centerImage != null )
 				centerImage.notifyVisiableChanged(visible);
-			if(video!=null)
-				video.notifyVisiableChanged(visible);
+			/*if(video!=null)
+				video.notifyVisiableChanged(visible);*/
 			if(refresh!=null)
 				refresh.notifyVisiableChanged(visible);
 			//super.onVisibilityChanged(visible);
@@ -320,9 +366,7 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		@Override
 		public void onDestroy()
 		{
-			super.onDestroy();
-			/*if ( mVisualizer != null )
-				mVisualizer.release();*/
+			Log.d(toString(),"destroy");
 			if ( refresh != null )refresh.destroy();
 			if ( sizeListener != null )
 				sizeListener.clear();
@@ -353,6 +397,7 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		@Override
 		public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height)
 		{
+			Log.d(toString(),"surfacechanged");
 			direction = width < height ?0: 1;
 			this.width=width;
 			this.height=height;
@@ -367,7 +412,8 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		@Override
 		public void onSurfaceCreated(SurfaceHolder holder)
 		{
-			holder.setType(moe.getBoolean("gpu",false)?holder.SURFACE_TYPE_PUSH_BUFFERS:holder.SURFACE_TYPE_GPU);
+			Log.d(toString(),"surfaceCreated");
+			holder.setType(getPreference().getBoolean("gpu",false)?holder.SURFACE_TYPE_PUSH_BUFFERS:holder.SURFACE_TYPE_GPU);
 			super.onSurfaceCreated(holder);
 			
 		}

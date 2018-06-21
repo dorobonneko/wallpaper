@@ -6,6 +6,7 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Paint;
 import java.util.Random;
+import com.moe.LiveVisualizer.utils.ColorList;
 
 public class UnKnow1 extends RingDraw
 {
@@ -16,13 +17,17 @@ public class UnKnow1 extends RingDraw
 	@Override
 	public void onDraw(Canvas canvas, int color_mode)
 	{
-		drawGraph(getFft(),canvas,color_mode,true);
+		super.onDraw(canvas,color_mode);
 		drawCircleImage(canvas);
 	}
 
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
+		final LiveWallpaper.WallpaperEngine engine=getEngine();
+		if(engine==null)return;
+		final ColorList colorList=engine.getColorList();
+		if(colorList==null)return;
 		PointF center=getPointF();
 		Paint paint=getPaint();
 		if(points==null)
@@ -33,9 +38,9 @@ public class UnKnow1 extends RingDraw
 		for(int i=0;i<5;i++){
 			if(useMode){
 				if(color_mode==1){
-					paint.setColor(getEngine().getColorList().get(color_step));
+					paint.setColor(colorList.get(color_step));
 					color_step++;
-					if(color_step>=getEngine().getColorList().size())
+					if(color_step>=colorList.size())
 						color_step=0;
 				}else if(color_mode==2){
 					paint.setColor(0xff000000|(int)(Math.random()*0xffffff));

@@ -1,22 +1,18 @@
 package com.moe.LiveVisualizer.draw.circle;
 import com.moe.LiveVisualizer.internal.ImageDraw;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PointF;
-import android.graphics.Path;
-import android.graphics.RectF;
-import android.graphics.SweepGradient;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
 import com.moe.LiveVisualizer.service.LiveWallpaper;
 import com.moe.LiveVisualizer.utils.ColorList;
+import android.graphics.PointF;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.Path;
 
-public class UnKnow2 extends RingDraw
+public class UnKnow3 extends RingDraw
 {
 	private float[] points;
 	private float width;
-	public UnKnow2(ImageDraw draw){
+	public UnKnow3(ImageDraw draw){
 		super(draw);
 	}
 	@Override
@@ -25,7 +21,7 @@ public class UnKnow2 extends RingDraw
 		// TODO: Implement this method
 		super.onSizeChanged();
 		width=(float)(2*getRadius()*Math.PI/(size()-1));
-		
+
 	}
 
 	@Override
@@ -34,7 +30,7 @@ public class UnKnow2 extends RingDraw
 		drawCircleImage(canvas);
 		super.onDraw(canvas, color_mode);
 	}
-	
+
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
@@ -56,42 +52,51 @@ public class UnKnow2 extends RingDraw
 		int color_step=0;
 		double degress=2d/size()*Math.PI;
 		/*float halfWidth=width/2;
-		float halfBorder=getBorderWidth()/2f;*/
-		float[] lines=new float[4];
-		Path path1=new Path(),path2=new Path();
+		 float halfBorder=getBorderWidth()/2f;*/
+		Path lines=new Path();
 		float radius=getRadius();
 		for(int i=0;i<points.length;i++){
-			float height=buffer[i]/127f*getRadius()/2;
+			float height=buffer[i]/127f*radius/2;
 			if(height<points[i])
 				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getRadius()/2);
 			if(height<0)height=0;
 			points[i]=height;
 			double value=degress*i;
-			if (i==0){
-                path1.moveTo(lines[0]=(float)((radius-points[i])*Math.cos(value)),lines[1]=(float)((radius-points[i])*Math.sin(value)));
-				path2.moveTo(lines[2]=(float)((radius+points[i])*Math.cos(value)),lines[3]=(float)((radius+points[i])*Math.sin(value)));
-				
-            }else{
-                path1.lineTo(lines[0]=(float)((radius-points[i])*Math.cos(value)),lines[1]=(float)((radius-points[i])*Math.sin(value)));
-				path2.lineTo(lines[2]=(float)((radius+points[i])*Math.cos(value)),lines[3]=(float)((radius+points[i])*Math.sin(value)));
-            }
+			//前面
+			lines.moveTo((float)((radius-points[i])*Math.cos(value)),(float)((radius-points[i])*Math.sin(value)));
+			lines.lineTo((float)((radius+points[i])*Math.cos(value)),(float)((radius+points[i])*Math.sin(value)));
+			value=degress*(i+1);
+			lines.lineTo((float)((radius+points[i])*Math.cos(value)),(float)((radius+points[i])*Math.sin(value)));
+			lines.lineTo((float)((radius-points[i])*Math.cos(value)),(float)((radius-points[i])*Math.sin(value)));
+              lines.close();
 			if(useMode){
 				switch(color_mode){
 					case 1:
 						paint.setColor(colorList.get(color_step++));
 						if(color_step>=colorList.size())
 							color_step=0;
-					break;
+						break;
+					case 2:
+						paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
+						break;
+					case 4:
+						int color=colorList.get(color_step);
+						paint.setColor(engine.getPreference().getBoolean("nenosync",false)?color:0xffffffff);
+						color_step++;
+						if ( color_step >= colorList.size() )
+							color_step = 0;
+						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
+						break;
 				}
 			}
-			canvas.drawLines(lines,paint);
-			//canvas.rotate(degress,center.x,center.y);
+			if(useMode){
+			canvas.drawPath(lines,paint);
+			lines.reset();
+			}
 		}
-		path1.close();
-		path2.close();
-		canvas.drawPath(path1,paint);
-		canvas.drawPath(path2,paint);
+		if(!useMode)
+			canvas.drawPath(lines,paint);
 		canvas.restore();
-		
+
 	}
 }

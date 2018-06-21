@@ -12,22 +12,27 @@ import android.view.animation.AccelerateInterpolator;
 public class ImageDraw implements OnColorSizeChangedListener
 {
 	private LiveWallpaper.WallpaperEngine engine;
-	private Draw[] drawList=new Draw[13];
+	//private Draw[] drawList=new Draw[13];
 	private Shader shader;
 	private float downSpeed;
 	private Matrix centerImageMatrix;
 	private String mode,color_mode;
 	private WallpaperThread wallpaper;
+	private Draw draw;
 	public ImageDraw(WallpaperThread wallpaper)
 	{
 		this.wallpaper=wallpaper;
 		this.engine = wallpaper.getEngine();
-		mode = engine.getPreference().getString("visualizer_mode", "0");
 		color_mode = engine.getPreference().getString("color_mode", "0");
 		engine.registerColorSizeChangedListener(this);
+		setMode(engine.getPreference().getString("visualizer_mode", "0"));
 	}
-	public float getInterpolation(float value){
-		return value*value*getDownSpeed();
+	public float getInterpolation(float input){
+		//return value*value*getDownSpeed();
+		if(Float.isInfinite(input))
+			return 1;
+		input=Math.abs(input);
+		return (1f- ((1.0f - input) * (1.0f - input)))*getDownSpeed();
 	}
 	public LiveWallpaper.WallpaperEngine getEngine()
 	{
@@ -36,6 +41,8 @@ public class ImageDraw implements OnColorSizeChangedListener
 	public void setMode(String mode)
 	{
 		this.mode = mode;
+		if(draw!=null)draw.finalized();
+		draw=null;
 	}
 	public WallpaperThread getWallpaperThread()
 	{
@@ -52,41 +59,52 @@ public class ImageDraw implements OnColorSizeChangedListener
 	public void notifySizeChanged()
 	{
 		shader = null;
-		for (Draw draw:drawList)
+		if(draw!=null)draw.notifySizeChanged();
+		/*for (Draw draw:drawList)
 			if (draw != null)
-				draw.notifySizeChanged();
+				draw.notifySizeChanged();*/
 	}
 
 	public void setDirection(int direction)
 	{
-		for (Draw draw:drawList)
+		if(draw instanceof RingDraw)
+			((RingDraw)draw).setDirection(direction);
+		/*for (Draw draw:drawList)
 			if (draw instanceof RingDraw)
-				((RingDraw)draw).setDirection(direction);
+				((RingDraw)draw).setDirection(direction);*/
 	}
 	public void setCircleRadius(int radius)
 	{
-		for (Draw draw:drawList)
+		if(draw instanceof RingDraw)
+			((RingDraw)draw).setRadius(radius);
+		/*for (Draw draw:drawList)
 			if (draw instanceof RingDraw)
-				((RingDraw)draw).setRadius(radius);
+				((RingDraw)draw).setRadius(radius);*/
 	}
 	public void setDegressStep(float step)
 	{
-		for (Draw draw:drawList)
+		if(draw instanceof RingDraw)
+			((RingDraw)draw).setDegressStep(step);
+		/*for (Draw draw:drawList)
 			if (draw instanceof RingDraw)
-				((RingDraw)draw).setDegressStep(step);
+				((RingDraw)draw).setDegressStep(step);*/
 	}
 	public void setOffsetY(int y)
 	{
-		for (Draw draw:drawList)
+		if(draw!=null)
+			draw.setOffsetY(y);
+		/*for (Draw draw:drawList)
 			if (draw != null)
-				draw.setOffsetY(y);
+				draw.setOffsetY(y);*/
 	}
 
 	public void setOffsetX(int x)
 	{
-		for (Draw draw:drawList)
+		if(draw!=null)
+			draw.setOffsetX(x);
+		/*for (Draw draw:drawList)
 			if (draw != null)
-				draw.setOffsetX(x);
+				draw.setOffsetX(x);*/
 	}
 	public void setCenterScale(boolean scale)
 	{
@@ -101,17 +119,21 @@ public class ImageDraw implements OnColorSizeChangedListener
 	}
 	public void setCutImage(boolean cut)
 	{
-		for (Draw draw:drawList)
+		if(draw instanceof RingDraw)
+			((RingDraw)draw).setCutImage(cut);
+		/*for (Draw draw:drawList)
 			if (draw instanceof RingDraw)
-				((RingDraw)draw).setCutImage(cut);
+				((RingDraw)draw).setCutImage(cut);*/
 
 	}
 
 	public void setRound(boolean round)
 	{
-		for (Draw draw:drawList)
+		if(draw!=null)
+			draw.setRound(round);
+		/*for (Draw draw:drawList)
 			if (draw != null)
-				draw.setRound(round);
+				draw.setRound(round);*/
 	}
 
 	public void setDownSpeed(int speed)
@@ -124,27 +146,36 @@ public class ImageDraw implements OnColorSizeChangedListener
 	}
 	public void setDrawHeight(float height)
 	{
-		for (Draw draw:drawList)
+		if(draw!=null)
+			draw.onDrawHeightChanged(height);
+		/*for (Draw draw:drawList)
 			if (draw != null)
-				draw.onDrawHeightChanged(height);
+				draw.onDrawHeightChanged(height);*/
 	}
 	public void setBorderHeight(int height)
 	{
-		for (Draw draw:drawList)
+		if(draw!=null)
+			draw.onBorderHeightChanged(height);
+		/*for (Draw draw:drawList)
 			if (draw != null)
-				draw.onBorderHeightChanged(height);
+				draw.onBorderHeightChanged(height);*/
 	}
 	public void setSpaceWidth(int space)
 	{
-		for (Draw draw:drawList)
+		if(draw!=null)
+			draw.onSpaceWidthChanged(space);
+		/*for (Draw draw:drawList)
 			if (draw != null)
-				draw.onSpaceWidthChanged(space);
+				draw.onSpaceWidthChanged(space);*/
 	}
 	public void setBorderWidth(int width)
 	{
-		for (Draw draw:drawList)
+		if(draw!=null)
+			draw.onBorderWidthChanged(width);
+		/*for (Draw draw:drawList)
 			if (draw != null)
-				draw.onBorderWidthChanged(width);}
+				draw.onBorderWidthChanged(width);*/
+				}
 	@Override
 	public void onColorSizeChanged()
 	{
@@ -162,12 +193,47 @@ public class ImageDraw implements OnColorSizeChangedListener
 
 	final public Draw lockData()
 	{
-		return get();
+		if(draw==null)
+			get();
+		return draw;
+		
 	}
 
 	private Draw get()
 	{
 		switch (mode)
+		{
+			case "0"://柱形图
+				return draw=new RadialDraw(this);
+			case "1"://折线图
+				return draw= new LineChartDraw(this);
+			case "2"://圆形射线
+				return draw = new CircleRadialDraw(this);
+			case "3"://弹弹圈
+				return draw = new PopCircleDraw(this);
+			case "4"://圆环三角
+				return draw = new CircleTriangleDraw(this);
+			case "5"://射线
+				return draw = new CenterRadialDraw(this);
+			case "6"://波纹
+				return draw = new RippleDraw(this);
+			case "7"://离散
+				return draw = new CircleDisperseDraw(this);
+			case "8"://山坡线
+				return draw = new YamaLineDraw(this);
+			case "9"://方块
+				return draw = new SquareDraw(this);
+			case "10"://打砖块
+				return draw = new BlockBreakerDraw(this);
+			case "11":
+				return draw = new UnKnow1(this);
+			case "12":
+			return draw = new UnKnow2(this);
+			case "13":
+				return draw=new UnKnow3(this);
+		}
+		return null;
+		/*switch (mode)
 		{
 			case "0"://柱形图
 				return drawList[0] == null ?drawList[0] = new RadialDraw(this): drawList[0];
@@ -196,7 +262,7 @@ public class ImageDraw implements OnColorSizeChangedListener
 			case "12":
 				return drawList[12] == null ?drawList[12] = new UnKnow2(this): drawList[12];
 		}
-		return null;
+		return null;*/
 	}
 	public void resetShader()
 	{

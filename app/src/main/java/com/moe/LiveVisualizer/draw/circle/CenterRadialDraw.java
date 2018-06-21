@@ -13,48 +13,19 @@ import android.graphics.LinearGradient;
 import android.graphics.PorterDuff;
 import android.util.TypedValue;
 import com.moe.LiveVisualizer.draw.CircleDraw;
+import com.moe.LiveVisualizer.utils.ColorList;
 
-public class CenterRadialDraw extends CircleDraw
+public class CenterRadialDraw extends RingDraw
 {
 
-	private int size,spaceWidth;
 	private float[] points;
-	private Shader shader;
-	private Bitmap shaderBuffer;
-	private float degress,borderHeight,borderWidth;
-	private Paint paint;
-	//private float radius;
 	public CenterRadialDraw(ImageDraw draw){
 		super(draw);
-		paint = new Paint();
-		paint.setStrokeCap(getEngine().getPreference().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
-		paint.setAntiAlias(true);
-		paint.setDither(true);
-		paint.setColor(0xff39c5bb);
-		paint.setStyle(Paint.Style.FILL);
-		borderWidth=(getEngine().getPreference().getInt("borderWidth",30));
-		//borderWidth=paint.getStrokeWidth();
-		//radius=engine.getSharedPreferences().getInt("circleRadius",Math.min(engine.getWidth(),engine.getHeight())/6);
-		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,getEngine().getPreference().getInt("borderHeight",100),getEngine().getContext().getResources().getDisplayMetrics());
-		spaceWidth=getEngine().getPreference().getInt("spaceWidth",20);
-		
-		getEngine().registerColorSizeChangedListener(new OnColorSizeChangedListener(){
-
-				@Override
-				public void onColorSizeChanged()
-				{
-					shader = null;
-					if(shaderBuffer!=null)
-						shaderBuffer.recycle();
-					shaderBuffer=null;
-				}
-			});
-			onSizeChanged();
 	}
-	@Override
+	/*@Override
 	public void onDraw(Canvas canvas, int color_mode)
 	{
-		Paint paint=this.paint;
+		Paint paint=getP;
 		paint.setStrokeCap(getRound());
 		paint.setStrokeWidth(borderWidth);
 		switch(color_mode){
@@ -94,7 +65,7 @@ public class CenterRadialDraw extends CircleDraw
 								 paint.setShader(shader);
 								 drawLines(getFft(), canvas, false,color_mode);
 								 paint.setShader(null);*/
-								break;
+								/*break;
 							}
 				break;
 			case 1:
@@ -111,63 +82,32 @@ public class CenterRadialDraw extends CircleDraw
 				break;
 		}
 		paint.reset();
-	}
+	}*/
 
-	@Override
-	public void onBorderWidthChanged(int width)
-	{
-		borderWidth=width;
-		paint.setStrokeWidth(width);
-		onSizeChanged();
-	}
-
-	@Override
-	public void onBorderHeightChanged(int height)
-	{
-		borderHeight=height;
-		onSizeChanged();
-	}
-
-	@Override
-	public void onSpaceWidthChanged(int space)
-	{
-		spaceWidth=space;
-		onSizeChanged();
-	}
-	private void onSizeChanged(){
-		try{
-			size=(int)(borderHeight*2*Math.PI/spaceWidth);
-			}catch(Exception e){}
-			try{
-				size=size>getEngine().getFftSize()?getEngine().getFftSize():size;
-				degress=360f/size;
-				}catch(Exception e){}
-			
-	}
-
-	@Override
-	public int size()
-	{
-		return size;
-	}
-
+	
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
-		if(points==null||points.length!=size)
-			points=new float[size];
-		Paint paint=this.paint;
+		final LiveWallpaper.WallpaperEngine engine=getEngine();
+		if(getEngine()==null)return;
+		final ColorList colorList=engine.getColorList();
+		if(colorList==null)return;
+		if(points==null||points.length!=size())
+			points=new float[size()];
+		Paint paint=getPaint();
+		paint.setStrokeWidth(getBorderWidth());
 		canvas.save();
 		int color_step=0;
 		PointF point=getPointF();
 		canvas.rotate(-90,point.x,point.y);
-		for(int i=0;i<size;i++){
+		float degress=360f/points.length;
+		for(int i=0;i<points.length;i++){
 			if(useMode)
 				switch ( color_mode){
 					case 1:
-						paint.setColor(getEngine().getColorList().get(color_step));
+						paint.setColor(colorList.get(color_step));
 						color_step++;
-						if ( color_step >= getEngine().getColorList().size() )
+						if ( color_step >= colorList.size() )
 							color_step = 0;
 						break;
 					case 2:
@@ -182,15 +122,15 @@ public class CenterRadialDraw extends CircleDraw
 						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 						break;
 				}
-			float height=(float)(buffer[i]/127d*borderHeight);
+			float height=(float)(buffer[i]/127d*getBorderHeight());
 			if(height<points[i])
-				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/borderHeight);
+				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getBorderHeight());
 				if(height<0)height=0;
 			points[i]=height;
 			if(paint.getStrokeCap()==Paint.Cap.ROUND)
 				canvas.drawLine(point.x,point.y-height,point.x,point.y,paint);
 			else
-				canvas.drawRect(point.x-borderWidth/2,point.y-height,point.x+borderWidth/2,point.y,paint);
+				canvas.drawRect(point.x-getBorderWidth()/2,point.y-height,point.x+getBorderWidth()/2,point.y,paint);
 			canvas.rotate(degress,point.x,point.y);
 		}
 		canvas.restore();

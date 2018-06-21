@@ -112,7 +112,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 				else
 				{
 					Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-					intent.setType("*/*");
+					intent.setType("image/*");
 					/*intent.putExtra("crop", "true");
 					 //width:height
 					 Display display=getActivity().getWindowManager().getDefaultDisplay();
@@ -299,7 +299,8 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 									}.start();
 								}
 							});
-						gif_dialog.setButton(ProgressDialog.BUTTON3, "视频第一帧", new DialogInterface.OnClickListener(){
+						gif_dialog.setButton(ProgressDialog.BUTTON3, "取消",handler.obtainMessage(WALLPAPER_DISMISS));
+						/** new DialogInterface.OnClickListener(){
 
 								@Override
 								public void onClick(DialogInterface p1, int p2)
@@ -324,7 +325,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 										loadVideo();
 									}
 								}
-							});
+							});*/
 						gif_dialog.setCanceledOnTouchOutside(true);
 					}
 					gif_dialog.show();

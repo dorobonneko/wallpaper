@@ -3,6 +3,8 @@ import com.moe.LiveVisualizer.internal.ImageDraw;
 import com.moe.LiveVisualizer.service.LiveWallpaper;
 import android.graphics.Paint;
 import android.graphics.Canvas;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.PorterDuff;
 
 public abstract class LineDraw extends Draw
 {
@@ -13,8 +15,8 @@ public abstract class LineDraw extends Draw
 		super(draw);
 		LiveWallpaper.WallpaperEngine engine=getEngine();
 		paint=new Paint();
-		paint.setStyle(Paint.Style.FILL);
-		paint.setStrokeCap(getEngine().getPreference().getBoolean("round", true) ?Paint.Cap.ROUND: Paint.Cap.SQUARE);
+		//paint.setStyle(Paint.Style.FILL);
+		//paint.setStrokeCap(getEngine().getPreference().getBoolean("round", true) ?Paint.Cap.ROUND: Paint.Cap.SQUARE);
 		borderHeight = engine.getPreference().getInt("borderHeight", 100);
 		sourceSpace = engine.getPreference().getInt("spaceWidth", 20);
 		drawHeight = engine.getDisplayHeight() - engine.getPreference().getInt("height", 10) / 100.0f * engine.getDisplayHeight();
@@ -55,8 +57,62 @@ public abstract class LineDraw extends Draw
 	{
 		paint.setStrokeWidth(borderWidth);
 		paint.setStrokeCap(getRound());
+		paint.setStyle(Paint.Style.FILL);
 		super.draw(canvas);
 	}
+
+	@Override
+	public void onDraw(Canvas canvas, int color_mode)
+	{
+		if(isFinalized())return;
+		Paint paint=getPaint();
+		paint.setStrokeCap(getRound());
+		switch(color_mode){
+			case 0:
+				switch ( getEngine().getColorList().size() )
+				{
+					case 0:
+						paint.setColor(0xff39c5bb);
+						drawGraph(getFft(), canvas, color_mode,false);
+						break;
+					case 1:
+						paint.setColor(getEngine().getColorList().get(0));
+						drawGraph(getFft(), canvas, color_mode,false);
+						break;
+					default:
+						paint.setShader(getShader());
+						drawGraph(getFft(), canvas, color_mode, false);								
+						paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+						paint.setShader(null);
+						break;
+				}
+				break;
+			case 1:
+			case 2:
+				if(getEngine()!=null)
+					switch ( getEngine().getColorList().size() )
+					{
+						case 0:
+							paint.setColor(0xff39c5bb);
+							break;
+						default:
+							paint.setColor(getEngine().getColorList().get(0));
+							break;
+					}
+			case 4:
+				drawGraph(getFft(), canvas, color_mode,true);
+				break;
+			case 3:
+				int color=getColor();
+				paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
+				paint.setShadowLayer(getBorderWidth(),0,0,color);
+				drawGraph(getFft(), canvas, color_mode,false);
+				paint.setShadowLayer(0, 0, 0, 0);
+				break;
+		}
+		paint.reset();
+	}
+
 
 	
 
@@ -98,6 +154,14 @@ public abstract class LineDraw extends Draw
 		}
 		catch (Exception e)
 		{}
+	}
+
+	@Override
+	public void finalized()
+	{
+		// TODO: Implement this method
+		super.finalized();
+		paint.reset();
 	}
 
 }

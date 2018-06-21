@@ -22,10 +22,11 @@ public class RadialDraw extends LineDraw
 		super(draw);
 	}
 
-	@Override
+	/*@Override
 	public void onDraw(Canvas canvas, int color_mode)
 	{
 		Paint paint=getPaint();
+		//paint.setStrokeCap(Paint.Cap.SQUARE);
 		switch(color_mode){
 			case 0:
 				switch ( getEngine().getColorList().size() )
@@ -46,8 +47,18 @@ public class RadialDraw extends LineDraw
 					}
 				break;
 			case 1:
-			case 4:
 			case 2:
+				if(getEngine()!=null)
+				switch ( getEngine().getColorList().size() )
+				{
+					case 0:
+						paint.setColor(0xff39c5bb);
+						break;
+					default:
+						paint.setColor(getEngine().getColorList().get(0));
+						break;
+				}
+			case 4:
 				drawGraph(getFft(), canvas, color_mode, true);
 				break;
 			case 3:
@@ -59,35 +70,39 @@ public class RadialDraw extends LineDraw
 				break;
 		}
 		paint.reset();
-	}
+	}*/
 
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
+		final LiveWallpaper.WallpaperEngine engine=getEngine();
+		if(getEngine()==null)return;
+		final ColorList colorList=engine.getColorList();
+		if(colorList==null)return;
 		Paint paint=getPaint();
 		if ( points == null || points.length != size() )
 			points = new float[size()];
 		float x=0;//起始像素
 		int color_step=0;
 		final float halfWidth=getBorderWidth()/ 2;
-		for ( int i=0;i < size();i ++ )
+		for ( int i=0;i < points.length;i ++ )
 		{
 			if(useMode)
 				switch ( color_mode){
 					case 1:
-						paint.setColor(getEngine().getColorList().get(color_step));
+						paint.setColor(colorList.get(color_step));
 						color_step++;
-						if ( color_step >= getEngine().getColorList().size() )
+						if ( color_step >= colorList.size() )
 							color_step = 0;
 						break;
 					case 2:
 						paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
 						break;
 					case 4:
-						int color=getEngine().getColorList().get(color_step);
-						paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
+						int color=colorList.get(color_step);
+						paint.setColor(engine.getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 						color_step++;
-						if ( color_step >= getEngine().getColorList().size() )
+						if ( color_step >= colorList.size() )
 							color_step = 0;
 						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 						break;
@@ -99,15 +114,17 @@ public class RadialDraw extends LineDraw
 			points[i] = height;
 			if ( paint.getStrokeCap() != Paint.Cap.ROUND )
 			{
-				canvas.drawRect(x, getDrawHeight() - height, x + getBorderWidth() , getDrawHeight(), paint);
-				canvas.drawRect(x, getDrawHeight() + height, x + getBorderWidth(), getDrawHeight(), paint);
+				canvas.drawRect(x, getDrawHeight() - height, x + getBorderWidth() , getDrawHeight()+height, paint);
+				//if(getRound()==Paint.Cap.ROUND)
+				//canvas.drawArc(x,getDrawHeight()-height+halfWidth,x+getBorderWidth(),getDrawHeight()-height-halfWidth,180,360,true,paint);
+				//canvas.drawRect(x, getDrawHeight() + height, x + getBorderWidth(), getDrawHeight(), paint);
 				x += getSpaceWidth();
 			}
 			else
 			{
-				canvas.drawLine(x += halfWidth, getDrawHeight() - height-halfWidth, x, getDrawHeight()-halfWidth, paint);
-				canvas.drawLine(x, getDrawHeight() + height + halfWidth, x, getDrawHeight() + halfWidth, paint);
-				x += halfWidth + getSpaceWidth();
+				canvas.drawLine(x + halfWidth, getDrawHeight() - height, x+halfWidth, getDrawHeight()+height, paint);
+				//canvas.drawLine(x, getDrawHeight() + height + halfWidth, x, getDrawHeight() + halfWidth, paint);
+				x += getSpaceWidth();
 			}
 
 		}

@@ -15,28 +15,28 @@ public class ColorList
 		buffer=new int[capacity];
 	}
 
-	public int getRandom()
+	public synchronized int getRandom()
 	{
 		return get((int)(Math.random()*size));
 	}
-	public int size()
+	public synchronized int size()
 	{
 		return size;
 	}
 
-	public boolean isEmpty()
+	public synchronized boolean isEmpty()
 	{
 		return size==0;
 	}
 
-	public int[] toArray()
+	public synchronized int[] toArray()
 	{
 		return Arrays.copyOf(buffer,size);
 	}
-	public int get(int index){
+	public synchronized int get(int index){
 		return buffer[index];
 	}
-	public boolean add(int p1)
+	public synchronized boolean add(int p1)
 	{
 		buffer[size]=p1;
 		size++;
@@ -44,7 +44,7 @@ public class ColorList
 		return true;
 	}
 
-	public boolean remove(int index)
+	public synchronized boolean remove(int index)
 	{
 		for(;index<size;)
 		buffer[index]=buffer[++index];
@@ -52,13 +52,13 @@ public class ColorList
 		return true;
 	}
 
-	public void clear()
+	public synchronized void clear()
 	{
 		size=0;
 	}
 	
 	
-	private void trim(){
+	private synchronized void trim(){
 		if(size>=buffer.length-1){
 			int[] src=buffer;
 			buffer=new int[src.length+(int)(capacity*0.5f)];

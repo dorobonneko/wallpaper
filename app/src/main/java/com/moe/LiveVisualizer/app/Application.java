@@ -17,24 +17,33 @@ public class Application extends android.app.Application implements Thread.Uncau
 {
 
 	@Override
-	public void uncaughtException(Thread p1, Throwable p2)
+	public void uncaughtException(final Thread p1,final Throwable p2)
 	{
-		StringBuffer sb=new StringBuffer(p2.getMessage());
+		new Thread(){
+			public void run(){
+				if(p2==null)Runtime.getRuntime().exit(1);
+				StringBuffer sb=new StringBuffer(p2.getMessage());
+				try
+				{
+					sb.append("\n").append(getPackageManager().getPackageInfo(getPackageName(), 0).versionName).append("\n").append(Build.MODEL).append(" ").append(Build.VERSION.RELEASE).append("\n");
+				}
+				catch (PackageManager.NameNotFoundException e)
+				{}
+				for (StackTraceElement element:p2.getStackTrace())
+					sb.append("\n").append(element.toString());
+				Intent intent=new Intent(getApplicationContext(),CrashActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				intent.putExtra(Intent.EXTRA_TEXT,sb.toString());
+				startActivity(intent);
+			}
+		}.start();
 		try
 		{
-			sb.append("\n").append(getPackageManager().getPackageInfo(getPackageName(), 0).versionName).append("\n").append(Build.MODEL).append(" ").append(Build.VERSION.RELEASE).append("\n");
+			Thread.sleep(3000);
 		}
-		catch (PackageManager.NameNotFoundException e)
+		catch (InterruptedException e)
 		{}
-		for (StackTraceElement element:p2.getStackTrace())
-		sb.append("\n").append(element.toString());
-		Intent intent=new Intent(this,CrashActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.putExtra(Intent.EXTRA_TEXT,sb.toString());
-		startActivity(intent);
-		if(p1.getName().equals("main"))
-		Runtime.getRuntime().exit(1);
-		//android.os.Process.killProcess(android.os.Process.myPid());
+		android.os.Process.killProcess(android.os.Process.myPid());
 	}
 
 

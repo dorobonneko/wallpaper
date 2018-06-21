@@ -76,7 +76,7 @@ public class VideoThread extends Thread
 		}catch(Exception e){}
 		return null;
 	}
-	public void release(){
+	public void destroy(){
 		meta.release();
 		Iterator<Bitmap> iterator=list.iterator();
 		while(iterator.hasNext()){

@@ -27,8 +27,8 @@ public class VisualizerThread extends HandlerThread
 	@Override
 	public void destroy()
 	{
-		// TODO: Implement this method
-		super.destroy();
+		if(handler!=null)
+		handler.sendEmptyMessage(2);
 		quit();
 	}
 	
@@ -45,7 +45,7 @@ public class VisualizerThread extends HandlerThread
 				switch ( msg.what )
 				{
 					case 0:
-						
+						if(error_msg!=null)break;
 							if ( mVisualizer != null )break;
 							try
 							{
@@ -59,7 +59,8 @@ public class VisualizerThread extends HandlerThread
 							catch (Exception e)
 							{
 								mVisualizer=null;
-								new Handler(Looper.getMainLooper()).post(new Runnable(){
+								Handler handler=new Handler(Looper.getMainLooper());
+								handler.post(new Runnable(){
 
 										@Override
 										public void run()
@@ -70,7 +71,7 @@ public class VisualizerThread extends HandlerThread
 												if(!mVisualizer.getEnabled()){
 													mVisualizer.setCaptureSize(engine.getCaptureSize());
 													//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
-													handler.obtainMessage(3).sendToTarget();
+													VisualizerThread.this.handler.obtainMessage(3).sendToTarget();
 												}
 												//mVisualizer.setEnabled(engine.isVisible());
 											}
@@ -92,6 +93,7 @@ public class VisualizerThread extends HandlerThread
 								{
 									mVisualizer.release();
 									mVisualizer = null;
+									sendEmptyMessage(0);
 									//msg.obj=0;
 									//check();
 								}
@@ -108,11 +110,12 @@ public class VisualizerThread extends HandlerThread
 							mVisualizer.setEnabled(false);
 							mVisualizer.release();
 						}
-						getLooper().quit();
+						//handler.getLooper().quit();
 						break;
 					case 3:
 						try
 						{
+							if(mVisualizer!=null)
 							mVisualizer.setEnabled(engine.isVisible());
 						}
 						catch (Exception e)

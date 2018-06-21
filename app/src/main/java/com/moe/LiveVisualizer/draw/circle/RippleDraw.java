@@ -13,45 +13,21 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.PorterDuff;
 import android.graphics.LinearGradient;
 import com.moe.LiveVisualizer.draw.CircleDraw;
+import com.moe.LiveVisualizer.utils.ColorList;
 
-public class RippleDraw extends CircleDraw
+public class RippleDraw extends RingDraw
 {
 	private float[] points;
-	private Shader shader;
-	private Bitmap shaderBuffer;
-	private float borderHeight,borderWidth;
-	private Paint paint;
+		//private float borderHeight,borderWidth;
+	
 	public RippleDraw(ImageDraw draw){
 		super(draw);
-		paint = new Paint();
-		paint.setStrokeCap(getEngine().getPreference().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
-		paint.setAntiAlias(true);
-		paint.setDither(true);
-		paint.setColor(0xff39c5bb);
-		paint.setStyle(Paint.Style.FILL);
-		borderWidth=(getEngine().getPreference().getInt("borderWidth",30));
-		//borderWidth=paint.getStrokeWidth();
-		borderHeight=(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,getEngine().getPreference().getInt("borderHeight",100),getEngine().getContext().getResources().getDisplayMetrics());
-		getEngine().registerColorSizeChangedListener(new OnColorSizeChangedListener(){
-
-				@Override
-				public void onColorSizeChanged()
-				{
-					shader = null;
-					if(shaderBuffer!=null)
-						shaderBuffer.recycle();
-					shaderBuffer=null;
-				}
-			});
 	}
-
 	
-
-	
-	@Override
+	/*@Override
 	public void onDraw(Canvas canvas, int color_mode)
 	{
-		Paint paint=this.paint;
+		Paint paint=getPaint()
 		paint.setStrokeCap(getRound());
 		paint.setStrokeWidth(borderWidth);
 		switch(color_mode){
@@ -92,7 +68,7 @@ public class RippleDraw extends CircleDraw
 								 paint.setShader(shader);
 								 drawLines(getFft(), canvas, false,color_mode);
 								 paint.setShader(null);*/
-								break;
+								/*break;
 							}
 				break;
 			case 1:
@@ -109,9 +85,9 @@ public class RippleDraw extends CircleDraw
 				break;
 		}
 		paint.reset();
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public void onBorderWidthChanged(int width)
 	{
 		borderWidth=width;
@@ -129,7 +105,7 @@ public class RippleDraw extends CircleDraw
 	{
 		
 	}
-
+*/
 	@Override
 	public int size()
 	{
@@ -139,36 +115,41 @@ public class RippleDraw extends CircleDraw
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
+		final LiveWallpaper.WallpaperEngine engine=getEngine();
+		if(getEngine()==null)return;
+		final ColorList colorList=engine.getColorList();
+		if(colorList==null)return;
 		if(points==null||points.length!=size())
 			points=new float[size()];
-		Paint paint=this.paint;
+		Paint paint=getPaint();
 		paint.setStyle(Paint.Style.STROKE);
+		paint.setStrokeWidth(getBorderWidth());
 		int color_step=0;
 		PointF point=getPointF();
 		for(int i=0;i<size();i++){
 			if(useMode)
 				switch ( color_mode){
 					case 1:
-						paint.setColor(getEngine().getColorList().get(color_step));
+						paint.setColor(colorList.get(color_step));
 						color_step++;
-						if ( color_step >= getEngine().getColorList().size() )
+						if ( color_step >= colorList.size() )
 							color_step = 0;
 						break;
 					case 2:
 						paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
 						break;
 					case 4:
-						int color=getEngine().getColorList().get(color_step);
-						paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
+						int color=colorList.get(color_step);
+						paint.setColor(engine.getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 						color_step++;
-						if ( color_step >= getEngine().getColorList().size() )
+						if ( color_step >= colorList.size() )
 							color_step = 0;
 						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
 						break;
 				}
-			float height=(float)(buffer[i]/127d*borderHeight);
+			float height=(float)(buffer[i]/127d*getBorderHeight());
 			if(height<points[i])
-				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/borderHeight);
+				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getBorderHeight());
 				if(height<0)height=0;
 			points[i]=height;
 			//if(paint.getStrokeCap()==Paint.Cap.ROUND)

@@ -108,8 +108,14 @@
 		android:max="30"
 		android:defaultValue="2"/>
 	<SwitchPreference
-		android:title="频谱倒置"
-		android:key="rotate"/>
+		android:title="垂直翻转"
+		android:key="rotateX"/>
+	<SwitchPreference
+		android:title="水平翻转"
+		android:key="rotateY"/>
+	<SwitchPreference
+		android:title="涟漪"
+		android:key="ripple"/>
 	<Preference
 		android:title="赞助开发"
 		android:key="pay"/>

@@ -17,7 +17,7 @@ import android.graphics.Paint;
 
 abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 {
-	private boolean round;
+	private boolean round,finalize;
 	private int[] fade=new int[2];
 	private Handler handler;
 	private int index;
@@ -27,22 +27,11 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 	private boolean isInterval;
 	Draw(ImageDraw draw)
 	{
-		handler = new Handler(Looper.getMainLooper(), new Handler.Callback(){
-
-				@Override
-				public boolean handleMessage(Message p1)
-				{
-				anime.start();
-					return false;
-				}
-			});
+		
 		this.draw = draw;
 		this.engine = draw.getEngine();
 		round=engine.getPreference().getBoolean("round",false);
-		anime=new ValueAnimator();
-		anime.setRepeatCount(0);
-		anime.setIntValues(0);
-		anime.setRepeatMode(ValueAnimator.RESTART);
+		
 	}
 
 	@Override
@@ -57,7 +46,6 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 	@Override
 	public LiveWallpaper.WallpaperEngine getEngine()
 	{
-		// TODO: Implement this method
 		return engine;
 	}
 
@@ -82,6 +70,21 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 	@Override
 	public int getColor()
 	{
+		if(handler==null){
+			handler = new Handler(Looper.getMainLooper(), new Handler.Callback(){
+
+					@Override
+					public boolean handleMessage(Message p1)
+					{
+						anime.start();
+						return false;
+					}
+				});
+			anime=new ValueAnimator();
+			anime.setRepeatCount(0);
+			anime.setIntValues(0);
+			anime.setRepeatMode(ValueAnimator.RESTART);
+		}
 		switch(engine.getColorList().size()){
 			case 0:
 				return 0xff39c5bb;
@@ -120,12 +123,14 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 	@Override
 	public float getInterpolator(float interpolator)
 	{
+		if(draw==null)return interpolator;
 		return draw.getInterpolation(interpolator);
 	}
 
 
 	public void draw(Canvas canvas)
 	{
+		if(draw!=null)
 		onDraw(canvas, Integer.parseInt(draw.getColorMode()));
 	}
 
@@ -167,6 +172,29 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 	public void setOffsetY(int y)
 	{
 		// TODO: Implement this method
+	}
+
+	@Override
+	public void finalized()
+	{
+	draw=null;
+	anime=null;
+	engine=null;
+	finalize=true;
+	}
+
+	@Override
+	public boolean isFinalized()
+	{
+		// TODO: Implement this method
+		return finalize;
+	}
+
+	@Override
+	protected void finalize() throws Throwable
+	{
+		super.finalize();
+		finalized();
 	}
 
 
