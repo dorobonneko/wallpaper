@@ -24,28 +24,15 @@ public class UnKnow1 extends RingDraw
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
-		final LiveWallpaper.WallpaperEngine engine=getEngine();
-		if(engine==null)return;
-		final ColorList colorList=engine.getColorList();
-		if(colorList==null)return;
 		PointF center=getPointF();
 		Paint paint=getPaint();
 		if(points==null)
 			points=new float[20];
 		canvas.save();
 		int count=-1;
-		int color_step=0;
 		for(int i=0;i<5;i++){
-			if(useMode){
-				if(color_mode==1){
-					paint.setColor(colorList.get(color_step));
-					color_step++;
-					if(color_step>=colorList.size())
-						color_step=0;
-				}else if(color_mode==2){
-					paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
-				}
-			}
+			if(useMode)
+				checkMode(color_mode,paint);
 			//计算高度
 			for(int n=0;n<4;n++){
 			byte height=buffer[++count];

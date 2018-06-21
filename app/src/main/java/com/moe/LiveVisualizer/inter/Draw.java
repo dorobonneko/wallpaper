@@ -3,6 +3,7 @@ import android.graphics.Canvas;
 import android.graphics.Shader;
 import com.moe.LiveVisualizer.service.LiveWallpaper;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 
 public interface Draw
 {
@@ -34,4 +35,5 @@ public interface Draw
 	void setOffsetY(int y);
 	void notifySizeChanged();
 	float getInterpolator(float interpolator);
+	void checkMode(int mode,Paint paint);
 }

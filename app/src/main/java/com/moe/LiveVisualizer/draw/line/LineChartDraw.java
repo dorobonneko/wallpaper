@@ -15,6 +15,7 @@ import com.moe.LiveVisualizer.utils.ColorList;
 
 public class LineChartDraw extends LineDraw
 {
+	private float[] tmpData=new float[8];
 	public LineChartDraw(ImageDraw draw)
 	{
 		super(draw);
@@ -64,14 +65,8 @@ public class LineChartDraw extends LineDraw
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas,final int color_mode, boolean useMode)
 	{
-		final LiveWallpaper.WallpaperEngine engine=getEngine();
-		if(getEngine()==null)return;
-		final ColorList colorList=engine.getColorList();
-		if(colorList==null)return;
 		Paint paint=getPaint();
 		float offsetX=0;
-		float[] tmpData=new float[8];
-		int color_step=0;
 		for ( int i=0;i < buffer.length-2;i+=2 )
 		{
 			float height=((byte)(buffer[i]+128))*getBorderHeight()/256;
@@ -85,25 +80,7 @@ public class LineChartDraw extends LineDraw
 			tmpData[6]=(offsetX+=getSpaceWidth()+getBorderWidth());
 			tmpData[7]=getDrawHeight()-height;
 			if(useMode)
-				switch ( color_mode){
-					case 1:
-						paint.setColor(colorList.get(color_step));
-						color_step++;
-						if ( color_step >= colorList.size() )
-							color_step = 0;
-					break;
-				case 2:
-					paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
-				break;
-				case 4:
-						int color=colorList.get(color_step);
-						paint.setColor(engine.getPreference().getBoolean("nenosync",false)?color:0xffffffff);
-						color_step++;
-						if ( color_step >= colorList.size() )
-							color_step = 0;
-					paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
-					break;
-				}
+				checkMode(color_mode,paint);
 			
 			canvas.drawLines(tmpData, paint);
 		}

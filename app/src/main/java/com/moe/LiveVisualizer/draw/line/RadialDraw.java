@@ -75,38 +75,15 @@ public class RadialDraw extends LineDraw
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
-		final LiveWallpaper.WallpaperEngine engine=getEngine();
-		if(getEngine()==null)return;
-		final ColorList colorList=engine.getColorList();
-		if(colorList==null)return;
 		Paint paint=getPaint();
 		if ( points == null || points.length != size() )
 			points = new float[size()];
 		float x=0;//起始像素
-		int color_step=0;
 		final float halfWidth=getBorderWidth()/ 2;
 		for ( int i=0;i < points.length;i ++ )
 		{
 			if(useMode)
-				switch ( color_mode){
-					case 1:
-						paint.setColor(colorList.get(color_step));
-						color_step++;
-						if ( color_step >= colorList.size() )
-							color_step = 0;
-						break;
-					case 2:
-						paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
-						break;
-					case 4:
-						int color=colorList.get(color_step);
-						paint.setColor(engine.getPreference().getBoolean("nenosync",false)?color:0xffffffff);
-						color_step++;
-						if ( color_step >= colorList.size() )
-							color_step = 0;
-						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
-						break;
-				}
+				checkMode(color_mode,paint);
 			float height=(float)(buffer[i] / 127d * getBorderHeight());
 			if ( height < points[i] )
 				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getBorderHeight());

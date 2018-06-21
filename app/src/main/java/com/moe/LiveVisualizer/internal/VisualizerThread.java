@@ -82,6 +82,7 @@ public class VisualizerThread extends HandlerThread
 											}
 										}
 									});
+									
 							}
 						break;
 					case 1:

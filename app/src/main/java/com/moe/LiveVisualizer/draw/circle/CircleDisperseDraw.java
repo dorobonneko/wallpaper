@@ -32,10 +32,6 @@ public class CircleDisperseDraw extends RingDraw
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
-		final LiveWallpaper.WallpaperEngine engine=getEngine();
-		if(getEngine()==null)return;
-		final ColorList colorList=engine.getColorList();
-		if(colorList==null)return;
 		PointF point=getPointF();
 		float radius=getRadius();
 		final float radialHeight=getDirection()==OUTSIDE?getBorderHeight():getRadius();
@@ -43,33 +39,14 @@ public class CircleDisperseDraw extends RingDraw
 		paint.setStrokeWidth(getBorderWidth());
 		if ( points == null || points.length != size() )
 			points = new float[size()];
-		int color_step=0;
 		float degress_step=360f / size();
 		canvas.save();
-		final PointF center=getPointF();
-		canvas.rotate(degress_step / 2f, center.x, center.y);
+		//final PointF center=getPointF();
+		canvas.rotate(degress_step / 2f, point.x, point.y);
 		for ( int i=0;i < points.length;i ++ )
 		{
 			if(useMode)
-				switch ( color_mode){
-					case 1:
-						paint.setColor(colorList.get(color_step));
-						color_step++;
-						if ( color_step >= colorList.size() )
-							color_step = 0;
-						break;
-					case 2:
-						paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
-						break;
-					case 4:
-						int color=colorList.get(color_step);
-						paint.setColor(engine.getPreference().getBoolean("nenosync",false)?color:0xffffffff);
-						color_step++;
-						if ( color_step >= colorList.size() )
-							color_step = 0;
-						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
-						break;
-				}
+				checkMode(color_mode,paint);
 			float height=(float) (buffer[i] / 127d * radialHeight);
 			if ( height < points[i] )
 				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/radialHeight);
@@ -79,7 +56,7 @@ public class CircleDisperseDraw extends RingDraw
 				canvas.drawLine(point.x,point.y-radius+(getDirection()==OUTSIDE?- height:height), point.x, point.y -radius+(getDirection()==OUTSIDE?- height:height), paint);
 			else
 				canvas.drawRect(point.x-getBorderWidth()/2,  point.y -radius+(getDirection()==OUTSIDE?- height:height), point.x + getBorderWidth()/2, point.y -radius+(getDirection()==OUTSIDE?- height-getBorderWidth():height+getBorderWidth()), paint);
-			canvas.rotate(degress_step, center.x, center.y);
+			canvas.rotate(degress_step, point.x, point.y);
 			//degress+=degress_step;
 		}
 		canvas.restore();

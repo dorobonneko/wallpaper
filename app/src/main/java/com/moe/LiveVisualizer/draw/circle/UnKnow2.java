@@ -16,6 +16,9 @@ public class UnKnow2 extends RingDraw
 {
 	private float[] points;
 	private float width;
+	private float[] lines=new float[4];
+	private Path path1=new Path(),path2=new Path();
+	
 	public UnKnow2(ImageDraw draw){
 		super(draw);
 	}
@@ -38,10 +41,6 @@ public class UnKnow2 extends RingDraw
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
-		final LiveWallpaper.WallpaperEngine engine=getEngine();
-		if(engine==null)return;
-		final ColorList colorList=engine.getColorList();
-		if(colorList==null)return;
 		PointF center=getPointF();
 		Paint paint=getPaint();
 		paint.setAntiAlias(true);
@@ -53,12 +52,9 @@ public class UnKnow2 extends RingDraw
 		canvas.save();
 		canvas.rotate(-90,center.x,center.y);
 		canvas.translate(center.x,center.y);
-		int color_step=0;
 		double degress=2d/size()*Math.PI;
 		/*float halfWidth=width/2;
 		float halfBorder=getBorderWidth()/2f;*/
-		float[] lines=new float[4];
-		Path path1=new Path(),path2=new Path();
 		float radius=getRadius();
 		for(int i=0;i<points.length;i++){
 			float height=buffer[i]/127f*getRadius()/2;
@@ -75,15 +71,8 @@ public class UnKnow2 extends RingDraw
                 path1.lineTo(lines[0]=(float)((radius-points[i])*Math.cos(value)),lines[1]=(float)((radius-points[i])*Math.sin(value)));
 				path2.lineTo(lines[2]=(float)((radius+points[i])*Math.cos(value)),lines[3]=(float)((radius+points[i])*Math.sin(value)));
             }
-			if(useMode){
-				switch(color_mode){
-					case 1:
-						paint.setColor(colorList.get(color_step++));
-						if(color_step>=colorList.size())
-							color_step=0;
-					break;
-				}
-			}
+			if(useMode)
+				checkMode(color_mode,paint);
 			canvas.drawLines(lines,paint);
 			//canvas.rotate(degress,center.x,center.y);
 		}
@@ -91,6 +80,8 @@ public class UnKnow2 extends RingDraw
 		path2.close();
 		canvas.drawPath(path1,paint);
 		canvas.drawPath(path2,paint);
+		path1.reset();
+		path2.reset();
 		canvas.restore();
 		
 	}

@@ -63,10 +63,6 @@ public class PopCircleDraw extends LineDraw
 	@Override
 	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
-		final LiveWallpaper.WallpaperEngine engine=getEngine();
-		if(getEngine()==null)return;
-		final ColorList colorList=engine.getColorList();
-		if(colorList==null)return;
 		Paint paint=getPaint();
 		paint.setStrokeWidth(2);
 		paint.setStyle(Paint.Style.STROKE);
@@ -74,31 +70,12 @@ public class PopCircleDraw extends LineDraw
 			points=new float[size()];
 		float radius=getBorderWidth()/2.0f;
 		float x=radius;//起始像素
-		float y=canvas.getHeight() - engine.getPreference().getInt("height", 10) / 100.0f * canvas.getHeight();
-		int color_step=0;
-		//canvas.drawLine(0,y,canvas.getWidth(),y,paint);
+		float y=getDrawHeight();
+		//float y=canvas.getHeight() - engine.getPreference().getInt("height", 10) / 100.0f * canvas.getHeight();
 		for ( int i=0;i < points.length;i ++ )
 		{
 			if(useMode)
-				switch ( color_mode){
-					case 1:
-						paint.setColor(colorList.get(color_step));
-						color_step++;
-						if ( color_step >= colorList.size() )
-							color_step = 0;
-						break;
-					case 2:
-						paint.setColor(0xff000000|(int)(Math.random()*0xffffff));
-						break;
-					case 4:
-						int color=colorList.get(color_step);
-						paint.setColor(engine.getPreference().getBoolean("nenosync",false)?color:0xffffffff);
-						color_step++;
-						if ( color_step >= colorList.size() )
-							color_step = 0;
-						paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
-						break;
-				}
+				checkMode(color_mode,paint);
 			float height=(float)(buffer[i]/127d*getBorderHeight());
 			if(height<points[i])
 				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getBorderHeight());

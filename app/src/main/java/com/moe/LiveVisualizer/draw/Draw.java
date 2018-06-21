@@ -14,17 +14,20 @@ import android.animation.TypeEvaluator;
 import android.animation.PropertyValuesHolder;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.animation.ArgbEvaluator;
+import com.moe.LiveVisualizer.utils.ColorList;
 
 abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 {
 	private boolean round,finalize;
 	private int[] fade=new int[2];
 	private Handler handler;
-	private int index;
+	private int index,color_step;
 	private ImageDraw draw;
 	private ValueAnimator anime;
 	private LiveWallpaper.WallpaperEngine engine;
 	private boolean isInterval;
+	private ArgbEvaluator argb;
 	Draw(ImageDraw draw)
 	{
 		
@@ -80,6 +83,7 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 						return false;
 					}
 				});
+				argb=new ArgbEvaluator();
 			anime=new ValueAnimator();
 			anime.setRepeatCount(0);
 			anime.setIntValues(0);
@@ -130,13 +134,15 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 
 	public void draw(Canvas canvas)
 	{
+		color_step=0;
 		if(draw!=null)
 		onDraw(canvas, Integer.parseInt(draw.getColorMode()));
 	}
 
 	public Integer evaluate(float fraction,int... n)
 	{
-		int p2=n[0];
+		return (Integer)argb.evaluate(fraction,n[0],n[1]);
+		/*int p2=n[0];
 		int p3=n[1];
 		int startA=Color.alpha(p2);
 		int endA=Color.alpha(p3);
@@ -152,12 +158,12 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 		int green=getCurrentColor(startGreen,endGreen,fraction);
 		int blue=getCurrentColor(startBlue,endBlue,fraction);
 
-		return Color.argb(alpha,red,green,blue);
+		return Color.argb(alpha,red,green,blue);*/
 	}
 
-	private int getCurrentColor(int start, int end,float fraction) {  
+	/*private int getCurrentColor(int start, int end,float fraction) {  
 		return start-(int)((start-end)*fraction);
-	}
+	}*/
 
 	
 
@@ -197,8 +203,35 @@ abstract class Draw implements com.moe.LiveVisualizer.inter.Draw
 		finalized();
 	}
 
-
-
+	@Override
+	public void checkMode(int mode, Paint paint)
+	{
+		final LiveWallpaper.WallpaperEngine engine=getEngine();
+		if(getEngine()==null)return;
+		final ColorList colorList=engine.getColorList();
+		if(colorList==null)return;
+		switch (mode)
+		{
+			case 1:
+				paint.setColor(colorList.get(color_step));
+				color_step++;
+				if (color_step >= colorList.size())
+					color_step = 0;
+				
+				break;
+			case 2:
+				paint.setColor(0xff000000 | (int)(Math.random() * 0xffffff));
+				break;
+			case 4:
+				int color=colorList.get(color_step);
+				paint.setColor(engine.getPreference().getBoolean("nenosync", false) ?color: 0xffffffff);
+				color_step++;
+				if (color_step >= colorList.size())
+					color_step = 0;
+				paint.setShadowLayer(paint.getStrokeWidth(), 0, 0, color);
+				break;
+		}
+	}
 	
 
 }
