@@ -11,6 +11,7 @@ public abstract class LineDraw extends Draw
 	private int size;
 	private float spaceWidth,borderHeight,borderWidth,drawHeight,sourceSpace;
 	private Paint paint;
+	private boolean antialias;
 	public LineDraw(ImageDraw draw){
 		super(draw);
 		LiveWallpaper.WallpaperEngine engine=getEngine();
@@ -24,6 +25,15 @@ public abstract class LineDraw extends Draw
 		paint.setStrokeWidth(borderWidth);
 		notifySizeChanged();
 	}
+
+	@Override
+	public void setAntialias(boolean antialias)
+	{
+		this.antialias=antialias;
+		//paint.setAntiAlias(antialias);
+	}
+
+	
 	public Paint getPaint(){
 		return paint;
 	}
@@ -67,6 +77,8 @@ public abstract class LineDraw extends Draw
 		if(isFinalized())return;
 		Paint paint=getPaint();
 		paint.setStrokeCap(getRound());
+		paint.setAntiAlias(antialias);
+		paint.setDither(antialias);
 		switch(color_mode){
 			case 0:
 				switch ( getEngine().getColorList().size() )
@@ -107,7 +119,7 @@ public abstract class LineDraw extends Draw
 				paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 				paint.setShadowLayer(getBorderWidth(),0,0,color);
 				drawGraph(getFft(), canvas, color_mode,false);
-				paint.setShadowLayer(0, 0, 0, 0);
+				paint.clearShadowLayer();
 				break;
 		}
 		paint.reset();

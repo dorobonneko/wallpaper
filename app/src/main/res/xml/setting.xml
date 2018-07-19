@@ -116,6 +116,9 @@
 	<SwitchPreference
 		android:title="涟漪"
 		android:key="ripple"/>
+	<SwitchPreference
+		android:title="抗锯齿"
+		android:key="antialias"/>
 	<Preference
 		android:title="赞助开发"
 		android:key="pay"/>

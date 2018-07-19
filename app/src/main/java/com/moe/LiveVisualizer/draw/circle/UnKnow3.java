@@ -47,8 +47,8 @@ public class UnKnow3 extends RingDraw
 		canvas.rotate(-90,center.x,center.y);
 		canvas.translate(center.x,center.y);
 		double degress=2d/size()*Math.PI;
-		/*float halfWidth=width/2;
-		 float halfBorder=getBorderWidth()/2f;*/
+		/*float halfWidth=width/2;*/
+		float halfBorder=getBorderWidth()/2f;
 		float radius=getRadius();
 		for(int i=0;i<points.length;i++){
 			float height=buffer[i]/127f*radius/2;
@@ -56,8 +56,9 @@ public class UnKnow3 extends RingDraw
 				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getRadius()/2);
 			if(height<0)height=0;
 			points[i]=height;
+			if(useMode)
+				checkMode(color_mode,paint);
 			double value=degress*i;
-			//前面
 			lines.moveTo((float)((radius-points[i])*Math.cos(value)),(float)((radius-points[i])*Math.sin(value)));
 			lines.lineTo((float)((radius+points[i])*Math.cos(value)),(float)((radius+points[i])*Math.sin(value)));
 			value=degress*(i+1);
@@ -65,7 +66,6 @@ public class UnKnow3 extends RingDraw
 			lines.lineTo((float)((radius-points[i])*Math.cos(value)),(float)((radius-points[i])*Math.sin(value)));
               lines.close();
 			if(useMode){
-				checkMode(color_mode,paint);
 			canvas.drawPath(lines,paint);
 			lines.reset();
 			}

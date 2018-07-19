@@ -81,7 +81,7 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 	{
 		new Thread(){
 			public void run(){
-				if(p2==null)Runtime.getRuntime().exit(1);
+				if(p2==null)return;
 				StringBuffer sb=new StringBuffer(p2.getMessage());
 				try
 				{
@@ -353,8 +353,16 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 			System.gc();
 			Log.d(toString(),"visiable");
 			//mVisualizer.check();
+			switch(direction){
+				case 0:
 			if ( background != null )
 				background.notifyVisiableChanged(visible);
+				break;
+			case 1:
+				if ( background_h != null )
+					background_h.notifyVisiableChanged(visible);
+				break;
+				}
 			if ( centerImage != null )
 				centerImage.notifyVisiableChanged(visible);
 			/*if(video!=null)

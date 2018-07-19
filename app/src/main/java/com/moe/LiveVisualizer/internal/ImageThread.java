@@ -53,7 +53,7 @@ public class ImageThread extends Thread implements Handler.Callback
 		//	handler.obtainMessage(0).sendToTarget();
 	}
 	public void notifyVisiableChanged(boolean visiable){
-		if(visiable&&gifDecoder!=null&&handler!=null)
+		if(visiable&&isGif()&&handler!=null)
 			handler.sendEmptyMessage(1);
 			if(visiable)
 				anime.resumeAnime();
@@ -67,7 +67,7 @@ public class ImageThread extends Thread implements Handler.Callback
 		{
 			case 0:
 				loadImage();
-				setRipple(ripple);
+				handler.sendEmptyMessage(2);
 				break;
 			case 1:
 					try{gifDecoder.advance();
@@ -194,8 +194,10 @@ public class ImageThread extends Thread implements Handler.Callback
 		}
 	}
 	public void setRipple(boolean ripple){
+		if(this.ripple!=ripple){
 		this.ripple=ripple;
 		handler.sendEmptyMessage(2);
+		}
 	}
 	public void onTouchEvent(MotionEvent event){
 		if(isGif())return;

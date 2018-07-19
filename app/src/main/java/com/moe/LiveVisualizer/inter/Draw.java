@@ -36,4 +36,5 @@ public interface Draw
 	void notifySizeChanged();
 	float getInterpolator(float interpolator);
 	void checkMode(int mode,Paint paint);
+	void setAntialias(boolean antialias);
 }

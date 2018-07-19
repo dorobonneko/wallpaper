@@ -23,7 +23,7 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 	private Paint paint;
 	private float degress=0;
 	private float radius,degress_step;//圆形半径
-	private boolean cutCenterImage;
+	private boolean cutCenterImage,antialias;
 	private ImageDraw draw;
 	private Shader shader;
 	private Bitmap shaderBuffer;
@@ -39,10 +39,7 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 		direction=Integer.parseInt(engine.getPreference().getString("direction",OUTSIDE+""));
 		paint = new Paint();
 		//paint.setStrokeCap(getEngine().getPreference().getBoolean("round",true)?Paint.Cap.ROUND:Paint.Cap.SQUARE);
-		paint.setAntiAlias(true);
-		paint.setDither(true);
 		paint.setColor(0xff39c5bb);
-		paint.setStyle(Paint.Style.FILL);
 		borderWidth=(engine.getPreference().getInt("borderWidth",30));
 		radius=engine.getPreference().getInt("circleRadius",Math.min(engine.getDisplayWidth(),engine.getDisplayHeight())/6);
 		cutCenterImage=engine.getPreference().getBoolean("cutImage",true);
@@ -50,6 +47,15 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 		engine.registerColorSizeChangedListener(this);
 			onSizeChanged();
 	}
+
+	@Override
+	public void setAntialias(boolean antialias)
+	{
+		this.antialias=antialias;
+		//paint.setAntiAlias(antialias);
+	}
+
+	
 	public float getBorderHeight(){
 		return borderHeight;
 	}
@@ -170,6 +176,8 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 		if(isFinalized())return;
 		Paint paint=getPaint();
 		paint.setStrokeCap(getRound());
+		paint.setAntiAlias(antialias);
+		paint.setDither(antialias);
 		switch(color_mode){
 			case 0:
 				switch ( getEngine().getColorList().size() )
@@ -217,7 +225,7 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 				paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
 				paint.setShadowLayer(getBorderWidth(),0,0,color);
 				drawGraph(getFft(), canvas, color_mode,false);
-				paint.setShadowLayer(0, 0, 0, 0);
+				paint.clearShadowLayer();
 				break;
 		}
 		paint.reset();

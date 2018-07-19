@@ -44,7 +44,8 @@ public class WallpaperThread extends Thread
 		rotateY=engine.getPreference().getBoolean("rotateY", false);
 		setMatrix();
 		engine.setTouchEventsEnabled(engine.getPreference().getBoolean("ripple",false));
-		if (imageDraw != null)imageDraw.setDownSpeed(engine.getPreference().getInt("downspeed", 15));
+		imageDraw.setAnitialias(engine.getPreference().getBoolean("antialias",false));
+		imageDraw.setDownSpeed(engine.getPreference().getInt("downspeed", 15));
 		if (engine.getPreference().getBoolean("scaleImage", true))
 			wallpaperMatrix = new Matrix();
 		if (imageDraw != null)
@@ -229,6 +230,10 @@ public class WallpaperThread extends Thread
 				break;
 			case "ripple":
 				engine.setTouchEventsEnabled(PreferencesUtils.getBoolean(null,uri,false));
+				break;
+			case "antialias":
+				if(imageDraw!=null)
+					imageDraw.setAnitialias(PreferencesUtils.getBoolean(null,uri,false));
 				break;
 		}
 	}

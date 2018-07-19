@@ -19,6 +19,7 @@ public class ImageDraw implements OnColorSizeChangedListener
 	private String mode,color_mode;
 	private WallpaperThread wallpaper;
 	private Draw draw;
+	private boolean antialias;
 	public ImageDraw(WallpaperThread wallpaper)
 	{
 		this.wallpaper=wallpaper;
@@ -26,6 +27,10 @@ public class ImageDraw implements OnColorSizeChangedListener
 		color_mode = engine.getPreference().getString("color_mode", "0");
 		engine.registerColorSizeChangedListener(this);
 		setMode(engine.getPreference().getString("visualizer_mode", "0"));
+	}
+	public void setAnitialias(boolean antialias){
+		this.antialias=antialias;
+		if(draw!=null)draw.setAntialias(antialias);
 	}
 	public float getInterpolation(float input){
 		//return value*value*getDownSpeed();

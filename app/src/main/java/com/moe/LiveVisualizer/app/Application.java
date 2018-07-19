@@ -21,7 +21,7 @@ public class Application extends android.app.Application implements Thread.Uncau
 	{
 		new Thread(){
 			public void run(){
-				if(p2==null)Runtime.getRuntime().exit(1);
+				if(p2==null)return;
 				StringBuffer sb=new StringBuffer(p2.getMessage());
 				try
 				{
