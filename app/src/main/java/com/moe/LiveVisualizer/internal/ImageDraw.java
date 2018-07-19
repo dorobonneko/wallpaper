@@ -198,8 +198,11 @@ public class ImageDraw implements OnColorSizeChangedListener
 
 	final public Draw lockData()
 	{
-		if(draw==null)
+		if(draw==null){
 			get();
+			if(draw!=null)
+				draw.setAntialias(antialias);
+			}
 		return draw;
 		
 	}
