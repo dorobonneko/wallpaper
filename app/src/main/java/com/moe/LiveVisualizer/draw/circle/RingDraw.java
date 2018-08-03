@@ -222,7 +222,9 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 				break;
 			case 3:
 				int color=getColor();
+				try{
 				paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
+				}catch(NullPointerException e){}
 				paint.setShadowLayer(getBorderWidth(),0,0,color);
 				drawGraph(getFft(), canvas, color_mode,false);
 				paint.clearShadowLayer();
@@ -253,6 +255,7 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 				matrix.setScale(scale,scale);
 				matrix.postTranslate(point.x-circle.getWidth()*scale/2,point.y-circle.getHeight()*scale/2);
 			}
+			try{
 			if(cutCenterImage){
 				canvas.drawCircle(point.x,point.y, radius, paint);
 				paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
@@ -267,6 +270,7 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 				else
 					canvas.drawBitmap(circle,point.x-circle.getWidth()/2,point.y-circle.getHeight()/2, paint);
 			}
+			}catch(Exception e){}
 			canvas.restoreToCount(layer);
 	}
 	public float getRadius(){

@@ -116,7 +116,9 @@ public abstract class LineDraw extends Draw
 				break;
 			case 3:
 				int color=getColor();
+				try{
 				paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
+				}catch(NullPointerException e){}
 				paint.setShadowLayer(getBorderWidth(),0,0,color);
 				drawGraph(getFft(), canvas, color_mode,false);
 				paint.clearShadowLayer();
