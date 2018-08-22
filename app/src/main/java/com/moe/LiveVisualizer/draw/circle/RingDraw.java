@@ -21,7 +21,7 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 	public final static int INSIDE=1;
 	private int direction;
 	private Paint paint;
-	private float degress=0;
+	private float degress=0,vDegress=0;
 	private float radius,degress_step;//圆形半径
 	private boolean cutCenterImage,antialias;
 	private ImageDraw draw;
@@ -145,6 +145,8 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 	}
 	public Matrix getCenterScale()
 	{
+		if(draw==null)
+			return null;
 		return draw.getCenterScale();
 	}
 	
@@ -174,6 +176,12 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 	public void onDraw(Canvas canvas, int color_mode) throws NullPointerException
 	{
 		if(isFinalized())return;
+		int count=-1;
+		if(isVisualizerRotation()){
+			count=canvas.save();
+			canvas.rotate(vDegress+=degress_step,getPointF().x,getPointF().y);
+			if(vDegress>=360)vDegress=0;
+			}
 		Paint paint=getPaint();
 		paint.setStrokeCap(getRound());
 		paint.setAntiAlias(antialias);
@@ -231,6 +239,8 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 				break;
 		}
 		paint.reset();
+		if(count!=-1)
+			canvas.restoreToCount(count);
 	}
 
 	

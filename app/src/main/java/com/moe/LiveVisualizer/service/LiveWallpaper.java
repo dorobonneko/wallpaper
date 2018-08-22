@@ -81,7 +81,7 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 	{
 		new Thread(){
 			public void run(){
-				if(p2==null)return;
+				if(p2==null||p2.getMessage()==null)return;
 				StringBuffer sb=new StringBuffer(p2.getMessage());
 				try
 				{

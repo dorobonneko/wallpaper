@@ -42,7 +42,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 		seekbar.setOnSeekBarChangeListener(this);
 		TextView tips=(TextView)view.findViewById(R.id.tips);
 		seekbar.setTag(tips);
-		view.findViewById(R.id.plus).setOnClickListener(new View.OnClickListener(){
+		((View)view.findViewById(R.id.plus)).setOnClickListener(new View.OnClickListener(){
 
 				@Override
 				public void onClick(View p1)
@@ -51,7 +51,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 					onStopTrackingTouch(seekbar);
 				}
 			});
-		view.findViewById(R.id.minus).setOnClickListener(new View.OnClickListener(){
+		((View)view.findViewById(R.id.minus)).setOnClickListener(new View.OnClickListener(){
 
 				@Override
 				public void onClick(View p1)

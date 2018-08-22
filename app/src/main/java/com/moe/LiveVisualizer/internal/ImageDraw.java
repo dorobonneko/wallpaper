@@ -20,6 +20,7 @@ public class ImageDraw implements OnColorSizeChangedListener
 	private WallpaperThread wallpaper;
 	private Draw draw;
 	private boolean antialias;
+	private boolean rotation;
 	public ImageDraw(WallpaperThread wallpaper)
 	{
 		this.wallpaper=wallpaper;
@@ -27,6 +28,13 @@ public class ImageDraw implements OnColorSizeChangedListener
 		color_mode = engine.getPreference().getString("color_mode", "0");
 		engine.registerColorSizeChangedListener(this);
 		setMode(engine.getPreference().getString("visualizer_mode", "0"));
+	}
+
+	public void setVisualizerRotation(boolean rotation)
+	{
+		this.rotation=rotation;
+		if(draw instanceof CircleDraw)
+			((CircleDraw)draw).setVisualizerRotation(rotation);
 	}
 	public void setAnitialias(boolean antialias){
 		this.antialias=antialias;
@@ -202,6 +210,8 @@ public class ImageDraw implements OnColorSizeChangedListener
 			get();
 			if(draw!=null)
 				draw.setAntialias(antialias);
+				if(draw instanceof CircleDraw)
+					((CircleDraw)draw).setVisualizerRotation(rotation);
 			}
 		return draw;
 		

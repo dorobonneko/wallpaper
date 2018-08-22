@@ -46,4 +46,8 @@
 		android:defaultValue="0"
 		android:entries="@array/direction"
 		android:entryValues="@array/direction_v"/>
+	<SwitchPreference
+		android:key="visualizerRotation"
+		android:title="旋转频谱"
+		android:summary="只对部分频谱有效"/>
 </PreferenceScreen>

@@ -12,6 +12,7 @@ import android.graphics.Matrix;
 public abstract class CircleDraw extends Draw
 {
 	private PointF point;
+	private boolean rotation;
 	public CircleDraw(ImageDraw draw){
 		super(draw);
 		LiveWallpaper.WallpaperEngine engine=draw.getEngine();
@@ -25,6 +26,11 @@ public abstract class CircleDraw extends Draw
 		}
 	}
 
+	public void setVisualizerRotation(boolean rotation)
+	{
+		this.rotation=rotation;
+	}
+
 	@Override
 	public void notifySizeChanged()
 	{
@@ -36,6 +42,9 @@ public abstract class CircleDraw extends Draw
 			point.y=x;
 		}
 	}
+public boolean isVisualizerRotation(){
+	return rotation;
+}
 
 
 

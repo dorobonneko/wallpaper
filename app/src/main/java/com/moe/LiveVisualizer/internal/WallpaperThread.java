@@ -56,6 +56,8 @@ public class WallpaperThread extends Thread
 		}
 		if (imageDraw != null)
 			imageDraw.setCutImage(engine.getPreference().getBoolean("cutImage", true));
+		if(imageDraw!=null)
+			imageDraw.setVisualizerRotation(engine.getPreference().getBoolean("visualizerRotation",false));
 		engine.getContext().getContentResolver().registerContentObserver(Uri.parse(com.moe.LiveVisualizer.service.SharedPreferences.URI), true, observer = new ContentObserver(new Handler()){
 																			 public void onChange(boolean change, Uri uri)
 																			 {
@@ -234,6 +236,10 @@ public class WallpaperThread extends Thread
 			case "antialias":
 				if(imageDraw!=null)
 					imageDraw.setAnitialias(PreferencesUtils.getBoolean(null,uri,false));
+				break;
+			case "visualizerRotation":
+				if(imageDraw!=null)
+					imageDraw.setVisualizerRotation(PreferencesUtils.getBoolean(null,uri,false));
 				break;
 		}
 	}
@@ -450,8 +456,9 @@ public class WallpaperThread extends Thread
 							if(rotateY)
 								matrix.postTranslate(canvas.getWidth(),0);*/
 							canvas.setMatrix(matrix);
+							try{
 							draw.draw(canvas);
-							
+							}catch(Exception e){}
 							//canvas.setMatrix(null);
 							/*if (rotateX)*/
 							canvas.restoreToCount(save);
