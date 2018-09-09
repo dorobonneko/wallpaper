@@ -58,7 +58,7 @@ public class FftThread extends Thread
 				}catch(Exception e){}
 				try
 				{
-					Thread.sleep(66);
+					Thread.sleep(33);
 				}
 				catch (InterruptedException e)
 				{}

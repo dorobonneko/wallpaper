@@ -129,7 +129,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 	protected void onRestoreInstanceState(Parcelable state)
 	{
 		SavedState save=(SeekBarPreference.SavedState) state;
-		super.onRestoreInstanceState(save);
+		super.onRestoreInstanceState(save.getSuperState());
 		max=save.max;
 		progress=save.progress;
 		unit=save.unit;
@@ -153,9 +153,9 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 		{
 			// TODO: Implement this method
 			super.writeToParcel(dest, flags);
-			dest.writeInt(max);
-			dest.writeInt(progress);
-			dest.writeValue(unit);
+			dest.writeInt(SeekBarPreference.this.max);
+			dest.writeInt(SeekBarPreference.this.progress);
+			dest.writeValue(SeekBarPreference.this.unit);
 		}
 	}
 }
