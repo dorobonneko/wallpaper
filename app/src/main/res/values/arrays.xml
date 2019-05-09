@@ -22,6 +22,7 @@
 			<item>未命名</item>
 			<item>未命名2</item>
 			<item>未命名3</item>
+			<item>心形</item>
 		</string-array>
 		<string-array name="color_mode_v">
 			<item>0</item>
@@ -45,6 +46,7 @@
 			<item>11</item>
 			<item>12</item>
 			<item>13</item>
+			<item>14</item>
 		</string-array>
 		<string-array name="direction">
 			<item>向外</item>

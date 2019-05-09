@@ -249,6 +249,8 @@ public class ImageDraw implements OnColorSizeChangedListener
 			return draw = new UnKnow2(this);
 			case "13":
 				return draw=new UnKnow3(this);
+			case "14"://心形
+				return draw=new HeartDraw(this);
 		}
 		return null;
 		/*switch (mode)

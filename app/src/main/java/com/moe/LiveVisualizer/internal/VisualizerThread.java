@@ -52,8 +52,9 @@ public class VisualizerThread extends HandlerThread
 								mVisualizer = new Visualizer(0);
 								if(!mVisualizer.getEnabled()){
 									mVisualizer.setCaptureSize(engine.getCaptureSize());
+									mVisualizer.setScalingMode(Visualizer.SCALING_MODE_AS_PLAYED);
 									//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
-									mVisualizer.setEnabled(engine.isVisible());
+								VisualizerThread.this.handler.obtainMessage(3).sendToTarget();
 								}
 							}
 							catch (Exception e)
@@ -70,6 +71,7 @@ public class VisualizerThread extends HandlerThread
 												mVisualizer = new Visualizer(0);
 												if(!mVisualizer.getEnabled()){
 													mVisualizer.setCaptureSize(engine.getCaptureSize());
+													mVisualizer.setScalingMode(Visualizer.SCALING_MODE_AS_PLAYED);
 													//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
 													VisualizerThread.this.handler.obtainMessage(3).sendToTarget();
 												}
@@ -103,7 +105,8 @@ public class VisualizerThread extends HandlerThread
 							{
 								//error_msg=e.getMessage();
 							}
-						}
+						}else
+						handler.sendEmptyMessage(0);
 						break;
 					case 2:
 						if ( mVisualizer != null )
@@ -116,8 +119,10 @@ public class VisualizerThread extends HandlerThread
 					case 3:
 						try
 						{
-							if(mVisualizer!=null)
+							if(mVisualizer!=null){
 							mVisualizer.setEnabled(engine.isVisible());
+							//if(call!=null)call.onReady(mVisualizer);
+							}
 						}
 						catch (Exception e)
 						{
@@ -128,7 +133,6 @@ public class VisualizerThread extends HandlerThread
 				}
 			}
 		};
-		handler.obtainMessage(0).sendToTarget();
 	}
 	
 	public synchronized void check()
