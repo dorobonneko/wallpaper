@@ -37,15 +37,43 @@ public class FftThread extends HandlerThread
 	}
 
 	
+/*private byte[] fft(byte[] fft){
+	byte[] model = new byte[fft.length / 2 + 1];
+	if(fft[0]==0)return model;
+	model[0] = (byte) Math.abs(fft[1]);
+	int j = 1;
 
-	private void fft(byte[] wave){
-		for (int n = 0; n < wave.length-1;n++)
+	for (int i = 2; i < fft.length;i+=2) {
+
+		model[j++] = (byte) Math.hypot(fft[i], fft[i + 1]);
+	}
+	return model;
+}*/
+	private byte[] fft(byte[] fft){
+		byte[] model = new byte[fft.length / 4 + 1];
+		if(fft[0]==0)return model;
+		model[0] = (byte) Math.abs(fft[1]);
+		int j = 1;
+
+		for (int i = 2; i < fft.length-2;i+=4) {
+
+			model[j++] = (byte)Math.hypot(Math.hypot(fft[i], fft[i + 1]),Math.hypot(fft[i+2],fft[i+3]));
+		}
+		return model;
+	}
+	private byte[] fftHypot(byte[] wave){
+		byte[] fft=new byte[wave.length];
+		for (int n = 2; n < wave.length-1;n++)
 		{    
 			//第k个点频率 getSamplingRate() * k /(getCaptureSize()/2)  
 			//fft[n - 1] = (byte) ((int)Math.hypot(wave[k] == -1 ?0: wave[k], wave[k + 1] == -1 ?0: wave[k + 1]) & 0x7f);   
-			wave[n]=(byte)Math.hypot(wave[n],wave[n+1]);
+			int k=n-2;
+			fft[k]=(byte)Math.hypot(wave[n],wave[n+1]);
+			fft[k]=(byte)(fft[k]*fft[k]*0.95d);
+			if(fft[k]<0)
+				fft[k]=Byte.MAX_VALUE;
 		}
-	
+		return fft;
 	}
 	@Override
 	public void run()
@@ -64,18 +92,15 @@ public class FftThread extends HandlerThread
 				try{
 				if(visualizer!=null&&visualizer.isInit()){
 					visualizer.getVisualizer().getFft(wave);
-				fft(wave);
-				fft(wave);
-				fft(wave);
-				fft(wave);
-				fft(wave);
-				System.arraycopy(wave,0,fft,0,wave.length);
+				fft=fftHypot(wave);
+				
+				//System.arraycopy(wave,0,fft,0,wave.length);
 				}
 				}catch(Exception e){}
 				try
 				{
 					long duration=System.currentTimeMillis()-oldTime;
-					Thread.sleep(duration>16?0:16-duration);
+					Thread.sleep(duration>33?0:33-duration);
 				}
 				catch (InterruptedException e)
 				{}

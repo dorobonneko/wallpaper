@@ -72,7 +72,7 @@ public class BlockBreakerDraw extends LineDraw
 		{
 			if (useMode)
 				checkMode(color_mode,paint);
-			float height=(float)(buffer[i] / 127d * getBorderHeight());
+			float height=(float)(buffer[i] / (double)Byte.MAX_VALUE * getBorderHeight());
 			if (height < points[i])
 				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getBorderHeight());
 			if (height < 0)height = 0;

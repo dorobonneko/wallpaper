@@ -208,8 +208,9 @@ public class ImageDraw implements OnColorSizeChangedListener
 	{
 		if(draw==null){
 			get();
-			if(draw!=null)
+			if(draw!=null){
 				draw.setAntialias(antialias);
+				}
 				if(draw instanceof CircleDraw)
 					((CircleDraw)draw).setVisualizerRotation(rotation);
 			}
