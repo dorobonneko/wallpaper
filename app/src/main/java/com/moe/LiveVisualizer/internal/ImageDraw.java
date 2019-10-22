@@ -199,7 +199,7 @@ public class ImageDraw implements OnColorSizeChangedListener
 		
 		return wallpaper.getWave();
 	}
-	public byte[] getFft()
+	public double[] getFft()
 	{
 		return wallpaper.getFft();
 	}

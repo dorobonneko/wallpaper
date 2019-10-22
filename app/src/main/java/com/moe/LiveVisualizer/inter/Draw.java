@@ -14,8 +14,8 @@ public interface Draw
 
 	void draw(Canvas canvas);
 	void onDraw(Canvas canvas,int color_mode)throws NullPointerException;
-	void drawGraph(byte[] buffer,Canvas canvas,int color_mode,boolean useMode)throws NullPointerException;
-	byte[] getFft();
+	void drawGraph(double[] buffer,Canvas canvas,int color_mode,boolean useMode)throws NullPointerException;
+	double[] getFft();
 	byte[] getWave();
 	//float getDownSpeed();
 	

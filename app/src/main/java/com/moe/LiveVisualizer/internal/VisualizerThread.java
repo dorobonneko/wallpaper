@@ -52,7 +52,7 @@ public class VisualizerThread extends HandlerThread
 								mVisualizer = new Visualizer(0);
 								if(!mVisualizer.getEnabled()){
 									mVisualizer.setCaptureSize(engine.getCaptureSize());
-									mVisualizer.setScalingMode(Visualizer.SCALING_MODE_AS_PLAYED);
+									mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
 									//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
 								VisualizerThread.this.handler.obtainMessage(3).sendToTarget();
 								}
@@ -71,7 +71,7 @@ public class VisualizerThread extends HandlerThread
 												mVisualizer = new Visualizer(0);
 												if(!mVisualizer.getEnabled()){
 													mVisualizer.setCaptureSize(engine.getCaptureSize());
-													mVisualizer.setScalingMode(Visualizer.SCALING_MODE_AS_PLAYED);
+													mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
 													//mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
 													VisualizerThread.this.handler.obtainMessage(3).sendToTarget();
 												}

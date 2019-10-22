@@ -16,7 +16,7 @@ public class HeartDraw extends RingDraw
 		super(draw);
 	}
 	@Override
-	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode) throws NullPointerException
+	public void drawGraph(double[] buffer, Canvas canvas, int color_mode, boolean useMode) throws NullPointerException
 	{
 		if(mPointControlls==null){
 			mPointDatas = new ArrayList<>();

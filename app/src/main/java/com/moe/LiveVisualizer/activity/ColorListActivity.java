@@ -35,6 +35,8 @@ import android.widget.EditText;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import com.moe.LiveVisualizer.app.ColorDialog;
+import android.widget.*;
+import android.net.*;
 
 public class ColorListActivity extends Activity implements ColorPickerView.OnColorCheckedListener,ListView.OnItemClickListener,View.OnClickListener
 {
@@ -66,6 +68,9 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 		MenuItem item=menu.add(0,0,0,"手动输入");
 		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		item=menu.add(1,1,1,"调色板");
+		menu.add(2,2,2,"导入");
+		menu.add(3,3,3,"导出");
+		menu.add(4,4,4,"清空");
 		//VectorDrawableCompat plus=VectorDrawableCompat.create(getResources(),R.drawable.plus,getTheme());
 		//plus.setTint(0xffffffff);
 		//item.setIcon(plus);
@@ -106,6 +111,51 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 				if(cd.isAdded())getFragmentManager().beginTransaction().show(cd).commit();
 				else cd.show(getFragmentManager(),"color");
 				break;
+			case 2:
+				Intent intent=new Intent(Intent.ACTION_GET_CONTENT);
+				intent.setType("*/*");
+				startActivityForResult(intent,2534);
+				break;
+			case 3:
+				if(colorList.isEmpty()){
+					Toast.makeText(this,"没有数据",Toast.LENGTH_SHORT).show();
+				}else{
+					final File backup=getExternalFilesDir("backup");
+					if(!backup.exists())
+						backup.mkdirs();
+					final EditText filename=new EditText(this);
+					new AlertDialog.Builder(this).setTitle("文件命名").setView(filename).setPositiveButton("保存", new DialogInterface.OnClickListener(){
+
+							@Override
+							public void onClick(DialogInterface p1, int p2)
+							{
+								final File file=new File(backup,filename.getText().toString().trim().concat(".mcl"));
+								if(file.exists()){
+									Toast.makeText(ColorListActivity.this,"文件已存在",Toast.LENGTH_SHORT).show();
+									return;
+								}
+								new Thread(){
+									public void run(){
+										save(file);
+										runOnUiThread(new Runnable(){
+
+												@Override
+												public void run()
+												{
+													Toast.makeText(ColorListActivity.this,"保存成功\n".concat(backup.getAbsolutePath()),Toast.LENGTH_SHORT).show();
+												}
+											});
+									}
+								}.start();
+							}
+						}).setNegativeButton(android.R.string.cancel, null).show();
+				}
+				break;
+				case 4:
+					colorList.clear();
+					((ColorAdapter)listview.getAdapter()).notifyDataSetChanged();
+					notifyColorFileChanged();
+					break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -164,41 +214,46 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 			public void run(){
 		synchronized(fileLock){
 			File colorFile=new File(getExternalFilesDir(null),"color");
-			OutputStream os=null;
-			try
-			{
-				os = new FileOutputStream(colorFile);
-				for(int i=0;i<colorList.size();i++){
-					os.write((colorList.get(i)+"\n").getBytes());
-				}
-				os.flush();
-			}
-			catch (IOException e)
-			{}finally{
-				try
-				{
-					if ( os != null )os.close();
-				}
-				catch (IOException e)
-				{}
-			}
+			save(colorFile);
 		}
 		sendBroadcast(new Intent("color_changed"));
 		}}.start();
 	}
-	
+	private void save(File file){
+		OutputStream os=null;
+		try
+		{
+			os = new FileOutputStream(file);
+			for(int i=0;i<colorList.size();i++){
+				os.write((colorList.get(i)+"\n").getBytes());
+			}
+			os.flush();
+		}
+		catch (IOException e)
+		{}finally{
+			try
+			{
+				if ( os != null )os.close();
+			}
+			catch (IOException e)
+			{}
+		}
+	}
 	private void read(){
 		File color=new File(getExternalFilesDir(null),"color");
 		if(!(color.exists()&&color.isFile()))return;
+		override(Uri.fromFile(color));
+	}
+	private void append(Uri file){
 		BufferedReader read=null;
 		try
 		{
-			read=new BufferedReader(new InputStreamReader(new FileInputStream(color)));
+			read=new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(file)));
 			String line;
 			while((line=read.readLine())!=null){
 				try{
-				colorList.add(Integer.parseInt(line));
-				((ColorAdapter)listview.getAdapter()).notifyDataSetChanged();
+					colorList.add(Integer.parseInt(line));
+					((ColorAdapter)listview.getAdapter()).notifyDataSetChanged();
 				}catch(NumberFormatException e){}
 			}
 		}catch(IOException i){}
@@ -210,9 +265,33 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 			catch (IOException e)
 			{}
 		}
-		
+		notifyColorFileChanged();
 	}
-
+	private void override(Uri file){
+		colorList.clear();
+		((ColorAdapter)listview.getAdapter()).notifyDataSetChanged();
+		BufferedReader read=null;
+		try
+		{
+			read=new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(file)));
+			String line;
+			while((line=read.readLine())!=null){
+				try{
+					colorList.add(Integer.parseInt(line));
+					((ColorAdapter)listview.getAdapter()).notifyDataSetChanged();
+				}catch(NumberFormatException e){}
+			}
+		}catch(IOException i){}
+		finally{
+			try
+			{
+				if ( read != null )read.close();
+			}
+			catch (IOException e)
+			{}
+		}
+		notifyColorFileChanged();
+	}
 	@Override
 	public void onClick(View p1)
 	{
@@ -223,4 +302,32 @@ public class ColorListActivity extends Activity implements ColorPickerView.OnCol
 			notifyColorFileChanged();
 			}
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, final Intent data)
+	{
+		switch(requestCode){
+			case 2534:
+				if(resultCode==RESULT_OK){
+					new AlertDialog.Builder(this).setTitle("操作").setPositiveButton("追加", new DialogInterface.OnClickListener(){
+
+							@Override
+							public void onClick(DialogInterface p1, int p2)
+							{
+								append(data.getData());
+							}
+						}).setNegativeButton("覆盖", new DialogInterface.OnClickListener(){
+
+							@Override
+							public void onClick(DialogInterface p1, int p2)
+							{
+								override(data.getData());
+							}
+						}).setNeutralButton(android.R.string.cancel, null).show();
+				}
+				break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
 }

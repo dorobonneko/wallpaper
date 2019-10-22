@@ -9,12 +9,13 @@ public class FftThread extends HandlerThread
 {
 	private Object lock=new Object();
 	private LiveWallpaper.WallpaperEngine engine;
-	private byte[] fft,wave;
+	private byte[] wave;
+	private double[] fft;
 	private VisualizerThread visualizer;
 	public FftThread(LiveWallpaper.WallpaperEngine engine){
 		super(FftThread.class.getSimpleName());
 		this.engine=engine;
-		fft=new byte[engine.getCaptureSize()];
+		fft=new double[engine.getCaptureSize()];
 		wave=new byte[engine.getCaptureSize()];
 		//wave=new byte[engine.getCaptureSize()];
 		visualizer=new VisualizerThread(engine);
@@ -29,7 +30,7 @@ public class FftThread extends HandlerThread
 				lock.notify();
 		}
 	}
-	public byte[] getFft(){
+	public double[] getFft(){
 		return fft;
 	}
 	public byte[] getWave(){
@@ -49,15 +50,17 @@ public class FftThread extends HandlerThread
 	}
 	return model;
 }*/
-	private byte[] fft(byte[] fft){
-		byte[] model = new byte[fft.length / 4 + 1];
-		if(fft[0]==0)return model;
-		model[0] = (byte) Math.abs(fft[1]);
+	private double[] fft(byte[] fft){
+		double[] model = new double[fft.length / 4 + 1];
+		//if(fft[0]==0)return model;
+		model[0] = Math.abs(fft[1]);
 		int j = 1;
 
-		for (int i = 2; i < fft.length-2;i+=4) {
+		for (int i = 2; i < fft.length;i+=2) {
 
-			model[j++] = (byte)Math.hypot(Math.hypot(fft[i], fft[i + 1]),Math.hypot(fft[i+2],fft[i+3]));
+			model[j++] = Math.hypot(fft[i], fft[i + 1]);
+			
+			if(j>=model.length)break;
 		}
 		return model;
 	}
@@ -92,7 +95,7 @@ public class FftThread extends HandlerThread
 				try{
 				if(visualizer!=null&&visualizer.isInit()){
 					visualizer.getVisualizer().getFft(wave);
-				fft=fftHypot(wave);
+				fft=fft(wave);
 				
 				//System.arraycopy(wave,0,fft,0,wave.length);
 				}

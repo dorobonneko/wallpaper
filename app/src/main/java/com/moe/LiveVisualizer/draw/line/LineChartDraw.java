@@ -57,13 +57,13 @@ public class LineChartDraw extends LineDraw
 		paint.reset();
 	}*/
 
-	@Override
-	public byte[] getFft()
+	/*@Override
+	public double[] getFft()
 	{
 		return getWave();
-	}
+	}*/
 	@Override
-	public void drawGraph(byte[] buffer, Canvas canvas,final int color_mode, boolean useMode)
+	public void drawGraph(double[] buffer, Canvas canvas,final int color_mode, boolean useMode)
 	{
 		Paint paint=getPaint();
 		float offsetX=0;

@@ -58,7 +58,7 @@ public class BlockBreakerDraw extends LineDraw
 	}*/
 
 	@Override
-	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
+	public void drawGraph(double[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
 		Paint paint=getPaint();
 		if (points == null || points.length != size())

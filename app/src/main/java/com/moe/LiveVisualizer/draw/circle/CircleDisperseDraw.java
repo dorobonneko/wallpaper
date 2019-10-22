@@ -30,7 +30,7 @@ public class CircleDisperseDraw extends RingDraw
 	}
 
 	@Override
-	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
+	public void drawGraph(double[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
 		PointF point=getPointF();
 		float radius=getRadius();

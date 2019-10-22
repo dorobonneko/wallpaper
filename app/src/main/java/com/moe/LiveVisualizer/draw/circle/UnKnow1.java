@@ -22,7 +22,7 @@ public class UnKnow1 extends RingDraw
 	}
 
 	@Override
-	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
+	public void drawGraph(double[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
 		PointF center=getPointF();
 		Paint paint=getPaint();
@@ -35,11 +35,11 @@ public class UnKnow1 extends RingDraw
 				checkMode(color_mode,paint);
 			//计算高度
 			for(int n=0;n<4;n++){
-			byte height=buffer[++count];
+			float height=(float)buffer[++count];
 			if(height<points[count])
 				height=(byte)(points[count]-(points[count]-height)*getInterpolator(1-(points[count]-height)/127f));
 			if(height<0)height=0;
-			points[count]=height;
+			points[count]=(float)height;
 			}
 			canvas.rotate(i*15,center.x,center.y);
 			Path path=new Path();

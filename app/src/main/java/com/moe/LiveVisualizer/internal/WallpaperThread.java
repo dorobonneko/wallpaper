@@ -72,7 +72,7 @@ public class WallpaperThread extends Thread
 			return fftThread.getWave();
 			return null;
 	}
-	public byte[] getFft(){
+	public double[] getFft(){
 		if(fftThread!=null)
 			return fftThread.getFft();
 			return null;

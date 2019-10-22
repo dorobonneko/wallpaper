@@ -39,7 +39,7 @@ public class UnKnow2 extends RingDraw
 	}
 	
 	@Override
-	public void drawGraph(byte[] buffer, Canvas canvas, int color_mode, boolean useMode)
+	public void drawGraph(double[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
 		PointF center=getPointF();
 		Paint paint=getPaint();
@@ -57,7 +57,7 @@ public class UnKnow2 extends RingDraw
 		float halfBorder=getBorderWidth()/2f;*/
 		float radius=getRadius();
 		for(int i=0;i<points.length;i++){
-			float height=buffer[i]/127f*getRadius()/2;
+			float height=(float)(buffer[i]/127f*getRadius()/2);
 			if(height<points[i])
 				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getRadius()/2);
 			if(height<0)height=0;
