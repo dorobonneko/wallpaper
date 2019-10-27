@@ -15,7 +15,7 @@ public class FftThread extends HandlerThread
 	public FftThread(LiveWallpaper.WallpaperEngine engine){
 		super(FftThread.class.getSimpleName());
 		this.engine=engine;
-		fft=new double[engine.getCaptureSize()];
+		fft=new double[engine.getCaptureSize()/4];
 		wave=new byte[engine.getCaptureSize()];
 		//wave=new byte[engine.getCaptureSize()];
 		visualizer=new VisualizerThread(engine);
@@ -51,17 +51,12 @@ public class FftThread extends HandlerThread
 	return model;
 }*/
 	private double[] fft(byte[] fft){
-		double[] model = new double[fft.length / 4 + 1];
+		double[] model = new double[fft.length / 4 ];
 		//if(fft[0]==0)return model;
-		model[0] = Math.abs(fft[1]);
-		int j = 1;
-
-		for (int i = 2; i < fft.length;i+=2) {
-
-			model[j++] = Math.hypot(fft[i], fft[i + 1]);
-			
-			if(j>=model.length)break;
-		}
+		//model[0] = Math.abs(fft[1]);
+		for (int i = 2,j=0; j < model.length;i+=2,j++) {
+			model[j] = Math.hypot(fft[i], fft[i + 1]);
+			}
 		return model;
 	}
 	private byte[] fftHypot(byte[] wave){
