@@ -4,6 +4,7 @@ import android.media.audiofx.Visualizer;
 import android.os.HandlerThread;
 import android.os.Handler;
 import android.os.Message;
+import java.util.Arrays;
 
 public class FftThread extends HandlerThread
 {
@@ -51,13 +52,10 @@ public class FftThread extends HandlerThread
 	return model;
 }*/
 	private double[] fft(byte[] fft){
-		double[] model = new double[fft.length / 4 ];
-		//if(fft[0]==0)return model;
-		//model[0] = Math.abs(fft[1]);
-		for (int i = 2,j=0; j < model.length;i+=2,j++) {
-			model[j] = Math.hypot(fft[i], fft[i + 1]);
+		for (int i = 2,j=0; j < this.fft.length;i+=2,j++) {
+			this.fft[j] = Math.hypot(fft[i], fft[i + 1]);
 			}
-		return model;
+		return this.fft;
 	}
 	private byte[] fftHypot(byte[] wave){
 		byte[] fft=new byte[wave.length];
@@ -93,6 +91,8 @@ public class FftThread extends HandlerThread
 				fft=fft(wave);
 				
 				//System.arraycopy(wave,0,fft,0,wave.length);
+				}else{
+					Arrays.fill(fft,0);
 				}
 				}catch(Exception e){}
 				try
