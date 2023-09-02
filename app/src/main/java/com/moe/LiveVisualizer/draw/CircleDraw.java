@@ -13,12 +13,14 @@ public abstract class CircleDraw extends Draw
 {
 	private PointF point;
 	private boolean rotation;
+    private int num;
 	public CircleDraw(ImageDraw draw){
 		super(draw);
 		LiveWallpaper.WallpaperEngine engine=draw.getEngine();
 		point=new PointF();
 		point.x=engine.getPreference().getInt("offsetX",Math.min(engine.getDisplayWidth(),engine.getDisplayHeight())/2);
 		point.y=engine.getPreference().getInt("offsetY",Math.max(engine.getDisplayHeight(),engine.getDisplayWidth())/2);
+        num=engine.getPreference().getInt("num",50);
 		if(engine.getDisplayWidth()>engine.getDisplayHeight()){
 			float x=point.x;
 			point.x=point.y;
@@ -46,9 +48,14 @@ public boolean isVisualizerRotation(){
 	return rotation;
 }
 
+@Override
+public void setNum(int num) {
+    this.num=num;
+}
 
-
-	
+	public int getSize(){
+        return num;
+    }
 	@Override
 	public void setOffsetX(int x)
 	{

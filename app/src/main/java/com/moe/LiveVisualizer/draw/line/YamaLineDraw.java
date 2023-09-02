@@ -62,7 +62,7 @@ public class YamaLineDraw extends LineDraw
 		if ( points == null || points.length != size() )
 			points = new float[size()];
 		final float halfWidth=getBorderWidth() / 2;
-		float x=0;
+		float x=getStartOffset();
 		for ( int i=0;i < points.length;i ++ )
 		{
 			if(useMode)

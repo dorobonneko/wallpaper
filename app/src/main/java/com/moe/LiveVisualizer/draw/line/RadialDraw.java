@@ -78,7 +78,7 @@ public class RadialDraw extends LineDraw
 		Paint paint=getPaint();
 		if ( points == null || points.length != size() )
 			points = new float[size()];
-		float x=0;//起始像素
+		float x=getStartOffset();//起始像素
 		final float halfWidth=getBorderWidth()/ 2;
 		for ( int i=0;i < points.length;i ++ )
 		{

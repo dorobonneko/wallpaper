@@ -63,7 +63,7 @@ public class SquareDraw extends LineDraw
 		Paint paint=getPaint();
 		if ( points == null || points.length != size() )
 			points = new int[size()];
-		float x=0;//起始像素
+		float x=getStartOffset();//起始像素
 		final float halfWidth=getBorderWidth()/8;
 		for ( int i=0;i < points.length;i ++ )
 		{

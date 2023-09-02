@@ -11,12 +11,13 @@ public class FftThread extends HandlerThread
 	private Object lock=new Object();
 	private LiveWallpaper.WallpaperEngine engine;
 	private byte[] wave;
-	private double[] fft;
+	private double[] fft,old;
 	private VisualizerThread visualizer;
 	public FftThread(LiveWallpaper.WallpaperEngine engine){
 		super(FftThread.class.getSimpleName());
 		this.engine=engine;
-		fft=new double[engine.getCaptureSize()/4];
+		fft=new double[engine.getFftSize()];
+        old=new double[engine.getFftSize()];
 		wave=new byte[engine.getCaptureSize()];
 		//wave=new byte[engine.getCaptureSize()];
 		visualizer=new VisualizerThread(engine);
@@ -32,7 +33,7 @@ public class FftThread extends HandlerThread
 		}
 	}
 	public double[] getFft(){
-		return fft;
+		return old;
 	}
 	public byte[] getWave(){
 		return wave;
@@ -51,9 +52,19 @@ public class FftThread extends HandlerThread
 	}
 	return model;
 }*/
-	private double[] fft(byte[] fft){
+    private void fill(double[] b){
+        for(int i=0;i<b.length;i++)
+            b[i]=0;
+    }
+    private double a(byte data1,byte data2){
+        double d=Math.hypot(data1,data2);
+        d=Math.sqrt(d*d-d);
+        return d;
+    }
+	private double[] fft(byte[] wave){
 		for (int i = 2,j=0; j < this.fft.length;i+=2,j++) {
-			this.fft[j] = Math.hypot(fft[i], fft[i + 1]);
+			//this.fft[j] = Math.sqrt(Math.pow(Math.hypot(wave[i],wave[i + 1]),2)-10);
+            this.fft[j]=a(wave[i],wave[i+1]);
 			}
 		return this.fft;
 	}
@@ -78,8 +89,10 @@ public class FftThread extends HandlerThread
 			synchronized(lock){
 				try
 				{
-					if (!engine.isVisible())
+					if (!engine.isVisible()){
+                        fill(old);
 						lock.wait();
+                        }
 				}
 				catch (InterruptedException e)
 				{}
@@ -89,10 +102,10 @@ public class FftThread extends HandlerThread
 				if(visualizer!=null&&visualizer.isInit()){
 					visualizer.getVisualizer().getFft(wave);
 				fft=fft(wave);
-				
+				System.arraycopy(fft,0,old,0,old.length);
 				//System.arraycopy(wave,0,fft,0,wave.length);
 				}else{
-					Arrays.fill(fft,0);
+					Arrays.fill(old,0);
 				}
 				}catch(Exception e){}
 				try
@@ -106,13 +119,13 @@ public class FftThread extends HandlerThread
 		}
 	}
 
-	@Override
 	public void destroy()
 	{
 		if(visualizer!=null)
 			visualizer.destroy();
 			fft=null;
 			wave=null;
+            old=null;
 	}
 	
 }

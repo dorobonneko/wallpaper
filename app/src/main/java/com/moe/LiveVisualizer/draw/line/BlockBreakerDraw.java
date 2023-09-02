@@ -66,7 +66,7 @@ public class BlockBreakerDraw extends LineDraw
 			points = new float[size()];
 			breaker = new float[points.length];
 		}
-		float x=0;//起始像素
+		float x=getStartOffset();//起始像素
 		final float halfWidth=getBorderWidth() / 2;
 		for (int i=0;i < points.length;i ++)
 		{
@@ -74,14 +74,15 @@ public class BlockBreakerDraw extends LineDraw
 				checkMode(color_mode,paint);
 			float height=(float)(buffer[i] / (double)Byte.MAX_VALUE * getBorderHeight());
 			if (height < points[i])
-				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getBorderHeight());
-			if (height < 0)height = 0;
+				height=points[i]-(points[i]-height)*getInterpolator((points[i]-height)/points[i]*0.99f);
+			if (height < 0)
+                height = 0;
 				points[i] = height;
 			if (height < breaker[i])
-				height =breaker[i]-(breaker[i]-height)*getInterpolator(1-(breaker[i]-height)/getBorderHeight())*0.35f;
+				height =breaker[i]-(breaker[i]-height)*getInterpolator((breaker[i]-height)/breaker[i]*0.89f)*0.45f;
 			if (height < 0)
 				height = 0;
-				breaker[i]=height;
+			breaker[i]=height;
 			canvas.drawRect(x, getDrawHeight() - points[i], x + getBorderWidth() , getDrawHeight(), paint);
 			canvas.drawRect(x, getDrawHeight() - breaker[i] - halfWidth, x + getBorderWidth() , getDrawHeight() - breaker[i], paint);
 			x += getSpaceWidth();

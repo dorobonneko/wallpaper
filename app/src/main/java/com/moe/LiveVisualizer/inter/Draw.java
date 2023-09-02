@@ -37,4 +37,5 @@ public interface Draw
 	float getInterpolator(float interpolator);
 	void checkMode(int mode,Paint paint);
 	void setAntialias(boolean antialias);
+    void setNum(int num);
 }

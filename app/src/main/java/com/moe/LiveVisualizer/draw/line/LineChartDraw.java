@@ -66,7 +66,7 @@ public class LineChartDraw extends LineDraw
 	public void drawGraph(double[] buffer, Canvas canvas,final int color_mode, boolean useMode)
 	{
 		Paint paint=getPaint();
-		float offsetX=0;
+		float offsetX=getStartOffset();
 		for ( int i=0;i < buffer.length-2;i+=2 )
 		{
 			float height=((byte)(buffer[i]+128))*getBorderHeight()/256;

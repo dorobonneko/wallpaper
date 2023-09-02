@@ -24,7 +24,6 @@ public class VisualizerThread extends HandlerThread
 		return mVisualizer;
 	}
 
-	@Override
 	public void destroy()
 	{
 		if(handler!=null)

@@ -113,6 +113,10 @@ public class WallpaperThread extends Thread
 	{
 		switch (key)
 		{
+            case "num":
+                if(imageDraw!=null)
+                    imageDraw.setNum(PreferencesUtils.getInt(null,uri,50));
+                break;
 			case "highfps"://false
 				fpsDelay = PreferencesUtils.getBoolean(null, uri, false) ?16: 33;
 				break;
@@ -256,7 +260,7 @@ public class WallpaperThread extends Thread
 		matrix.preTranslate(rotateY?-engine.getDisplayWidth()/2f:0,rotateX?-engine.getDisplayHeight()/2f:0);
 		matrix.postTranslate(rotateY?engine.getDisplayWidth()/2f:0,rotateX?engine.getDisplayHeight()/2f:0);
 	}
-	@Override
+    
 	public void destroy()
 	{
 		if(fftThread!=null)

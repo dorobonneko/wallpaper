@@ -51,7 +51,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 		onPreferenceChange(color_mode, getPreferenceManager().getSharedPreferences().getString("color_mode", "0"));
 		onPreferenceChange(visualizer_mode, getPreferenceManager().getSharedPreferences().getString("visualizer_mode", "0"));
 		onPreferenceChange(color_direction, getPreferenceManager().getSharedPreferences().getString("color_direction", "0"));
-
+        ((SeekBarPreference)findPreference("num")).setMax(255);
 		((SeekBarPreference)findPreference("borderHeight")).setMax(Math.min(display.widthPixels, display.heightPixels));
 	}
 

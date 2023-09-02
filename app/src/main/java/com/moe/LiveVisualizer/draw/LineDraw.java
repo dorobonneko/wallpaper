@@ -6,65 +6,65 @@ import android.graphics.Canvas;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.PorterDuff;
 
-public abstract class LineDraw extends Draw
-{
+public abstract class LineDraw extends Draw {
 	private int size;
-	private float spaceWidth,borderHeight,borderWidth,drawHeight,sourceSpace;
+	private float spaceWidth,borderHeight,borderWidth,drawHeight,sourceSpace,offsetX;
 	private Paint paint;
 	private boolean antialias;
-	public LineDraw(ImageDraw draw){
+	public LineDraw(ImageDraw draw) {
 		super(draw);
 		LiveWallpaper.WallpaperEngine engine=getEngine();
-		paint=new Paint();
+		paint = new Paint();
 		//paint.setStyle(Paint.Style.FILL);
 		//paint.setStrokeCap(getEngine().getPreference().getBoolean("round", true) ?Paint.Cap.ROUND: Paint.Cap.SQUARE);
 		borderHeight = engine.getPreference().getInt("borderHeight", 100);
 		sourceSpace = engine.getPreference().getInt("spaceWidth", 20);
 		drawHeight = engine.getDisplayHeight() - engine.getPreference().getInt("height", 10) / 100.0f * engine.getDisplayHeight();
 		borderWidth = engine.getPreference().getInt("borderWidth", 30);
+        size = engine.getPreference().getInt("num", 50);
 		paint.setStrokeWidth(borderWidth);
 		notifySizeChanged();
 	}
 
 	@Override
-	public void setAntialias(boolean antialias)
-	{
-		this.antialias=antialias;
+	public void setAntialias(boolean antialias) {
+		this.antialias = antialias;
 		//paint.setAntiAlias(antialias);
 	}
+    @Override
+    public void setNum(int num) {
+        this.size = num;
+        notifySizeChanged();
+    }
 
-	
-	public Paint getPaint(){
+	public Paint getPaint() {
 		return paint;
 	}
-	public float getDrawHeight(){
+	public float getDrawHeight() {
 		return drawHeight;
 	}
-	public float getSpaceWidth(){
+	public float getSpaceWidth() {
 		return spaceWidth;
 	}
-	public float getBorderWidth(){
+	public float getBorderWidth() {
 		return borderWidth;
 	}
-	public float getBorderHeight(){
+	public float getBorderHeight() {
 		return borderHeight;
 	}
 	@Override
-	final public void onDrawHeightChanged(float height)
-	{
-		this.drawHeight=height;
+	final public void onDrawHeightChanged(float height) {
+		this.drawHeight = height;
 	}
 
 	@Override
-	final public void onBorderHeightChanged(int height)
-	{
-		this.borderHeight=height;
+	final public void onBorderHeightChanged(int height) {
+		this.borderHeight = height;
 		notifySizeChanged();
 	}
 
 	@Override
-	public void draw(Canvas canvas)
-	{
+	public void draw(Canvas canvas) {
 		paint.setStrokeWidth(borderWidth);
 		paint.setStrokeCap(getRound());
 		paint.setStyle(Paint.Style.FILL);
@@ -72,24 +72,22 @@ public abstract class LineDraw extends Draw
 	}
 
 	@Override
-	public void onDraw(Canvas canvas, int color_mode)
-	{
-		if(isFinalized())return;
+	public void onDraw(Canvas canvas, int color_mode) {
+		if (isFinalized())return;
 		Paint paint=getPaint();
 		paint.setStrokeCap(getRound());
 		paint.setAntiAlias(antialias);
 		paint.setDither(antialias);
-		switch(color_mode){
+		switch (color_mode) {
 			case 0:
-				switch ( getEngine().getColorList().size() )
-				{
+				switch (getEngine().getColorList().size()) {
 					case 0:
 						paint.setColor(0xff39c5bb);
-						drawGraph(getFft(), canvas, color_mode,false);
+						drawGraph(getFft(), canvas, color_mode, false);
 						break;
 					case 1:
 						paint.setColor(getEngine().getColorList().get(0));
-						drawGraph(getFft(), canvas, color_mode,false);
+						drawGraph(getFft(), canvas, color_mode, false);
 						break;
 					default:
 						paint.setShader(getShader());
@@ -101,9 +99,8 @@ public abstract class LineDraw extends Draw
 				break;
 			case 1:
 			case 2:
-				if(getEngine()!=null)
-					switch ( getEngine().getColorList().size() )
-					{
+				if (getEngine() != null)
+					switch (getEngine().getColorList().size()) {
 						case 0:
 							paint.setColor(0xff39c5bb);
 							break;
@@ -112,15 +109,15 @@ public abstract class LineDraw extends Draw
 							break;
 					}
 			case 4:
-				drawGraph(getFft(), canvas, color_mode,true);
+				drawGraph(getFft(), canvas, color_mode, true);
 				break;
 			case 3:
 				int color=getColor();
-				try{
-				paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
-				}catch(NullPointerException e){}
-				paint.setShadowLayer(getBorderWidth(),0,0,color);
-				drawGraph(getFft(), canvas, color_mode,false);
+				try {
+                    paint.setColor(getEngine().getPreference().getBoolean("nenosync", false) ?color: 0xffffffff);
+				} catch (NullPointerException e) {}
+				paint.setShadowLayer(getBorderWidth(), 0, 0, color);
+				drawGraph(getFft(), canvas, color_mode, false);
 				paint.clearShadowLayer();
 				break;
 		}
@@ -128,54 +125,53 @@ public abstract class LineDraw extends Draw
 	}
 
 
-	
+
 
 
 	@Override
-	final public void onBorderWidthChanged(int width)
-	{
-		this.borderWidth=width;
+	final public void onBorderWidthChanged(int width) {
+		this.borderWidth = width;
 		paint.setStrokeWidth(width);
 		notifySizeChanged();
 	}
 
 	@Override
-	final public void onSpaceWidthChanged(int space)
-	{
-		sourceSpace=space;
+	final public void onSpaceWidthChanged(int space) {
+		sourceSpace = space;
 		notifySizeChanged();
 	}
 	@Override
-	public int size()
-	{
+	public int size() {
 		return size;
 	}
 
 	@Override
-	public void notifySizeChanged()
-	{
-		try
-		{
-			size = (int)(getEngine().getDisplayWidth()/sourceSpace);
-		}
-		catch (Exception e)
-		{}
-		try
-		{
-			size = size > getEngine().getFftSize() ?getEngine().getFftSize(): size;
-			spaceWidth = (float)getEngine().getDisplayWidth()/(size-1);
+	public void notifySizeChanged() {
+		/*try
+         {
+         size = (int)(getEngine().getDisplayWidth()/sourceSpace);
+         }
+         catch (Exception e)
+         {}
+         try
+         {
+         size = size > getEngine().getFftSize() ?getEngine().getFftSize(): size;
+         spaceWidth = (float)getEngine().getDisplayWidth()/(size-1);
 
-		}
-		catch (Exception e)
-		{}
+         }
+         catch (Exception e)
+         {}*/
+         spaceWidth=getEngine().getDisplayWidth()/(float)size;
+        offsetX=(getSpaceWidth()-getBorderWidth())/2f;
 	}
 
 	@Override
-	public void finalized()
-	{
+	public void finalized() {
 		// TODO: Implement this method
 		super.finalized();
 		paint.reset();
 	}
-
+    public float getStartOffset(){
+        return offsetX;
+    }
 }

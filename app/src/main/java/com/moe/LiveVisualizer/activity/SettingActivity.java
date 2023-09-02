@@ -56,8 +56,8 @@ public class SettingActivity extends Activity implements SharedPreferences.OnSha
 			{
 				getPackageManager().setComponentEnabledSetting(service, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 			}
-			WallpaperInfo info=WallpaperManager.getInstance(this).getWallpaperInfo();
-			if (info == null || !getPackageName().equals(((WallpaperManager)getSystemService(WALLPAPER_SERVICE)).getWallpaperInfo().getPackageName()))
+			WallpaperInfo info=((WallpaperManager)getSystemService(WALLPAPER_SERVICE)).getWallpaperInfo();
+			if (info == null || !getPackageName().equals(info.getPackageName()))
 			{
 				Toast.makeText(getApplicationContext(), "先激活动态壁纸才能继续使用", Toast.LENGTH_LONG).show();
 				try

@@ -77,7 +77,10 @@ public class ImageDraw implements OnColorSizeChangedListener
 			if (draw != null)
 				draw.notifySizeChanged();*/
 	}
-
+    public void setNum(int num){
+        if(draw!=null)
+            draw.setNum(num);
+    }
 	public void setDirection(int direction)
 	{
 		if(draw instanceof RingDraw)

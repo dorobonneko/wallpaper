@@ -259,11 +259,11 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 		}
 		public int getCaptureSize()
 		{
-			return 1024;
+			return 512;
 		}
 		public int getFftSize()
 		{
-			return getCaptureSize() / 4;
+			return 255;
 		}
 		/*public String getError()
 		{
