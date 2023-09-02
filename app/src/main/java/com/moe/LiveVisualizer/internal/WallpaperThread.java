@@ -14,6 +14,8 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import com.moe.LiveVisualizer.utils.PreferencesUtils;
+import android.media.AudioManager;
+import android.content.Context;
 
 public class WallpaperThread extends Thread
 {
@@ -30,9 +32,11 @@ public class WallpaperThread extends Thread
 	private FftThread fftThread;
 	private Camera camera;
 	private Matrix matrix=new Matrix();
+    private AudioManager mAudioManager;
 	public WallpaperThread(final LiveWallpaper.WallpaperEngine engine)
 	{
 		camera=new Camera();
+        mAudioManager=(AudioManager) engine.getContext().getSystemService(Context.AUDIO_SERVICE);
 		this.engine = engine;
 		imageDraw = new ImageDraw(this);
 		paint.setTextAlign(Paint.Align.CENTER);
@@ -441,7 +445,7 @@ public class WallpaperThread extends Thread
 					//bitmap.recycle();
 					}
 				}
-				if (imageDraw != null)
+				if (imageDraw != null&&mAudioManager.isMusicActive())
 				{
 					
 						Draw draw=imageDraw.lockData();
@@ -483,7 +487,7 @@ public class WallpaperThread extends Thread
 			try
 			{
 				long space=delay == 0 ?fpsDelay: delay;
-				sleep(blank > space ?0: (space - blank));
+				sleep(mAudioManager.isMusicActive()?(blank > space ?0: (space - blank)):1000);
 				oldTime = System.nanoTime();
 
 			}
