@@ -14,9 +14,11 @@ public class FftThread extends HandlerThread implements Handler.Callback {
 	private double[] fft,old;
 	private VisualizerThread visualizer;
     private Handler mHandler;
+    private boolean visible;
 	public FftThread(LiveWallpaper.WallpaperEngine engine) {
 		super(FftThread.class.getSimpleName());
 		this.engine = engine;
+        visible=engine.isVisible();
 		fft = new double[engine.getFftSize()];
         old = new double[engine.getFftSize()];
 		wave = new byte[engine.getCaptureSize()];
@@ -35,6 +37,7 @@ public class FftThread extends HandlerThread implements Handler.Callback {
                         fft = fft(wave);
                         System.arraycopy(fft, 0, old, 0, old.length);
                     } catch (Exception e) {
+                        visualizer.check(visible);
                         fill(old);
                     }
                 } else {
@@ -47,10 +50,10 @@ public class FftThread extends HandlerThread implements Handler.Callback {
 
 
 
-	public void notifyVisibleChanged(boolean visiable) {
-
+	public void notifyChanged(boolean visiable) {
+        this.visible=visiable;
 		synchronized (lock) {
-			if (visualizer != null)visualizer.check();
+			if (visualizer != null)visualizer.check(visiable);
 			/*if(visiable)
              lock.notify();*/
 		}
