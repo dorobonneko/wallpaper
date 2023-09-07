@@ -70,7 +70,7 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
         mMusicListener = new MusicListener(engine, this);
         mMusicListener.start();
         active = mMusicListener.isMusicActive();
-        visible=engine.isVisible();
+        visible = engine.isVisible();
 	}
 
     @Override
@@ -97,7 +97,10 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
 		return rotateX;
 	}
 
-
+    public void notifyPropertyChanged() {
+        if (visible && mHandler != null)
+            mHandler.sendEmptyMessage(3);
+    }
 	public void notifyVisiableChanged(boolean visible) {
         this.visible = visible;
         if (mHandler != null)
@@ -114,6 +117,8 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
 			imageDraw.setDrawHeight(engine.getDisplayHeight() - PreferencesUtils.getInt(engine.getContext(), PreferencesUtils.getUriBuilder().appendQueryParameter("key", "height").build(), 10) / 100f * engine.getDisplayHeight());
 		}if (mDuangEngine != null)
 			mDuangEngine.changed();
+        if (visible && mHandler != null)
+            mHandler.sendEmptyMessage(3);
 	}
 	private void onChanged(String key, Uri uri) {
 		switch (key) {
@@ -247,6 +252,8 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
 					imageDraw.setVisualizerRotation(PreferencesUtils.getBoolean(null, uri, false));
 				break;
 		}
+        if (visible && mHandler != null)
+            mHandler.sendEmptyMessage(3);
 	}
 	private void setMatrix() {
 		//matrix.reset();
@@ -299,6 +306,9 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
             case 2:
                 mDrawThread.pause(active);
                 break;
+            case 3:
+                mDrawThread.resumeOnce();
+                break;
         }
         return true;
     }
@@ -339,10 +349,15 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
                     lock.notify();
             }
         }
+        public void resumeOnce() {
+            synchronized (lock) {
+                lock.notify();
+            }
+        }
 
         @Override
         public void interrupt() {
-            this.cancel=true;
+            this.cancel = true;
             super.interrupt();
             synchronized (lock) {
                 lock.notify();
@@ -352,70 +367,69 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
         public void run() {
             while (!cancel) {
                 long delay=0;
-                synchronized (lock) {
-                    boolean  active=this.active;
-                    LiveWallpaper.WallpaperEngine engine=WallpaperThread.this.engine;
-                    if (engine == null) {
-                        break;
-                    }
-                    SurfaceHolder sh=engine.getSurfaceHolder();
-                    if (sh == null) {
-                        try {
-                            sleep(100);
-                        } catch (InterruptedException e) {}
-                        continue;
-                    }
-                    final Canvas canvas=sh.lockCanvas();
-                    if (canvas == null) {
-                        engine.onSurfaceRedrawNeeded(sh);
-                        continue;
-                    }
-
-                    //绘制背景
-                    drawWallpager(canvas);
-                    if (imageDraw != null && active) {
-
-                        Draw draw=imageDraw.lockData();
-                        if (draw != null) {
-                            synchronized (draw) {
-                                /*if (rotateX)
-                                 {
-                                 canvas.save();
-                                 canvas.rotate(180, canvas.getWidth() / 2, canvas.getHeight() / 2);
-                                 }*/
-                                int save=canvas.save();
-                                //setMatrix();
-                                /*if(rotateX)
-                                 matrix.postTranslate(0,canvas.getHeight());
-                                 if(rotateY)
-                                 matrix.postTranslate(canvas.getWidth(),0);*/
-                                canvas.setMatrix(matrix);
-                                try {
-                                    draw.draw(canvas);
-                                } catch (Exception e) {}
-                                //canvas.setMatrix(null);
-                                /*if (rotateX)*/
-                                canvas.restoreToCount(save);
-                            }
+                boolean  active=this.active;
+                LiveWallpaper.WallpaperEngine engine=WallpaperThread.this.engine;
+                if (engine == null) {
+                    break;
+                }
+                SurfaceHolder sh=engine.getSurfaceHolder();
+                if (sh == null) {
+                    try {
+                        sleep(100);
+                    } catch (InterruptedException e) {}
+                    continue;
+                }
+                final Canvas canvas=sh.lockCanvas();
+                if (canvas == null) {
+                    engine.onSurfaceRedrawNeeded(sh);
+                    continue;
+                }
+                //绘制背景
+                drawWallpager(canvas);
+                if (imageDraw != null && active) {
+                    Draw draw=imageDraw.lockData();
+                    if (draw != null) {
+                        synchronized (draw) {
+                            /*if (rotateX)
+                             {
+                             canvas.save();
+                             canvas.rotate(180, canvas.getWidth() / 2, canvas.getHeight() / 2);
+                             }*/
+                            int save=canvas.save();
+                            //setMatrix();
+                            /*if(rotateX)
+                             matrix.postTranslate(0,canvas.getHeight());
+                             if(rotateY)
+                             matrix.postTranslate(canvas.getWidth(),0);*/
+                            canvas.setMatrix(matrix);
+                            try {
+                                draw.draw(canvas);
+                            } catch (Exception e) {}
+                            //canvas.setMatrix(null);
+                            /*if (rotateX)*/
+                            canvas.restoreToCount(save);
                         }
                     }
-                    //特效
-                    if (mDuangEngine != null && active)
-                        mDuangEngine.draw(canvas);
-
-                    try {
-                        sh.unlockCanvasAndPost(canvas);
-                        if (!active)
-                            lock.wait();
-                    } catch (Exception E) {}
                 }
-                long blank=(System.nanoTime() - oldTime) / 1000000;
+                //特效
+                if (mDuangEngine != null && active)
+                    mDuangEngine.draw(canvas);
+
                 try {
+                    sh.unlockCanvasAndPost(canvas);
+                } catch (Exception E) {}
+                try {
+                    long blank=(System.nanoTime() - oldTime) / 1000000;
                     long space=delay == 0 ?fpsDelay: delay;
-                    sleep(active ?(blank > space ?0: (space - blank)): 1000);
+                    sleep(blank > space ?0: (space - blank));
+                    synchronized (lock) {
+                        try {
+                            if (!active)
+                                lock.wait();
+                        } catch (InterruptedException e) {}
+                    }
                     oldTime = System.nanoTime();
                 } catch (InterruptedException e) {}
-
             }
         }
     }

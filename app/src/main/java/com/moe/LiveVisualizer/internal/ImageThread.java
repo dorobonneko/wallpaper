@@ -12,9 +12,9 @@ import android.graphics.Matrix;
 import java.io.IOException;
 import android.view.MotionEvent;
 import java.util.Arrays;
+import android.os.HandlerThread;
 
-public class ImageThread extends Thread implements Handler.Callback
-{
+public class ImageThread extends HandlerThread implements Handler.Callback {
 	private Bitmap image;
 	private GifDecoder gifDecoder;
 	private Handler handler;
@@ -28,179 +28,172 @@ public class ImageThread extends Thread implements Handler.Callback
 	private int[] m_bitmap1, m_bitmap2;
 	private int m_preX,m_preY;
 	private animeThread anime;
-	public ImageThread(LiveWallpaper live, File file)
-	{
+	public ImageThread(LiveWallpaper live, File file) {
+        super("解析图片线程");
 		this.live = live;
 		this.file = file;
-		anime=new animeThread();
+		anime = new animeThread();
 		anime.start();
 	}
-	@Override
-	public void run()
-	{
-		Looper.prepare();
-		handler = new Handler(this);
-		//loadWallpaper();
-		Looper.loop();
+
+    @Override
+    public void start() {
+        super.start();
+        handler = new Handler(getLooper(), this);
+        handler.sendEmptyMessage(0);
+    }
+
+	public boolean isGif() {
+		return gifDecoder != null;
 	}
-	public boolean isGif(){
-		return gifDecoder!=null;
-	}
-	public void reLoad()
-	{
-		isLoad=false;
+	public void reLoad() {
+		isLoad = false;
+        handler.sendEmptyMessage(0);
 		//if ( handler != null )
 		//	handler.obtainMessage(0).sendToTarget();
 	}
-	public void notifyVisiableChanged(boolean visiable){
-		if(visiable&&isGif()&&handler!=null)
+	public void notifyVisiableChanged(boolean visiable) {
+		if (visiable && isGif() && handler != null)
 			handler.sendEmptyMessage(1);
-			if(visiable)
-				anime.resumeAnime();
-				else
-				anime.pauseAnime();
+        if (visiable)
+            anime.resumeAnime();
+        else
+            anime.pauseAnime();
 	}
 	@Override
-	public boolean handleMessage(Message p1)
-	{
-		switch ( p1.what )
-		{
+	public boolean handleMessage(Message p1) {
+		switch (p1.what) {
 			case 0:
 				loadImage();
+                synchronized (this) {
+                    isLoad = true;
+                    notifyAll();
+                }
 				handler.sendEmptyMessage(2);
 				break;
 			case 1:
-					try{gifDecoder.advance();
-					image=gifDecoder.getNextFrame();
-					if(handler.hasMessages(1))
+                try {
+                    gifDecoder.advance();
+					image = gifDecoder.getNextFrame();
+					if (handler.hasMessages(1))
 						handler.removeMessages(1);
-					handler.sendEmptyMessageDelayed(1,gifDecoder.getNextDelay());
-					}catch(Exception e){}
+					handler.sendEmptyMessageDelayed(1, gifDecoder.getNextDelay());
+                } catch (Exception e) {}
 				break;
 			case 2:
-				if(!ripple){
-					m_buf1=null;
-					m_buf2=null;
-					m_bitmap1=null;
-					m_bitmap2=null;
+				if (!ripple) {
+					m_buf1 = null;
+					m_buf2 = null;
+					m_bitmap1 = null;
+					m_bitmap2 = null;
 					System.gc();
-				}else if(image!=null&&!isGif()){
+				} else if (image != null && !isGif()) {
 					m_width = image.getWidth();
-						m_height = image.getHeight();
+                    m_height = image.getHeight();
 
-						// leave 1 extra up, low border for boundary condition
-						m_buf1 = new short[m_width * (m_height)];
-						m_buf2 = new short[m_width * (m_height)];
+                    // leave 1 extra up, low border for boundary condition
+                    m_buf1 = new short[m_width * (m_height)];
+                    m_buf2 = new short[m_width * (m_height)];
 
-						m_bitmap1 = new int[m_width * m_height];
-						//m_bitmap2 = new int[m_width * m_height];
-						image.getPixels(m_bitmap1, 0, m_width, 0, 0, m_width, m_height);
-						m_bitmap2=Arrays.copyOf(m_bitmap1,m_bitmap1.length);
+                    m_bitmap1 = new int[m_width * m_height];
+                    //m_bitmap2 = new int[m_width * m_height];
+                    image.getPixels(m_bitmap1, 0, m_width, 0, 0, m_width, m_height);
+                    m_bitmap2 = Arrays.copyOf(m_bitmap1, m_bitmap1.length);
 				}
-			break;
+                break;
 		}
 		return true;
 	}
-	public void destroy()
-	{
-		if ( handler != null )
+	public void destroy() {
+		if (handler != null)
 			handler.getLooper().quit();
-			if(image!=null)
-				image.recycle();
-				if(gifDecoder!=null)
-					gifDecoder.clear();
-			if(anime!=null)
-				anime.interrupt();
+        if (image != null)
+            image.recycle();
+        if (gifDecoder != null)
+            gifDecoder.clear();
+        if (anime != null)
+            anime.interrupt();
 	}
-	public Bitmap getImage()
-	{
-		if(!isLoad&&handler!=null)
-			handler.sendEmptyMessage(0);
-		if(gifDecoder!=null&&handler!=null&&!handler.hasMessages(1))
+	public Bitmap getImage() {
+        synchronized (this) {
+            try {
+                if (!isLoad) 
+                    wait();
+            } catch (InterruptedException e) {}
+        }
+		if (isGif() && handler != null && !handler.hasMessages(1))
 			handler.sendEmptyMessage(1);
 		return image;
 	}
-	public int[] getImageData(){
-		if(!isLoad&&handler!=null)
-			handler.sendEmptyMessage(0);
-		if(gifDecoder!=null&&handler!=null&&!handler.hasMessages(1))
-			handler.sendEmptyMessage(1);
-			return m_bitmap2;
+	public int[] getImageData() {
+        synchronized (this) {
+            try {
+                if (!isLoad)
+                    wait();
+            } catch (InterruptedException e) {}
+        }
+        return m_bitmap2;
 	}
-	
-	public int getWidth(){
+
+	public int getWidth() {
 		return m_width;
 	}
-	public int getHeight(){
+	public int getHeight() {
 		return m_height;
 	}
-	private synchronized void loadImage()
-	{
-		isLoad=true;
-		if ( this.image != null )
-		{
+	private synchronized void loadImage() {
+		if (this.image != null) {
 			this.image.recycle();
 			image = null;
 		}
-		if ( gifDecoder != null )
-		{
+		if (gifDecoder != null) {
 			this.gifDecoder.clear();
 			this.gifDecoder = null;
 		}
-		if ( file.exists() && file.isFile() )
-		{
+		if (file.exists() && file.isFile()) {
 			FileInputStream fis=null;
-			try
-			{
+			try {
 				gifDecoder = new GifDecoder(new GifDecoder.BitmapProvider(){
 
 						@Override
-						public Bitmap obtain(int p1, int p2, Bitmap.Config p3)
-						{
+						public Bitmap obtain(int p1, int p2, Bitmap.Config p3) {
 							return Bitmap.createBitmap(p1, p2, p3);
 						}
 
 						@Override
-						public void release(Bitmap p1)
-						{
+						public void release(Bitmap p1) {
 							p1.recycle();
 						}
 					});
 
 				fis = new FileInputStream(file);
 				gifDecoder.read(fis, (int)file.length());
-				if(gifDecoder.getFrameCount()==0){
+				if (gifDecoder.getFrameCount() == 0) {
 					throw new NullPointerException("it's not gif");
-				}else if(handler!=null)
+				} else if (handler != null)
 					handler.sendEmptyMessage(1);
 
-			}
-			catch (Exception e)
-			{
-				if(gifDecoder!=null)gifDecoder.clear();
-				gifDecoder=null;
+			} catch (Exception e) {
+				if (gifDecoder != null)gifDecoder.clear();
+				gifDecoder = null;
 				image = BitmapFactory.decodeFile(file.getAbsolutePath());
-				
-				}
-			finally
-			{
-				try
-				{
-					if ( fis != null )fis.close();
-				}
-				catch (IOException e)
-				{}
+
+            } finally {
+				try {
+					if (fis != null)fis.close();
+				} catch (IOException e) {}
 			}
+		} 
+	}
+	public void setRipple(boolean ripple) {
+        if (isGif())return;
+		if (this.ripple != ripple) {
+            this.ripple = ripple;
+            handler.sendEmptyMessage(2);
 		}
 	}
-	public void setRipple(boolean ripple){
-		if(this.ripple!=ripple){
-		this.ripple=ripple;
-		handler.sendEmptyMessage(2);
-		}
-	}
-	public void onTouchEvent(MotionEvent event){
-		if(isGif())return;
+	public void onTouchEvent(MotionEvent event) {
+		if (isGif())return;
 		int action = event.getAction();
 		int x = (int)(event.getX());
 		int y = (int)(event.getY());
@@ -229,15 +222,14 @@ public class ImageThread extends Thread implements Handler.Callback
 	//  +    |     +
 	//  +----x4----+
 	//
-    void rippleSpread()
-    {
+    void rippleSpread() {
     	int pixels = m_width * (m_height - 1);
     	for (int i = m_width; i < pixels; ++i) {
     		// 波能扩散:上下左右四点的波幅和的一半减去当前波幅
 	        // X0' =（X1 + X2 + X3 + X4）/ 2 - X0
 	        //
-    		m_buf2[i] = (short)(((m_buf1[i - 1] + m_buf1[i + 1]+
-				m_buf1[i - m_width] + m_buf1[i + m_width]) >>1) - m_buf2[i]);
+    		m_buf2[i] = (short)(((m_buf1[i - 1] + m_buf1[i + 1] +
+				m_buf1[i - m_width] + m_buf1[i + m_width]) >> 1) - m_buf2[i]);
 
     		// 波能衰减 1/32
 			//
@@ -263,8 +255,7 @@ public class ImageThread extends Thread implements Handler.Callback
     			// 判断坐标是否在窗口范围内
     			if (i + offset > 0 && i + offset < length) {
     				m_bitmap2[i] = m_bitmap1[i + offset];
-    			}
-    			else {
+    			} else {
     				m_bitmap2[i] = m_bitmap1[i];
     			}
     		}
@@ -319,100 +310,86 @@ public class ImageThread extends Thread implements Handler.Callback
 
 	    if (dx == 0 && dy == 0) {
 	    	dropStoneLine(xs, ys, size, weight);
-	    }
-	    else if (dx == 0) {
+	    } else if (dx == 0) {
 	    	int yinc = (ye - ys != 0) ? 1 : -1;
-	        for(int i = 0; i < dy; ++i){
+	        for (int i = 0; i < dy; ++i) {
 	        	dropStoneLine(xs, ys, size, weight);
 	            ys += yinc;
 	        }
-	    }
-	    else if (dy == 0) {
+	    } else if (dy == 0) {
 	    	int xinc = (xe - xs != 0) ? 1 : -1;
-	        for(int i = 0; i < dx; ++i){
+	        for (int i = 0; i < dx; ++i) {
 	        	dropStoneLine(xs, ys, size, weight);
 	            xs += xinc;
 	        }
-	    }
-	    else if (dx > dy) {
+	    } else if (dx > dy) {
 	        int p = (dy << 1) - dx;
 	        int inc1 = (dy << 1);
 	        int inc2 = ((dy - dx) << 1);
 	        int xinc = (xe - xs != 0) ? 1 : -1;
 	        int yinc = (ye - ys != 0) ? 1 : -1;
 
-	        for(int i = 0; i < dx; ++i) {
+	        for (int i = 0; i < dx; ++i) {
 	        	dropStoneLine(xs, ys, size, weight);
 	            xs += xinc;
 	            if (p < 0) {
 	                p += inc1;
-	            }
-	            else {
+	            } else {
 	                ys += yinc;
 	                p += inc2;
 	            }
 	        }
-	    }
-	    else {
+	    } else {
 	        int p = (dx << 1) - dy;
 	        int inc1 = (dx << 1);
 	        int inc2 = ((dx - dy) << 1);
 	        int xinc = (xe - xs != 0) ? 1 : -1;
 	        int yinc = (ye - ys != 0) ? 1 : -1;
 
-	        for(int i = 0; i < dy; ++i) {
+	        for (int i = 0; i < dy; ++i) {
 	        	dropStoneLine(xs, ys, size, weight);
 	            ys += yinc;
 	            if (p < 0) {
 	                p += inc1;
-	            }
-	            else {
+	            } else {
 	                xs += xinc;
 	                p += inc2;
 	            }
 	        }
 	    }
 	}
-	class animeThread extends Thread
-	{
+	class animeThread extends Thread {
 		private Object locked=new Object();
 		private boolean anime;
-		public void resumeAnime(){
-			synchronized(locked){
-				anime=true;
+		public void resumeAnime() {
+			synchronized (locked) {
+				anime = true;
 				locked.notify();
 			}
 		}
-		public void pauseAnime(){
-			anime=false;
+		public void pauseAnime() {
+			anime = false;
 		}
 		@Override
-		public void run()
-		{
-			while(!interrupted()){
-				synchronized(locked){
-					try
-					{
-						if (!anime||(image!=null&&isGif()))
+		public void run() {
+			while (!interrupted()) {
+				synchronized (locked) {
+					try {
+						if (!anime || (image != null && isGif()))
 							locked.wait();
-					}
-					catch (InterruptedException e)
-					{}
+					} catch (InterruptedException e) {}
 				}
-				try{
-				if(m_bitmap1!=null&&m_bitmap2!=null&&m_buf1!=null&&m_buf2!=null){
-				rippleSpread();
-				rippleRender();
-				}
-				}catch(Exception e){}
-				try
-				{
+				try {
+                    if (m_bitmap1 != null && m_bitmap2 != null && m_buf1 != null && m_buf2 != null) {
+                        rippleSpread();
+                        rippleRender();
+                    }
+				} catch (Exception e) {}
+				try {
 					sleep(16);
-				}
-				catch (InterruptedException e)
-				{}
+				} catch (InterruptedException e) {}
 			}
 		}
-		
+
 	}
 }
