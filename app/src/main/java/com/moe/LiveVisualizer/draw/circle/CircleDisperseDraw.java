@@ -49,9 +49,10 @@ public class CircleDisperseDraw extends RingDraw
 				checkMode(color_mode,paint);
 			float height=(float) (buffer[i] / 127d * radialHeight);
 			if ( height < points[i] )
-				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/radialHeight);
-			if ( height < 0 )height = 0;
-			points[i] = height;
+                points[i]=Math.max(0,points[i]-(points[i]-height)*getInterpolator((points[i]-height)/points[i]*0.8f)*0.45f);
+            else if(height>points[i])
+                points[i]=points[i]+(height-points[i])*getInterpolator((height-points[i])/height);
+                height=points[i];
 			if(paint.getStrokeCap()==Paint.Cap.ROUND)
 				canvas.drawLine(point.x,point.y-radius+(getDirection()==OUTSIDE?- height:height), point.x, point.y -radius+(getDirection()==OUTSIDE?- height:height), paint);
 			else

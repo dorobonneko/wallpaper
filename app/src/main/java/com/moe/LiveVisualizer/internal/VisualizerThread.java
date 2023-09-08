@@ -6,129 +6,105 @@ import android.os.Message;
 import android.widget.Toast;
 import com.moe.LiveVisualizer.service.LiveWallpaper;
 import android.os.HandlerThread;
+import java.util.Arrays;
 
-public class VisualizerThread extends HandlerThread {
+public class VisualizerThread extends HandlerThread implements Handler.Callback {
 	private Handler handler;
 	private Visualizer mVisualizer;
 	private LiveWallpaper.WallpaperEngine engine;
-	private Object locked=new Object();
-	private String error_msg;
+    private byte[] wave;
+	private double[] fft,old;
 	public VisualizerThread(LiveWallpaper.WallpaperEngine engine) {
 		super("visualizer");
 		this.engine = engine;
+        fft = new double[engine.getFftSize()];
+        old = new double[engine.getFftSize()];
+		wave = new byte[engine.getCaptureSize()];
+        start();
 	}
 	public Visualizer getVisualizer() {
 		return mVisualizer;
 	}
+    public double[] getFft() {
+        if(!handler.hasMessages(0))
+            handler.sendEmptyMessage(0);
+        synchronized(old){
+            return old;
+        }
+    }
+    public void setEnabled(boolean enable) {
+        synchronized (this) {
+            if (mVisualizer != null) {
+                if (mVisualizer.getEnabled() == enable)
+                    return;
+                mVisualizer.setEnabled(enable);
+                if (!enable) {
+                    handler.removeMessages(0);
+                    fill(old);
+                    
+                }
+            } else if (enable) {
+                //初始化visualizer
+                initVisualizer();
+            }
+        }
+    }
+    private void initVisualizer() {
+        mVisualizer = new Visualizer(0);
+        mVisualizer.setCaptureSize(engine.getCaptureSize());
+        mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
+        mVisualizer.setEnabled(true);
+    }
+    @Override
+    public void start() {
+        super.start();
+        handler = new Handler(getLooper(), this);
+    }
 
 	public void destroy() {
-		if (handler != null)
-            handler.sendEmptyMessage(2);
+		if (mVisualizer != null) {
+            if (mVisualizer.getEnabled())
+                mVisualizer.setEnabled(false);
+            mVisualizer.release();
+        }
 		quit();
 	}
 
-
-	@Override
-	protected void onLooperPrepared() {
-		// TODO: Implement this method
-		super.onLooperPrepared();
-		handler = new Handler(){
-			public void handleMessage(Message msg) {
-				synchronized (locked) {
-                    switch (msg.what) {
-                        case 0:
-
-                            break;
-                        case 1:
-                            if (mVisualizer != null) {
-                                try {
-                                    if (mVisualizer.setEnabled(msg.obj) != Visualizer.SUCCESS) {
-                                        mVisualizer.release();
-                                        mVisualizer = null;
-                                        if((Boolean)msg.obj)
-                                            init(msg.obj);
-                                        //msg.obj=0;
-                                        //check();
-                                    }
-                                } catch (Exception e) {
-                                    //error_msg=e.getMessage();
-                                }
-                            } else if((Boolean)msg.obj){
-                                init(msg.obj);
-                            }
-
-                            break;
-                        case 2:
-                            if (mVisualizer != null) {
-                                mVisualizer.setEnabled(false);
-                                mVisualizer.release();
-                            }
-                            //handler.getLooper().quit();
-                            break;
-                        case 3:
-                            try {
-                                if (mVisualizer != null) {
-                                    mVisualizer.setEnabled(msg.obj);
-                                    //if(call!=null)call.onReady(mVisualizer);
-                                }
-                            } catch (Exception e) {
-                                //error_msg=e.getMessage();
-                            }
-                            break;
-                    }
-				}
-			}
-		};
-	}
-	private void init(final boolean enable) {
-        if (error_msg != null)return;
-        if (mVisualizer != null)return;
-        try {
-            mVisualizer = new Visualizer(0);
-            if (!mVisualizer.getEnabled()) {
-                mVisualizer.setCaptureSize(engine.getCaptureSize());
-                mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
-                //mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
-                VisualizerThread.this.handler.obtainMessage(3).sendToTarget();
-            }
-        } catch (Exception e) {
-            mVisualizer = null;
-            Handler handler=new Handler(Looper.getMainLooper());
-            handler.post(new Runnable(){
-
-                    @Override
-                    public void run() {
-                        try {
-                            mVisualizer = new Visualizer(0);
-                            if (!mVisualizer.getEnabled()) {
-                                mVisualizer.setCaptureSize(engine.getCaptureSize());
-                                mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
-                                //mVisualizer.setDataCaptureListener(engine, mVisualizer.getMaxCaptureRate()/2, false, true);
-                                VisualizerThread.this.handler.obtainMessage(3, enable).sendToTarget();
-                            }
-                            //mVisualizer.setEnabled(engine.isVisible());
-                        } catch (Exception e) {
-                            mVisualizer = null;
-                            error_msg = e.getMessage();
+    @Override
+    public boolean handleMessage(Message msg) {
+        switch (msg.what) {
+            case 0:
+                synchronized (this) {
+                    if (mVisualizer != null && mVisualizer.getEnabled()) {
+                        long oldTime=System.currentTimeMillis();
+                        mVisualizer.getFft(wave);
+                        fft(wave);
+                        synchronized(old){
+                            System.arraycopy(fft, 0, old, 0, old.length);
                         }
+                        long distance=System.currentTimeMillis()-oldTime;
+                        handler.sendEmptyMessageDelayed(0,distance>100?0:100-distance);
                     }
-                });
-
+                }
+                break;
         }
+        return true;
     }
-	public synchronized void check(boolean enable) {
-		if (handler != null) {
-			//if(mVisualizer==null)
-			//	handler.obtainMessage(0).sendToTarget();
-            //	else
-            handler.obtainMessage(1, enable).sendToTarget();
-		}
-
+	private void fill(double[] b) {
+        for (int i=0;i < b.length;i++)
+            b[i] = 0;
+    }
+    private double a(byte data1, byte data2) {
+        double d=Math.hypot(data1, data2);
+        d = Math.sqrt(d * d - d);
+        return d;
+    }
+    private double[] fft(byte[] wave) {
+        for (int i = 2,j=0; j < this.fft.length;i += 2,j++) {
+            //this.fft[j] = Math.sqrt(Math.pow(Math.hypot(wave[i],wave[i + 1]),2)-10);
+            this.fft[j] = a(wave[i], wave[i + 1]);
+        }
+        return this.fft;
 	}
-	public String getMessage() {
-		return error_msg;
-	}
-	public boolean isInit() {
-		return mVisualizer != null;
-	}
+    
 }

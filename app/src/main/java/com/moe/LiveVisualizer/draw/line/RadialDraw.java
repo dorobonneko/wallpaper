@@ -22,56 +22,6 @@ public class RadialDraw extends LineDraw
 		super(draw);
 	}
 
-	/*@Override
-	public void onDraw(Canvas canvas, int color_mode)
-	{
-		Paint paint=getPaint();
-		//paint.setStrokeCap(Paint.Cap.SQUARE);
-		switch(color_mode){
-			case 0:
-				switch ( getEngine().getColorList().size() )
-				{
-					case 0:
-						paint.setColor(0xff39c5bb);
-						drawGraph(getFft(), canvas, color_mode, false);
-						break;
-					case 1:
-						paint.setColor(getEngine().getColorList().get(0));
-						drawGraph(getFft(), canvas, color_mode, false);
-						break;
-					default:
-						paint.setShader(getShader());
-						drawGraph(getFft(), canvas, color_mode, false);								
-						paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-						paint.setShader(null);
-					}
-				break;
-			case 1:
-			case 2:
-				if(getEngine()!=null)
-				switch ( getEngine().getColorList().size() )
-				{
-					case 0:
-						paint.setColor(0xff39c5bb);
-						break;
-					default:
-						paint.setColor(getEngine().getColorList().get(0));
-						break;
-				}
-			case 4:
-				drawGraph(getFft(), canvas, color_mode, true);
-				break;
-			case 3:
-				int color=getColor();
-				paint.setColor(getEngine().getPreference().getBoolean("nenosync",false)?color:0xffffffff);
-				paint.setShadowLayer(paint.getStrokeWidth(),0,0,color);
-				drawGraph(getFft(), canvas, color_mode, false);
-				paint.setShadowLayer(0, 0, 0, 0);
-				break;
-		}
-		paint.reset();
-	}*/
-
 	@Override
 	public void drawGraph(double[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
@@ -86,20 +36,17 @@ public class RadialDraw extends LineDraw
 				checkMode(color_mode,paint);
 			float height=(float)(buffer[i] / 127d * getBorderHeight());
 			if ( height < points[i] )
-				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getBorderHeight());
-			if ( height < 0 )height = 0;
-			points[i] = height;
+				points[i]=Math.max(0,points[i]-(points[i]-height)*getInterpolator((points[i]-height)/points[i]*0.8f)*0.45f);
+            else if(height>points[i])
+                points[i]=points[i]+(height-points[i])*getInterpolator((height-points[i])/height);
 			if ( paint.getStrokeCap() != Paint.Cap.ROUND )
 			{
-				canvas.drawRect(x, getDrawHeight() - height, x + getBorderWidth() , getDrawHeight()+height, paint);
-				//if(getRound()==Paint.Cap.ROUND)
-				//canvas.drawArc(x,getDrawHeight()-height+halfWidth,x+getBorderWidth(),getDrawHeight()-height-halfWidth,180,360,true,paint);
-				//canvas.drawRect(x, getDrawHeight() + height, x + getBorderWidth(), getDrawHeight(), paint);
+				canvas.drawRect(x, getDrawHeight() - points[i], x + getBorderWidth() , getDrawHeight()+points[i], paint);
 				x += getSpaceWidth();
 			}
 			else
 			{
-				canvas.drawLine(x + halfWidth, getDrawHeight() - height, x+halfWidth, getDrawHeight()+height, paint);
+				canvas.drawLine(x + halfWidth, getDrawHeight() - points[i], x+halfWidth, getDrawHeight()+points[i], paint);
 				//canvas.drawLine(x, getDrawHeight() + height + halfWidth, x, getDrawHeight() + halfWidth, paint);
 				x += getSpaceWidth();
 			}

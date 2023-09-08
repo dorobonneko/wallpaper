@@ -58,10 +58,11 @@ public class UnKnow2 extends RingDraw
 		float radius=getRadius();
 		for(int i=0;i<points.length;i++){
 			float height=(float)(buffer[i]/127f*getRadius()/2);
-			if(height<points[i])
-				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getRadius()/2);
-			if(height<0)height=0;
-			points[i]=height;
+			if ( height < points[i] )
+                points[i]=Math.max(0,points[i]-(points[i]-height)*getInterpolator((points[i]-height)/points[i]*0.8f)*0.45f);
+            else if(height>points[i])
+                points[i]=points[i]+(height-points[i])*getInterpolator((height-points[i])/height);
+                height=points[i];
 			double value=degress*i;
 			if (i==0){
                 path1.moveTo(lines[0]=(float)((radius-points[i])*Math.cos(value)),lines[1]=(float)((radius-points[i])*Math.sin(value)));

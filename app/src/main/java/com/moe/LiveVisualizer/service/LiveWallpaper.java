@@ -259,10 +259,6 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
             filter.addAction("color_changed");
             filter.setPriority(1);
 			registerReceiver(colorReceiver = new Color(), filter);
-			//sizeListener = new ArrayList<>();
-			//if ( colorList != null )
-			//	notifyColorsChanged();
-			refresh.start();
 		}
 		@Override
 		public void onTouchEvent(MotionEvent event) {

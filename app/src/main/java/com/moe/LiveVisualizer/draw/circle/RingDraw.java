@@ -79,8 +79,6 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 			onSizeChanged();
 	}
 
-
-
 	@Override
 	public void onSpaceWidthChanged(int space)
 	{
@@ -88,10 +86,16 @@ public abstract class RingDraw extends CircleDraw implements OnColorSizeChangedL
 		onSizeChanged();
 	}
 
+    @Override
+    public void setNum(int num) {
+        super.setNum(num);
+        onSizeChanged();
+    }
+
 	@Override
 	public int size()
 	{
-		return size;
+		return super.getSize();
 	}
 	public void onSizeChanged()
 	{

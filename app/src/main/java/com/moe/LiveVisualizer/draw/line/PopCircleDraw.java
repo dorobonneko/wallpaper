@@ -77,10 +77,11 @@ public class PopCircleDraw extends LineDraw
 			if(useMode)
 				checkMode(color_mode,paint);
 			float height=(float)(buffer[i]/127d*getBorderHeight());
-			if(height<points[i])
-				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getBorderHeight());
-			if(height<0)height=0;
-			points[i]=height;
+			if ( height < points[i] )
+                points[i]=Math.max(0,points[i]-(points[i]-height)*getInterpolator((points[i]-height)/points[i]*0.8f)*0.45f);
+            else if(height>points[i])
+                points[i]=points[i]+(height-points[i])*getInterpolator((height-points[i])/height);
+                height=points[i];
 			canvas.drawCircle(x,y-height-radius,radius,paint);
 			x+=getSpaceWidth();
 		}

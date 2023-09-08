@@ -17,33 +17,41 @@ import com.moe.LiveVisualizer.utils.PreferencesUtils;
 import android.media.AudioManager;
 import android.content.Context;
 import android.os.HandlerThread;
+import java.util.List;
+import android.media.AudioPlaybackConfiguration;
 
-public class WallpaperThread extends HandlerThread implements Handler.Callback,MusicListener.Callback {
+public class WallpaperThread extends HandlerThread implements Handler.Callback{
 	private LiveWallpaper.WallpaperEngine engine;
 	private ImageDraw imageDraw;
 	private Paint paint=new Paint();
-	private int fpsDelay=33;
+	private int fpsDelay=16;
 	private Matrix wallpaperMatrix;//缩放壁纸用
 	private Engine mDuangEngine;//屏幕特效引擎
 	private ContentObserver observer;
-	private boolean rotateX,rotateY,visible=true,active;
+	private boolean rotateX,rotateY,visible=true;
 	private Camera camera;
 	private Matrix matrix=new Matrix();
     private AudioManager mAudioManager;
-    private MusicListener mMusicListener;
+    private VisualizerThread mVisualizer;
     private Handler mHandler;
     private DrawThread mDrawThread;
+    private PlayCallback mPlayCallback=new PlayCallback();
 	public WallpaperThread(final LiveWallpaper.WallpaperEngine engine) {
         super("WallpaperThread");
+        start();
+        mHandler = new Handler(this);
+        if (visible)
+            mHandler.sendEmptyMessage(0);
 		camera = new Camera();
         mAudioManager = (AudioManager) engine.getContext().getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.registerAudioPlaybackCallback(mPlayCallback,mHandler);
 		this.engine = engine;
 		imageDraw = new ImageDraw(this);
 		paint.setTextAlign(Paint.Align.CENTER);
 		paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 18, engine.getContext().getResources().getDisplayMetrics()));
 		paint.setColor(0xff000000);
 		//engine.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-		fpsDelay = engine.getPreference().getBoolean("highfps", false) ?16: 33;
+		fpsDelay = engine.getPreference().getBoolean("highfps", false) ?11: 16;
 		rotateX = engine.getPreference().getBoolean("rotateX", false);
 		rotateY = engine.getPreference().getBoolean("rotateY", false);
 		setMatrix();
@@ -67,15 +75,14 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
 																			 }
 																		 });
 
-        mMusicListener = new MusicListener(engine, this);
-        mMusicListener.start();
-        active = mMusicListener.isMusicActive();
         visible = engine.isVisible();
+        mVisualizer=new VisualizerThread(engine);
+        mVisualizer.setEnabled(visible&&mAudioManager.isMusicActive());
 	}
 
-    @Override
     public void onMusicActived(boolean active) {
-        this.active = active;
+        if(mVisualizer!=null)
+            mVisualizer.setEnabled(visible&&active);
         if (visible && mHandler != null)
             mHandler.sendEmptyMessage(2);
     }
@@ -85,8 +92,8 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
         return null;
 	}
 	public double[] getFft() {
-		if (mMusicListener != null)
-			return mMusicListener.getFft();
+		if (mVisualizer != null)
+			return mVisualizer.getFft();
         return null;
 	}
 	public LiveWallpaper.WallpaperEngine getEngine() {
@@ -105,8 +112,8 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
         this.visible = visible;
         if (mHandler != null)
             mHandler.sendEmptyMessage(visible ?0: 1);
-        if (mMusicListener != null)
-            mMusicListener.onVisibleChanged(visible);
+        if (mVisualizer != null)
+            mVisualizer.setEnabled(visible&&mAudioManager.isMusicActive());
 	}
 //显示尺寸改变
 	public void onSizeChanged() {
@@ -127,7 +134,7 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
                     imageDraw.setNum(PreferencesUtils.getInt(null, uri, 50));
                 break;
 			case "highfps"://false
-				fpsDelay = PreferencesUtils.getBoolean(null, uri, false) ?16: 33;
+				fpsDelay = PreferencesUtils.getBoolean(null, uri, false) ?11: 16;
 				break;
 			case "downspeed"://50
 				if (imageDraw != null)imageDraw.setDownSpeed(PreferencesUtils.getInt(null, uri, 15));
@@ -270,8 +277,8 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
 	}
 
 	public void destroy() {
-		if (mMusicListener != null)
-			mMusicListener.destroy();
+		if (mVisualizer != null)
+			mVisualizer.destroy();
 		imageDraw = null;
 		//engine.getPreference().unregisterOnSharedPreferenceChangeListener(this);
 		if (mDuangEngine != null)
@@ -281,21 +288,13 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
 		engine = null;
 
 	}
-
-    @Override
-    protected void onLooperPrepared() {
-        mHandler = new Handler(this);
-        if (visible)
-            mHandler.sendEmptyMessage(0);
-    }
-
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
             case 0:
                 if (mDrawThread != null)
                     break;
-                mDrawThread = new DrawThread(active);
+                mDrawThread = new DrawThread();
                 mDrawThread.start();
                 break;
             case 1:
@@ -304,7 +303,7 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
                 mDrawThread = null;
                 break;
             case 2:
-                mDrawThread.pause(active);
+                mDrawThread.resumeOnce();
                 break;
             case 3:
                 mDrawThread.resumeOnce();
@@ -335,20 +334,19 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
             }
         }
     }
+    class PlayCallback extends AudioManager.AudioPlaybackCallback {
+
+        @Override
+        public void onPlaybackConfigChanged(List<AudioPlaybackConfiguration> configs) {
+            onMusicActived(mAudioManager.isMusicActive());
+        }
+        
+    }
     class DrawThread extends Thread {
-        private boolean active,cancel;
+        private boolean cancel;
         private Object lock=new Object();
         private long oldTime;
-        public DrawThread(boolean active) {
-            this.active = active;
-        }
-        public void pause(boolean active) {
-            this.active = active;
-            synchronized (lock) {
-                if (active)
-                    lock.notify();
-            }
-        }
+
         public void resumeOnce() {
             synchronized (lock) {
                 lock.notify();
@@ -367,7 +365,7 @@ public class WallpaperThread extends HandlerThread implements Handler.Callback,M
         public void run() {
             while (!cancel) {
                 long delay=0;
-                boolean  active=this.active;
+                boolean  active=mAudioManager.isMusicActive();
                 LiveWallpaper.WallpaperEngine engine=WallpaperThread.this.engine;
                 if (engine == null) {
                     break;

@@ -16,47 +16,6 @@ public class BlockBreakerDraw extends LineDraw
 		super(draw);
 	}
 
-	/*@Override
-	public void onDraw(Canvas canvas, int color_mode)
-	{
-		Paint paint=getPaint();
-		paint.setStrokeCap(Paint.Cap.SQUARE);
-		switch (color_mode)
-		{
-			case 0:
-				switch (getEngine().getColorList().size())
-				{
-					case 0:
-						paint.setColor(0xff39c5bb);
-						drawGraph(getFft(), canvas, color_mode, false);
-						break;
-					case 1:
-						paint.setColor(getEngine().getColorList().get(0));
-						drawGraph(getFft(), canvas, color_mode, false);
-						break;
-					default:
-						paint.setShader(getShader());
-						drawGraph(getFft(), canvas, color_mode, false);								
-						paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-						paint.setShader(null);
-				}
-				break;
-			case 1:
-			case 4:
-			case 2:
-				drawGraph(getFft(), canvas, color_mode, true);
-				break;
-			case 3:
-				int color=getColor();
-				paint.setColor(getEngine().getPreference().getBoolean("nenosync", false) ?color: 0xffffffff);
-				paint.setShadowLayer(paint.getStrokeWidth(), 0, 0, color);
-				drawGraph(getFft(), canvas, color_mode, false);
-				paint.setShadowLayer(0, 0, 0, 0);
-				break;
-		}
-		paint.reset();
-	}*/
-
 	@Override
 	public void drawGraph(double[] buffer, Canvas canvas, int color_mode, boolean useMode)
 	{
@@ -74,15 +33,14 @@ public class BlockBreakerDraw extends LineDraw
 				checkMode(color_mode,paint);
 			float height=(float)(buffer[i] / (double)Byte.MAX_VALUE * getBorderHeight());
 			if (height < points[i])
-				height=points[i]-(points[i]-height)*getInterpolator((points[i]-height)/points[i]*0.99f);
-			if (height < 0)
-                height = 0;
-				points[i] = height;
+				points[i]=Math.max(0,points[i]-(points[i]-height)*getInterpolator((points[i]-height)/points[i]*0.99f));
+            else if(height>points[i]){
+                points[i]=points[i]+(height-points[i])*getInterpolator((height-points[i])/height*0.99f);
+            }
 			if (height < breaker[i])
-				height =breaker[i]-(breaker[i]-height)*getInterpolator((breaker[i]-height)/breaker[i]*0.89f)*0.45f;
-			if (height < 0)
-				height = 0;
-			breaker[i]=height;
+				breaker[i] =Math.max(0,breaker[i]-(breaker[i]-height)*getInterpolator((breaker[i]-height)/breaker[i]*0.89f)*0.45f);
+            else if(height>breaker[i])
+			    breaker[i]=points[i];
 			canvas.drawRect(x, getDrawHeight() - points[i], x + getBorderWidth() , getDrawHeight(), paint);
 			canvas.drawRect(x, getDrawHeight() - breaker[i] - halfWidth, x + getBorderWidth() , getDrawHeight() - breaker[i], paint);
 			x += getSpaceWidth();

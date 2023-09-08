@@ -8,8 +8,8 @@ android {
         applicationId "com.moe.LiveVisualizer"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 79
-        versionName "4.1"
+        versionCode 80
+        versionName "4.2"
     }
     buildTypes {
         release {

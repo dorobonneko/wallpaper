@@ -22,9 +22,11 @@ public class Application extends android.app.Application implements Thread.Uncau
 		new Thread(){
 			public void run(){
 				if(p2==null)return;
-				StringBuffer sb=new StringBuffer(p2.getMessage());
+                String msg=p2.getMessage();
+				StringBuffer sb=new StringBuffer();
 				try
 				{
+                    sb.append(msg);
 					sb.append("\n").append(getPackageManager().getPackageInfo(getPackageName(), 0).versionName).append("\n").append(Build.MODEL).append(" ").append(Build.VERSION.RELEASE).append("\n");
 				}
 				catch (PackageManager.NameNotFoundException e)

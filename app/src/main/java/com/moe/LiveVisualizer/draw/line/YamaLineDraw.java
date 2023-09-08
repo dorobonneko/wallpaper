@@ -69,10 +69,10 @@ public class YamaLineDraw extends LineDraw
 				checkMode(color_mode,paint);
 			float height=(float)(buffer[i] / 127d * getBorderHeight());
 			if ( height < points[i] )
-				height=points[i]-(points[i]-height)*getInterpolator(1-(points[i]-height)/getBorderHeight());
-				if ( height < 0 )height = 0;
-			points[i] = height;
-			
+                points[i]=Math.max(0,points[i]-(points[i]-height)*getInterpolator((points[i]-height)/points[i]*0.8f)*0.45f);
+            else if(height>points[i])
+                points[i]=points[i]+(height-points[i])*getInterpolator((height-points[i])/height);
+			height=points[i];
 			canvas.drawLine(halfWidth, getDrawHeight(), x+=halfWidth, getDrawHeight()-height, paint);
 			canvas.drawLine(x, getDrawHeight() - height, canvas.getWidth()-halfWidth, getDrawHeight(), paint);
 			x += halfWidth + getSpaceWidth();
