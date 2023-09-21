@@ -1,5 +1,4 @@
 package com.moe.LiveVisualizer.internal;
-import android.graphics.*;
 import com.moe.LiveVisualizer.draw.*;
 import com.moe.LiveVisualizer.draw.circle.*;
 import com.moe.LiveVisualizer.draw.line.*;
@@ -8,8 +7,16 @@ import com.moe.LiveVisualizer.service.LiveWallpaper;
 import com.moe.LiveVisualizer.inter.Draw;
 import com.moe.LiveVisualizer.service.LiveWallpaper.WallpaperEngine;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.CycleInterpolator;
+import android.graphics.Shader;
+import android.graphics.Matrix;
+import android.view.animation.Interpolator;
+import android.graphics.LinearGradient;
+import android.view.animation.BaseInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
-public class ImageDraw implements OnColorSizeChangedListener
+public class ImageDraw extends BaseInterpolator implements OnColorSizeChangedListener
 {
 	private LiveWallpaper.WallpaperEngine engine;
 	//private Draw[] drawList=new Draw[13];
@@ -21,6 +28,7 @@ public class ImageDraw implements OnColorSizeChangedListener
 	private Draw draw;
 	private boolean antialias;
 	private boolean rotation;
+    private Interpolator mInterpolator;
 	public ImageDraw(WallpaperThread wallpaper)
 	{
 		this.wallpaper=wallpaper;
@@ -28,6 +36,7 @@ public class ImageDraw implements OnColorSizeChangedListener
 		color_mode = engine.getPreference().getString("color_mode", "0");
 		engine.registerColorSizeChangedListener(this);
 		setMode(engine.getPreference().getString("visualizer_mode", "0"));
+        mInterpolator=new AccelerateInterpolator();
 	}
 
 	public void setVisualizerRotation(boolean rotation)
@@ -40,11 +49,10 @@ public class ImageDraw implements OnColorSizeChangedListener
 		this.antialias=antialias;
 		if(draw!=null)draw.setAntialias(antialias);
 	}
+    @Override
 	public float getInterpolation(float input){
-		//return value*value*getDownSpeed();
-		if(Float.isInfinite(input))
-			return 1;
-		input=Math.abs(input);
+		//return value*value*getDownSpeed(););
+        //return mInterpolator.getInterpolation(input);
 		return (1f- ((1.0f - input) * (1.0f - input)))*getDownSpeed();
 	}
 	public LiveWallpaper.WallpaperEngine getEngine()

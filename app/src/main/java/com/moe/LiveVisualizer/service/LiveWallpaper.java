@@ -223,7 +223,7 @@ public class LiveWallpaper extends WallpaperService implements Thread.UncaughtEx
 			return 512;
 		}
 		public int getFftSize() {
-			return 255;
+			return 128;
 		}
 		public void registerColorSizeChangedListener(OnColorSizeChangedListener l) {
 			sizeListener.add(l);

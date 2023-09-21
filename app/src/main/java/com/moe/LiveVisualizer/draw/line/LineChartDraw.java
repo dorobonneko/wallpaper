@@ -12,14 +12,32 @@ import android.graphics.Shader;
 import com.moe.LiveVisualizer.internal.ImageDraw;
 import com.moe.LiveVisualizer.draw.LineDraw;
 import com.moe.LiveVisualizer.utils.ColorList;
+import android.graphics.RectF;
+import android.graphics.Path;
 
 public class LineChartDraw extends LineDraw
 {
 	private float[] tmpData=new float[8];
+    private float[] pointX;
+    private float[] points;
 	public LineChartDraw(ImageDraw draw)
 	{
 		super(draw);
-		}
+    }
+
+    @Override
+    public void notifySizeChanged() {
+        super.notifySizeChanged();
+        if(pointX==null||pointX.length!=size()){
+            pointX=new float[size()];
+            float offsetX=getStartOffset();
+            for(int i=0;i<pointX.length;i++){
+                pointX[i]=offsetX+i*getSpaceWidth();
+            }
+        }
+        if(points==null||points.length!=size())
+            points=new float[size()];
+    }
 
 	/*@Override
 	public void onDraw(Canvas canvas, int color_mode)
@@ -62,7 +80,7 @@ public class LineChartDraw extends LineDraw
 	{
 		return getWave();
 	}*/
-	@Override
+	/*@Override
 	public void drawGraph(double[] buffer, Canvas canvas,final int color_mode, boolean useMode)
 	{
 		Paint paint=getPaint();
@@ -84,6 +102,41 @@ public class LineChartDraw extends LineDraw
 			
 			canvas.drawLines(tmpData, paint);
 		}
-	}
-	
+	}*/
+    @Override
+    public void drawGraph(double[] buffer, Canvas canvas,final int color_mode, boolean useMode)
+    {
+        Paint paint=getPaint();
+        paint.setStyle(Paint.Style.STROKE);
+        float offsetX=getStartOffset();
+        for(int i=0;i<size();i++){
+            float height=getDrawHeight()-(float)buffer[i]/127*getBorderHeight();
+            if ( height < points[i] )
+                points[i]=Math.max(0,points[i]-(points[i]-height)*getInterpolator((points[i]-height)/points[i]*0.8f));
+            else if(height>points[i])
+                points[i]=points[i]+(height-points[i])*getInterpolator((height-points[i])/height);
+        }
+        Path path = new Path();
+        path.moveTo(offsetX,getDrawHeight());
+            for (int i = 0; i < size(); i ++) {
+                float startX=pointX[i];
+                float startY=points[i];
+                float endX,endY;
+                if(i+1==size()){
+                    endX=canvas.getWidth();
+                    endY=getDrawHeight();
+                }else{
+                     endX=pointX[i+1];
+                    endY=points[i+1];
+                }
+                float centerX=startX+(endX-startX)/2;
+                float centerY=startY+(endY-startY)/2;
+                path.quadTo(startX,startY,centerX,centerY);
+            }
+            path.lineTo(canvas.getWidth(),getDrawHeight());
+        if (useMode)
+            checkMode(color_mode, paint);
+
+        canvas.drawPath(path, paint);
+    }
 }

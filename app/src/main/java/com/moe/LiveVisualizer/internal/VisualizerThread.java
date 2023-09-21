@@ -20,6 +20,7 @@ public class VisualizerThread extends HandlerThread implements Handler.Callback 
         fft = new double[engine.getFftSize()];
         old = new double[engine.getFftSize()];
 		wave = new byte[engine.getCaptureSize()];
+        initVisualizer();
         start();
 	}
 	public Visualizer getVisualizer() {
@@ -33,7 +34,7 @@ public class VisualizerThread extends HandlerThread implements Handler.Callback 
         }
     }
     public void setEnabled(boolean enable) {
-        synchronized (this) {
+        /*synchronized (this) {
             if (mVisualizer != null) {
                 if (mVisualizer.getEnabled() == enable)
                     return;
@@ -47,13 +48,19 @@ public class VisualizerThread extends HandlerThread implements Handler.Callback 
                 //初始化visualizer
                 initVisualizer();
             }
-        }
+        }*/
+        if(!enable)
+            handler.removeMessages(0);
     }
     private void initVisualizer() {
         mVisualizer = new Visualizer(0);
+        if(mVisualizer.getEnabled())
+           mVisualizer.setEnabled(false);
         mVisualizer.setCaptureSize(engine.getCaptureSize());
         mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
         mVisualizer.setEnabled(true);
+        
+        
     }
     @Override
     public void start() {
@@ -62,10 +69,12 @@ public class VisualizerThread extends HandlerThread implements Handler.Callback 
     }
 
 	public void destroy() {
+        synchronized(this){
 		if (mVisualizer != null) {
             if (mVisualizer.getEnabled())
                 mVisualizer.setEnabled(false);
             mVisualizer.release();
+        }
         }
 		quit();
 	}
@@ -75,6 +84,7 @@ public class VisualizerThread extends HandlerThread implements Handler.Callback 
         switch (msg.what) {
             case 0:
                 synchronized (this) {
+                try{
                     if (mVisualizer != null && mVisualizer.getEnabled()) {
                         long oldTime=System.currentTimeMillis();
                         mVisualizer.getFft(wave);
@@ -85,6 +95,14 @@ public class VisualizerThread extends HandlerThread implements Handler.Callback 
                         long distance=System.currentTimeMillis()-oldTime;
                         handler.sendEmptyMessageDelayed(0,distance>100?0:100-distance);
                     }
+                }catch(Exception e){
+                    if(mVisualizer!=null){
+                        if(mVisualizer.getEnabled())
+                            mVisualizer.setEnabled(false);
+                            mVisualizer.release();
+                    }
+                    initVisualizer();
+                }
                 }
                 break;
         }
@@ -94,17 +112,25 @@ public class VisualizerThread extends HandlerThread implements Handler.Callback 
         for (int i=0;i < b.length;i++)
             b[i] = 0;
     }
-    private double a(byte data1, byte data2) {
+    private double a(double data1, double data2) {
         double d=Math.hypot(data1, data2);
-        d = Math.sqrt(d * d - d);
+        d = Math.min(127,d>64?d*0.7d:d*1.3d);
         return d;
     }
-    private double[] fft(byte[] wave) {
-        for (int i = 2,j=0; j < this.fft.length;i += 2,j++) {
+    /*private double[] fft(byte[] wave) {
+        wave[0]=0;
+        wave[1]=0;
+        for (int i = 0,j=0; i<wave.length&&j<fft.length;i += 4,j++) {
             //this.fft[j] = Math.sqrt(Math.pow(Math.hypot(wave[i],wave[i + 1]),2)-10);
-            this.fft[j] = a(wave[i], wave[i + 1]);
+            this.fft[j] =a(a(wave[i], wave[i + 1]),a(wave[i+2],wave[i+3]));
         }
         return this.fft;
-	}
+	}*/
+    private double[] fft(byte[] wave){
+        for(int i=0;i<fft.length;i++){
+            fft[i]=Math.hypot(wave[i],wave[i+1]);
+        }
+        return fft;
+    }
     
 }
