@@ -36,9 +36,9 @@ public class RadialDraw extends LineDraw
 				checkMode(color_mode,paint);
 			float height=(float)(buffer[i] / 127d * getBorderHeight());
 			if ( height < points[i] )
-				points[i]=Math.max(0,points[i]-(points[i]-height)*getInterpolator((points[i]-height)/points[i]*0.8f)*0.45f);
+				points[i]=Math.max(0,points[i]-(points[i]-height)*getInterpolator((points[i]-height)/points[i]*1.6f));
             else if(height>points[i])
-                points[i]=points[i]+(height-points[i])*getInterpolator((height-points[i])/height);
+                points[i]=points[i]+(height-points[i])*getInterpolator((height-points[i])/height*0.7f);
 			if ( paint.getStrokeCap() != Paint.Cap.ROUND )
 			{
 				canvas.drawRect(x, getDrawHeight() - points[i], x + getBorderWidth() , getDrawHeight()+points[i], paint);

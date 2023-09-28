@@ -35,10 +35,10 @@ public class BlockBreakerDraw extends LineDraw
 			if (height < points[i])
 				points[i]=Math.max(0,points[i]-(points[i]-height)*getInterpolator((points[i]-height)/points[i]*0.99f));
             else if(height>points[i]){
-                points[i]=points[i]+(height-points[i])*getInterpolator((height-points[i])/height*0.99f);
+                points[i]=points[i]+(height-points[i])*getInterpolator((height-points[i])/height*0.79f);
             }
 			if (height < breaker[i])
-				breaker[i] =Math.max(0,breaker[i]-(breaker[i]-height)*getInterpolator((breaker[i]-height)/breaker[i]*0.89f)*0.45f);
+				breaker[i] =Math.max(0,breaker[i]-(breaker[i]-height)*getInterpolator((breaker[i]-height)/breaker[i]*0.89f)*0.65f);
             else if(height>breaker[i])
 			    breaker[i]=points[i];
 			canvas.drawRect(x, getDrawHeight() - points[i], x + getBorderWidth() , getDrawHeight(), paint);
